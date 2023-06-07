@@ -16,6 +16,9 @@ function Login() {
             if(result.data === 'Login Success'){
                 navigate('/home');
             }
+            else if(result.data === 'Admin'){
+                navigate('/admin');
+            }
         })
         .catch(err => console.log(err))
     }
