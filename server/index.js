@@ -18,10 +18,10 @@ app.post('/login', (req, res) => {
         if(user){
             if(user.password === password){
                 if(user.name === 'admin'){
-                    res.json('Admin')
+                    res.json('Admin Logged In')
                 }
                 else{
-                    res.json('Login Success')
+                    res.json('User Logged In Successfully')
                 }
             }
             else{
