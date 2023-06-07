@@ -13,10 +13,10 @@ function Login() {
         axios.post('http://localhost:3001/login', {email, password})
         .then(result => {
             console.log(result);
-            if(result.data === 'Login Success'){
+            if(result.data === 'User Logged In Successfully'){
                 navigate('/home');
             }
-            else if(result.data === 'Admin'){
+            else if(result.data === 'Admin Logged In'){
                 navigate('/admin');
             }
         })
