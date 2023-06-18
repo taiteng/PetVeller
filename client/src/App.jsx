@@ -9,13 +9,18 @@ import {BrowserRouter, Routes, Route} from 'react-router-dom';
 
 function App() {
   return (
+    
     <div>
+      {/* Test push and commit by zc */}
+      <b>Hi</b>
       <BrowserRouter>
         <Routes>
           <Route path="/register" element={<Signup/>}></Route>
           <Route path="/login" element={<Login/>}></Route>
           <Route path="/home" element={<Home/>}></Route>
           <Route path="/admin" element={<Admin/>}></Route>
+          <Route path="/ZC" element={<Admin/>}></Route>
+        
         </Routes>
       </BrowserRouter>
     </div>
