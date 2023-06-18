@@ -1,5 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Header from '../components/Header';
+import dogImage from '../assets/dog.jpg';
+import catImage from '../assets/cat.jpg';
 
 function Home() {
   const [news, setNews] = useState([]);
