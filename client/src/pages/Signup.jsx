@@ -43,7 +43,12 @@ function Signup() {
         .post('http://localhost:3001/register', { name, email, password })
         .then((result) => {
           console.log(result);
-          navigate('/login');
+          if(result.data === 'User Exists'){
+            navigate('/register')
+          }
+          else{
+            navigate('/login');
+          }
         })
         .catch((err) => console.log(err));
     }

@@ -1,9 +1,10 @@
 import { useState } from 'react';
+import AdminHeader from '../components/AdminHeader';
 
 function Admin(){
     return(
         <div>
-            Admin
+            <AdminHeader/>
         </div>
     )
 }
