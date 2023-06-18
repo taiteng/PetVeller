@@ -13,16 +13,14 @@ function Header() {
   };
 
   const handleLogout = () => {
-    // Call the logout function here
     logoutUser();
     navigate('/login');
   };
 
   const logoutUser = () => {
-    // Implement the logout functionality here
-    // For example, clearing the user session, removing tokens, etc.
-    // You would need to provide your own implementation based on your authentication system.
-    // This is just a placeholder example:
+    window.name = '';
+    window.email = '';
+    window.password = '';
     console.log('User logged out');
   };
 
@@ -31,7 +29,9 @@ function Header() {
       <div className='p-2 flex justify-around gap-4 md:gap-14 align-items-center'>
         <img src={logo} className='w-[80px]' alt='Logo' />
         <ul className='flex gap-4 md:gap-14'>
-          <li className='hover:font-bold cursor-pointer'>Admin Home</li>
+          <li className='hover:font-bold cursor-pointer'>
+            <a href='/admin'>Admin Home</a>
+          </li>
           <li className='hover:font-bold cursor-pointer'>Dogs</li>
           <li className='hover:font-bold cursor-pointer'>Dog Facts</li>
           <li className='hover:font-bold cursor-pointer'>

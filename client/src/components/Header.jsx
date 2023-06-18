@@ -13,16 +13,14 @@ function Header() {
   };
 
   const handleLogout = () => {
-    // Call the logout function here
     logoutUser();
-    navigate('/login');
+    navigate('/');
   };
 
   const logoutUser = () => {
-    // Implement the logout functionality here
-    // For example, clearing the user session, removing tokens, etc.
-    // You would need to provide your own implementation based on your authentication system.
-    // This is just a placeholder example:
+    window.name = '';
+    window.email = '';
+    window.password = '';
     console.log('User logged out');
   };
   
