@@ -32,12 +32,18 @@ function Header() {
           <li className='hover:font-bold cursor-pointer'>
             <a href='/admin'>Admin Home</a>
           </li>
-          <li className='hover:font-bold cursor-pointer'>Dogs</li>
-          <li className='hover:font-bold cursor-pointer'>Dog Facts</li>
+          <li className='hover:font-bold cursor-pointer'>
+            <a>Dogs</a>
+          </li>
+          <li className='hover:font-bold cursor-pointer'>
+            <a>Dog Facts</a>
+          </li>
           <li className='hover:font-bold cursor-pointer'>
             <a href='/admincat'>Cats</a>
           </li>
-          <li className='hover:font-bold cursor-pointer'>Cat Facts</li>
+          <li className='hover:font-bold cursor-pointer'>
+            <a>Cat Facts</a>
+          </li>
         </ul>
         <form onSubmit={handleSubmit} className='align-items-center'>
           <button className='bg-blue-500 hover:bg-blue-700 rounded-full text-white flex align-items-center gap-1'>

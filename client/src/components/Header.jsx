@@ -36,11 +36,15 @@ function Header() {
             <li className='hover:font-bold cursor-pointer'>
               <a href='/dog'>Dogs</a>
             </li>
-            <li className='hover:font-bold cursor-pointer'>Dog Facts</li>
+            <li className='hover:font-bold cursor-pointer'>
+              <a>Dog Facts</a>
+            </li>
             <li className='hover:font-bold cursor-pointer'>
               <a href='/cat'>Cats</a>
             </li>
-            <li className='hover:font-bold cursor-pointer'>Cat Facts</li>
+            <li className='hover:font-bold cursor-pointer'>
+              <a>Cat Facts</a>
+            </li>
           </ul>
           <a href='/login'>
             <button className='bg-blue-500 hover:bg-blue-700 rounded-full text-white flex align-items-center gap-1'>
