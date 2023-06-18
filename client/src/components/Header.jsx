@@ -1,4 +1,5 @@
-import React from 'react'
+import { useState } from 'react'
+import logo from './../assets/catndog.jpeg'
 import { IoPersonCircleOutline } from 'react-icons/io5'
 import { useNavigate } from 'react-router-dom'
 
@@ -13,7 +14,8 @@ function Header() {
 
   return (
     <>
-    <div className='p-3 flex justify-center gap-4 md:gap-14 item-center'>
+    <div className='p-2 flex justify-around gap-4 md:gap-14 align-items-center'>
+      <img src={logo} className='w-[80px]'/>
       <ul className='flex gap-4 md:gap-14'>
         <li className='hover:font-bold cursor-pointer'>
             Home
@@ -31,7 +33,7 @@ function Header() {
             Cat Facts
         </li>
       </ul>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className='align-items-center'>
         <button className='bg-blue-500 hover:bg-blue-700 rounded-full text-white flex align-items-center gap-1'>
           <IoPersonCircleOutline className='ml-3 text-[20px]'/> Login <span></span>
         </button>
