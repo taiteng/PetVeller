@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
+import Header from '../components/Header';
 
 function Login() {
 
@@ -13,11 +14,17 @@ function Login() {
         axios.post('http://localhost:3001/login', {email, password})
         .then(result => {
             console.log(result);
-            if(result.data === 'User Logged In Successfully'){
-                navigate('/');
-            }
-            else if(result.data === 'Admin Logged In'){
+            if(result.data.email === 'admin@gmail.com'){
                 navigate('/admin');
+            }
+            else if(result.data === 'The Password Is Incorrect'){
+
+            }
+            else{
+                window.name = result.data.name;
+                window.email = result.data.email;
+                window.password = result.data.password;
+                navigate('/');
             }
         })
         .catch(err => console.log(err))
