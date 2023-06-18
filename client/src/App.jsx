@@ -9,6 +9,7 @@ import Admin from './pages/Admin'
 import Cat from './pages/Cat'
 import CatDetails from './pages/CatDetails'
 import { Routes, Route } from 'react-router-dom';
+import Dog from './pages/Dog';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/login" element={<Login/>}></Route>
         <Route path="/admin" element={<Admin/>}></Route>
         <Route path="/cat" element={<Cat/>}></Route>
+        <Route path="/dog" element={<Dog/>}></Route>
         <Route path="/catdetails" element={<CatDetails/>}></Route>
       </Routes>
     </>
