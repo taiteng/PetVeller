@@ -5,6 +5,9 @@ function Home(){
     return(
         <div>
             <Header/>
+            {window.name}
+            {window.email}
+            {window.password}
         </div>
     )
 }

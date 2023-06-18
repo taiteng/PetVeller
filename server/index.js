@@ -13,16 +13,11 @@ mongoose.connect(db);
 
 app.post('/login', (req, res) => {
     const { email, password } = req.body;
-    userModel.findOne({email: email})
+    userModel.findOne({ email: email })
     .then(user => {
         if(user){
             if(user.password === password){
-                if(user.name === 'admin'){
-                    res.json('Admin Logged In')
-                }
-                else{
-                    res.json('User Logged In Successfully')
-                }
+                res.json(user);
             }
             else{
                 res.json('The Password Is Incorrect')
@@ -35,9 +30,18 @@ app.post('/login', (req, res) => {
 })
 
 app.post('/register', (req, res) => {
-    userModel.create(req.body)
-    .then(users => res.json(users))
-    .catch(err => res.json(err))
+    const { name, email, password } = req.body;
+    userModel.findOne({ email: email })
+    .then(user => {
+        if(user){
+            res.json('User Exists')
+        }
+        else{
+            const newUser = new userModel({ name, email, password });
+            const saveUser = newUser.save();
+            res.json(saveUser);
+        }
+    })
 })
 
 app.listen(3001, () => {
