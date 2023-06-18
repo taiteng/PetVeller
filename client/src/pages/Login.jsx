@@ -24,6 +24,8 @@ function Login() {
     }
 
     return(
+        <>
+        <Header/>
         <div className="d-flex justify-content-center align-items-center bg-secondary vh-100">
             <div className="bg-white p-3 rounded w-25">
                 <h2 className="text-uppercase text-center mb-5">Login</h2>
@@ -58,6 +60,7 @@ function Login() {
                 </form>
             </div>
         </div>
+        </>
     );
 }
 
