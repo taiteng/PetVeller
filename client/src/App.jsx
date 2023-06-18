@@ -13,7 +13,6 @@ import { Routes, Route } from 'react-router-dom';
 function App() {
   return (
     <>
-    <b>Hi, This is ZC testing pushto zhicheng brenach</b>
       <Routes>
         <Route path="/" element={<Home/>}></Route>
         <Route path="/register" element={<Signup/>}></Route>
