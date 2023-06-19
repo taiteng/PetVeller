@@ -12,6 +12,7 @@ import AdminCat from './admin/AdminCat';
 import Catfacts from './pages/Catfacts';
 import { Routes, Route } from 'react-router-dom';
 import Dog from './pages/Dog';
+import Shop from './pages/Shop';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
         <Route path="/admin" element={<Admin/>}></Route>
         <Route path="/cat" element={<Cat/>}></Route>
         <Route path="/dog" element={<Dog/>}></Route>
+        <Route path="/shop" element={<Shop/>}></Route>
         <Route path="/catdetails" element={<CatDetails/>}></Route>
         <Route path="/catfacts" element={<Catfacts/>}></Route>
         <Route path="/admincat" element={<AdminCat/>}></Route>
