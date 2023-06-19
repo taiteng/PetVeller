@@ -23,7 +23,7 @@ function Header() {
     window.password = '';
     console.log('User logged out');
   };
-
+  
   if(window.name === ''){
     return (
       <>
@@ -103,5 +103,4 @@ function Header() {
   }
 }
 
-  
 export default Header;
