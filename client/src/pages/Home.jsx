@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import dogImage from '../assets/dog.jpg';
 import catImage from '../assets/cat.jpg';
+import BackToTop from '../components/BackToTop';
 
 function Home() {
   const [news, setNews] = useState([]);
@@ -33,6 +34,7 @@ function Home() {
   return (
     <div>
       <Header />
+      <BackToTop />
       <style>
         {`
         .image-container {

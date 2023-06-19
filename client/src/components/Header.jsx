@@ -23,7 +23,7 @@ function Header() {
     window.password = '';
     console.log('User logged out');
   };
-
+  
   if(window.name === ''){
     return (
       <>
@@ -40,8 +40,7 @@ function Header() {
             <li className='hover:font-bold cursor-pointer'>
               <a href='/cat'>Cats</a>
             </li>
-            <li className='hover:font-bold cursor-pointer'>
-              <a>Cat Facts</a>
+            <li className='hover:font-bold cursor-pointer'>Cat Facts
             </li>
           </ul>
           <a href='/login'>
@@ -67,7 +66,9 @@ function Header() {
             <li className='hover:font-bold cursor-pointer'>
               <a href='/cat'>Cats</a>
             </li>
-            <li className='hover:font-bold cursor-pointer'>Cat Facts</li>
+            <li className='hover:font-bold cursor-pointer'>
+              <a href='/catfacts'>Cat Facts</a>
+            </li>
           </ul>
           <form onSubmit={handleSubmit} className='align-items-center'>
             <button className='bg-blue-500 hover:bg-blue-700 rounded-full text-white flex align-items-center gap-1'>
@@ -100,6 +101,6 @@ function Header() {
       </>
     );
   }
+}
 
-  
 export default Header;
