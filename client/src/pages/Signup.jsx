@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import Header from '../components/Header';
 
 function Signup() {
   const [name, setName] = useState('');
@@ -55,6 +56,8 @@ function Signup() {
   };
 
   return (
+    <>
+    <Header/>
     <div className="d-flex justify-content-center align-items-center bg-secondary vh-100">
       <div className="bg-white p-3 rounded w-25">
         <h2 className="text-uppercase text-center mb-5">Register</h2>
@@ -144,6 +147,7 @@ function Signup() {
         </form>
       </div>
     </div>
+    </>
   );
 }
 
