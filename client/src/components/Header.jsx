@@ -37,13 +37,22 @@ function Header() {
               <a href='/dog'>Dogs</a>
             </li>
             <li className='hover:font-bold cursor-pointer'>
-              <a href=''>Dog Facts</a>
+              <a href='/'>Dog Facts</a>
             </li>
             <li className='hover:font-bold cursor-pointer'>
               <a href='/cat'>Cats</a>
             </li>
             <li className='hover:font-bold cursor-pointer'>
               <a href='/catfacts'>Cat Facts</a>
+            </li>
+            <li className='hover:font-bold cursor-pointer'>
+              <a href='/shop'>Pet Shop</a>
+            </li>
+            <li className='hover:font-bold cursor-pointer'>
+              <a href='/'>About Us</a>
+            </li>
+            <li className='hover:font-bold cursor-pointer'>
+              <a href='/'>Contact Us</a>
             </li>
           </ul>
           <a href='/login'>
