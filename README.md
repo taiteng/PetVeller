@@ -14,7 +14,8 @@ With the dog and cap API, users can find out information about breeds of dogs an
 Dog: https://portal.thatapicompany.com/pages/dog-api <br>
 Dog Facts: https://rapidapi.com/msaaddev/api/dog-facts2/ <br>
 Cat: https://portal.thatapicompany.com/pages/cat-api <br>
-Cat Facts: https://meowfacts.herokuapp.com/  
+Cat Facts: https://meowfacts.herokuapp.com/  <br>
+News : https://newsapi.org/ <br>
 
 
 ## Videocast
