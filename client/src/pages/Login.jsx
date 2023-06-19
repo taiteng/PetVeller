@@ -1,13 +1,15 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import Header from '../components/Header';
+import ReCAPTCHA from "react-google-recaptcha"
 
 function Login() {
 
     const [email, setEmail] = useState()
     const [password, setPassword] = useState()
     const navigate = useNavigate()
+    const captchaRef = useRef(null)
 
     const handleSubmit = (e) => {
         e.preventDefault()
@@ -60,6 +62,11 @@ function Login() {
                         <div className="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
                             <button type="submit" className="btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Login</button>
                         </div>
+
+                        <ReCAPTCHA
+                        sitekey={ process.env.REACT_APP_SITE_KEY} 
+                        
+                        />
 
                         <p className="text-center text-muted mt-5 mb-0">Don't Have An Account Yet? <a href="/register"
                         className="fw-bold text-body"><u>Register here</u></a></p>
