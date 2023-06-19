@@ -10,6 +10,7 @@ function Login() {
     const [password, setPassword] = useState()
     const navigate = useNavigate()
     const captchaRef = useRef(null)
+    const REACT_APP_SITE_KEY = "6LePOK0mAAAAAHl94QVuJ_X0iiPs-q0Wx4flY4DB"
 
     const handleSubmit = (e) => {
         e.preventDefault()
@@ -64,8 +65,7 @@ function Login() {
                         </div>
 
                         <ReCAPTCHA
-                        sitekey={ process.env.REACT_APP_SITE_KEY} 
-                        
+                        sitekey = {REACT_APP_SITE_KEY}
                         />
 
                         <p className="text-center text-muted mt-5 mb-0">Don't Have An Account Yet? <a href="/register"
