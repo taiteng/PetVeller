@@ -72,14 +72,29 @@ function Header() {
         <div className='p-2 flex justify-around gap-4 md:gap-14 align-items-center'>
           <img src={logo} className='w-[80px]' alt='Logo' />
           <ul className='flex gap-4 md:gap-14'>
-            <li className='hover:font-bold cursor-pointer'>Home</li>
-            <li className='hover:font-bold cursor-pointer'>Dogs</li>
-            <li className='hover:font-bold cursor-pointer'>Dog Facts</li>
+          <li className='hover:font-bold cursor-pointer'>
+              <a href='/'>Home</a>
+            </li>
+            <li className='hover:font-bold cursor-pointer'>
+              <a href='/dog'>Dogs</a>
+            </li>
+            <li className='hover:font-bold cursor-pointer'>
+              <a href='/'>Dog Facts</a>
+            </li>
             <li className='hover:font-bold cursor-pointer'>
               <a href='/cat'>Cats</a>
             </li>
             <li className='hover:font-bold cursor-pointer'>
               <a href='/catfacts'>Cat Facts</a>
+            </li>
+            <li className='hover:font-bold cursor-pointer'>
+              <a href='/shop'>Pet Shop</a>
+            </li>
+            <li className='hover:font-bold cursor-pointer'>
+              <a href='/'>About Us</a>
+            </li>
+            <li className='hover:font-bold cursor-pointer'>
+              <a href='/'>Contact Us</a>
             </li>
           </ul>
           <form onSubmit={handleSubmit} className='align-items-center'>
