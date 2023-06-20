@@ -42,7 +42,7 @@ function Home() {
 
 
   return (
-    <div>
+    <div style={{ background: 'linear-gradient(to bottom right, #A6BCE8, #FFC0C0)' }}>
       <Header />
       <BackToTop />
       <style>
@@ -83,16 +83,33 @@ function Home() {
         }
 
         .welcome-container {
-          background-color: #f3f3f3;
+          background: linear-gradient(to bottom right, #FBE8E8, #FCC2C2);
           text-align: center;
           padding: 40px;
-          border-radius: 10px; /* Add rounded corners */
+          border-radius: 10px;
         }
 
         .welcome-heading {
           font-size: 36px;
           font-weight: bold;
           margin-bottom: 20px;
+          background-image: linear-gradient(to right, violet, indigo, blue, green, yellow, orange, red);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-size: 200% auto; /* Adjust the background size as per your preference */
+          animation: rainbow-effect 10s linear infinite;
+        }
+        
+        @keyframes rainbow-effect {
+          0% {
+            background-position: 0% 50%;
+          }
+          50% {
+            background-position: 100% 50%;
+          }
+          100% {
+            background-position: 0% 50%;
+          }
         }
 
         .news-container {
@@ -104,7 +121,7 @@ function Home() {
 
         .news-card {
           padding: 20px;
-          background-color: #f3f3f3;
+          background: linear-gradient(to bottom right, #FBE8E8, #FCC2C2);
           border-radius: 10px;
         }
 
@@ -146,7 +163,7 @@ function Home() {
       </style>
       <div className="container mx-auto mt-8">
         <div className="welcome-container">
-          <h1 className="welcome-heading">Welcome to Dog and Cat World!</h1>
+          <h1 className="welcome-heading">~ Welcome to Dog and Cat World ~ </h1>
         </div>
         <br></br>
         <br></br>
@@ -194,7 +211,6 @@ function Home() {
           </div>
         </div>
         <div className="container mx-auto mt-8">
-       
         <div className="news-container">
           {displayedNews.map((article, index) => (
             <div className="news-card" key={index}>
