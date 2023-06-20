@@ -7,6 +7,8 @@ import BackToTop from '../components/BackToTop';
 function Home() {
   const [news, setNews] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [displayedNewsCount, setDisplayedNewsCount] = useState(8);
+
 
   useEffect(() => {
     fetchAnimalNews();
@@ -28,9 +30,17 @@ function Home() {
     setSearchTerm(event.target.value);
   };
 
+  const handleShowMore = () => {
+    setDisplayedNewsCount(displayedNewsCount + 8);
+  };
+
   const filteredNews = news.filter((article) =>
     article.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const displayedNews = filteredNews.slice(0, displayedNewsCount);
+
+
   return (
     <div>
       <Header />
@@ -108,6 +118,30 @@ function Home() {
           font-size: 16px;
           margin-bottom: 10px;
         }
+        .button-container {
+          display: flex;
+          justify-content: center;
+          margin-top: 20px;
+        }
+        
+        .show-more-button {
+          padding: 10px 20px;
+          font-size: 16px;
+          background-color: #f3f3f3;
+          color: black;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+        }
+        
+        .show-more-button:hover {
+          background-color: #283593;
+        }
+        .center-button {
+          display: flex;
+          justify-content: center;
+          margin-top: 20px;
+        }
         `}
       </style>
       <div className="container mx-auto mt-8">
@@ -159,8 +193,10 @@ function Home() {
             />
           </div>
         </div>
+        <div className="container mx-auto mt-8">
+       
         <div className="news-container">
-          {filteredNews.map((article, index) => (
+          {displayedNews.map((article, index) => (
             <div className="news-card" key={index}>
               <a href={article.url} className="news-link">
                 <h3 className="news-title">{article.title}</h3>
@@ -170,6 +206,17 @@ function Home() {
             </div>
           ))}
         </div>
+        
+        <div className="center-button">
+        {filteredNews.length > displayedNewsCount && (
+          <button onClick={handleShowMore} className="show-more-button">
+            Show More
+          </button>
+        )}
+        </div>
+        <br></br>
+      </div>
+      <br></br>
 
       </div>
     </div>
