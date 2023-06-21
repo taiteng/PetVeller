@@ -38,7 +38,7 @@ const CatCard = ({ catCards }) => {
         .then((result) => {
           console.log(result);
           if(result.data === 'Cat Exists'){
-            
+            res.json('Existed')
           }
           else{
             res.json('Saved')
