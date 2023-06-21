@@ -49,7 +49,7 @@ function Header() {
               <a href='/shop'>Pet Shop</a>
             </li>
             <li className='hover:font-bold cursor-pointer'>
-              <a href='/'>About Us</a>
+              <a href='/aboutus'>About Us</a>
             </li>
             <li className='hover:font-bold cursor-pointer'>
               <a href='/'>Contact Us</a>
@@ -91,7 +91,7 @@ function Header() {
               <a href='/shop'>Pet Shop</a>
             </li>
             <li className='hover:font-bold cursor-pointer'>
-              <a href='/'>About Us</a>
+              <a href='/aboutus'>About Us</a>
             </li>
             <li className='hover:font-bold cursor-pointer'>
               <a href='/'>Contact Us</a>

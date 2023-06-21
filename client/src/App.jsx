@@ -15,6 +15,7 @@ import Dogfacts from './pages/Dogfacts';
 
 import Dog from './pages/Dog';
 import Shop from './pages/Shop';
+import AboutUs from './pages/AboutUs';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
         <Route path="/dog" element={<Dog/>}></Route>
         <Route path="/dogfacts" element={<Dogfacts/>}></Route>
         <Route path="/shop" element={<Shop/>}></Route>
+        <Route path="/aboutus" element={<AboutUs/>}></Route>
         <Route path="/catdetails" element={<CatDetails/>}></Route>
         <Route path="/catfacts" element={<Catfacts/>}></Route>
         <Route path="/admincat" element={<AdminCat/>}></Route>
