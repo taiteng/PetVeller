@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import axios from 'axios';
+import Footer from '../components/Footer';
 
 function Dogfacts() {
   const [dogFacts, setDogFacts] = useState([]);
@@ -12,16 +13,9 @@ function Dogfacts() {
 
   const fetchDogFacts = async () => {
     try {
-      const response = await axios.get('https://api.thedogapi.com/v1/breeds');
-      const breeds = response.data;
-      const randomBreed = breeds[Math.floor(Math.random() * breeds.length)];
-
-      const corsProxyUrl = 'https://cors-anywhere.herokuapp.com/';
-      const apiUrl = `https://dog-facts-api.herokuapp.com/api/v1/resources/dogs?number=5&breed=${encodeURIComponent(
-        randomBreed.name
-      )}`;
-
-      const factResponse = await axios.get(corsProxyUrl + apiUrl);
+      const factResponse = await axios.get(
+        `https://cat-fact.herokuapp.com/facts/random?animal_type=dog&amount=4`
+      );
 
       setDogFacts(factResponse.data);
     } catch (error) {
@@ -30,21 +24,46 @@ function Dogfacts() {
     }
   };
 
+  const generateNewFacts = () => {
+    fetchDogFacts();
+  };
+
   return (
-    <div>
+    <div style={{ background: 'linear-gradient(to bottom right, #A6BCE8, #FFC0C0)' }}>
       <Header />
-      <h1>Dog Facts</h1>
-      {error ? (
-        <p>{error}</p>
-      ) : (
-        <ul>
-          {dogFacts.length > 0 ? (
-            dogFacts.map((fact, index) => <li key={index}>{fact.fact}</li>)
-          ) : (
-            <p>Loading dog facts...</p>
-          )}
-        </ul>
-      )}
+      <br></br>
+      <h1 className="text-center text-4xl font-bold mt-8 mb-4">Dog Facts</h1>
+      <br></br>
+      <div className="container mx-auto">
+        {error ? (
+          <p className="text-red-500 text-lg">{error}</p>
+        ) : (
+          <div>
+            {dogFacts.length > 0 ? (
+              dogFacts.map((fact, index) => (
+                <div
+                  key={index}
+                  className="bg-blue-100 border border-blue-500 rounded p-4 my-4"
+                  style={{ background: 'linear-gradient(to bottom right, #FBE8E8, #FCC2C2)' }}
+                >
+                  <p className="text-lg">{fact.text}</p>
+                </div>
+              ))
+            ) : (
+              <p className="text-lg">Loading dog facts...</p>
+            )}
+            <br></br>
+            <div className="flex justify-center mt-4">
+              <button onClick={generateNewFacts} className="generate-facts-button bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                Generate New Facts
+              </button>
+            </div>
+            <br></br>
+            <br></br>
+          </div>
+        )}
+      </div>
+      <Footer />
     </div>
   );
 }
