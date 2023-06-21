@@ -12,7 +12,7 @@ With the dog and cap API, users can find out information about breeds of dogs an
 
 ## List of API Used 
 Dog: https://portal.thatapicompany.com/pages/dog-api <br>
-Dog Facts: https://rapidapi.com/msaaddev/api/dog-facts2/ <br>
+Dog Facts: https://alexwohlbruck.github.io/cat-facts/docs/endpoints/facts.html <br>
 Cat: https://portal.thatapicompany.com/pages/cat-api <br>
 Cat Facts: https://meowfacts.herokuapp.com/  <br>
 News : https://newsapi.org/ <br>
