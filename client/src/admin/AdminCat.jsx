@@ -42,6 +42,7 @@ function AdminCat() {
 
   return (
     <>
+    <div style={{ background: 'linear-gradient(to bottom right, #A6BCE8, #FFC0C0)' }}>
     <p>AdminCat</p>
     <Container>
       <Row className="justify-content-center">
@@ -62,6 +63,7 @@ function AdminCat() {
         )}
       </Row>
     </Container>
+    </div>
     </>
   )
 }

@@ -24,10 +24,6 @@ const CatCard = ({ catCards }) => {
         e.preventDefault();
     }
 
-    const handleDeleteFromDatabase = (e) => {
-        e.preventDefault();
-    }
-
     return (
         <Card style={{ height: '650px', width: '100%', overflow: 'auto' }}>
           <Card.Body>
@@ -46,7 +42,7 @@ const CatCard = ({ catCards }) => {
               </ListGroup.Item>
     
               <ListGroup.Item>
-                Origin: {catCards?.temperament}
+                Temperament: {catCards?.temperament}
               </ListGroup.Item>
             </ListGroup>
 
@@ -71,10 +67,6 @@ const CatCard = ({ catCards }) => {
             <div className='flex justify-between'>
                 <form onSubmit={handleAddToDatabase}>
                     <button type="submit" className="btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Add</button>
-                </form>
-                
-                <form onSubmit={handleDeleteFromDatabase}>
-                    <button type="submit" className="btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Delete</button>
                 </form>
             </div>
           </Card.Footer>
