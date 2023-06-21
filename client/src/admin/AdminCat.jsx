@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Col, Container, Row, Spinner } from "react-bootstrap";
 import CatCard from '../components/CatCard';
+import AdminHeader from '../components/AdminHeader';
 
 function AdminCat() {
 
@@ -43,7 +44,7 @@ function AdminCat() {
   return (
     <>
     <div style={{ background: 'linear-gradient(to bottom right, #A6BCE8, #FFC0C0)' }}>
-    <p>AdminCat</p>
+    <AdminHeader/>
     <Container>
       <Row className="justify-content-center">
         {isLoading ? (
