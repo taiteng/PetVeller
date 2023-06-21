@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Card, ListGroup } from "react-bootstrap";
+import axios from 'axios';
 
 const CatCard = ({ catCards }) => {
 
@@ -20,8 +21,30 @@ const CatCard = ({ catCards }) => {
         }
     };
 
+    const imgURL = catImg;
+    const imgWidth = catCards?.width;
+    const imgHeight = catCards?.height;
+    const imgReferenceID = catCards?.reference_image_id;
+    const name = catCards?.name;
+    const description = catCards?.description;
+    const lifeSpan = catCards?.life_span;
+    const origin = catCards?.origin;
+    const temperament = catCards?.temperament;
+    const wikipediaURL = catCards?.wikipedia_url;
+
     const handleAddToDatabase = (e) => {
         e.preventDefault();
+        axios.post('http://localhost:3001/addCatDetail', { imgURL, imgWidth, imgHeight, imgReferenceID, name, description, lifeSpan, origin, temperament, wikipediaURL })
+        .then((result) => {
+          console.log(result);
+          if(result.data === 'Cat Exists'){
+            
+          }
+          else{
+            res.json('Saved')
+          }
+        })
+        .catch((err) => console.log(err));
     }
 
     return (
