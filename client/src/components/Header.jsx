@@ -37,7 +37,7 @@ function Header() {
               <a href='/dog'>Dogs</a>
             </li>
             <li className='hover:font-bold cursor-pointer'>
-              <a href='/'>Dog Facts</a>
+              <a href='/dogfacts'>Dog Facts</a>
             </li>
             <li className='hover:font-bold cursor-pointer'>
               <a href='/cat'>Cats</a>
@@ -79,7 +79,7 @@ function Header() {
               <a href='/dog'>Dogs</a>
             </li>
             <li className='hover:font-bold cursor-pointer'>
-              <a href='/'>Dog Facts</a>
+              <a href='/dogfacts'>Dog Facts</a>
             </li>
             <li className='hover:font-bold cursor-pointer'>
               <a href='/cat'>Cats</a>

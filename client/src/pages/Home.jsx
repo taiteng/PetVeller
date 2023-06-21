@@ -7,6 +7,8 @@ import BackToTop from '../components/BackToTop';
 function Home() {
   const [news, setNews] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [displayedNewsCount, setDisplayedNewsCount] = useState(8);
+
 
   useEffect(() => {
     fetchAnimalNews();
@@ -28,11 +30,19 @@ function Home() {
     setSearchTerm(event.target.value);
   };
 
+  const handleShowMore = () => {
+    setDisplayedNewsCount(displayedNewsCount + 8);
+  };
+
   const filteredNews = news.filter((article) =>
     article.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const displayedNews = filteredNews.slice(0, displayedNewsCount);
+
+
   return (
-    <div>
+    <div style={{ background: 'linear-gradient(to bottom right, #A6BCE8, #FFC0C0)' }}>
       <Header />
       <BackToTop />
       <style>
@@ -73,16 +83,33 @@ function Home() {
         }
 
         .welcome-container {
-          background-color: #f3f3f3;
+          background: linear-gradient(to bottom right, #FBE8E8, #FCC2C2);
           text-align: center;
           padding: 40px;
-          border-radius: 10px; /* Add rounded corners */
+          border-radius: 10px;
         }
 
         .welcome-heading {
           font-size: 36px;
           font-weight: bold;
           margin-bottom: 20px;
+          background-image: linear-gradient(to right, violet, indigo, blue, green, yellow, orange, red);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-size: 200% auto; /* Adjust the background size as per your preference */
+          animation: rainbow-effect 10s linear infinite;
+        }
+        
+        @keyframes rainbow-effect {
+          0% {
+            background-position: 0% 50%;
+          }
+          50% {
+            background-position: 100% 50%;
+          }
+          100% {
+            background-position: 0% 50%;
+          }
         }
 
         .news-container {
@@ -94,7 +121,7 @@ function Home() {
 
         .news-card {
           padding: 20px;
-          background-color: #f3f3f3;
+          background: linear-gradient(to bottom right, #FBE8E8, #FCC2C2);
           border-radius: 10px;
         }
 
@@ -108,11 +135,35 @@ function Home() {
           font-size: 16px;
           margin-bottom: 10px;
         }
+        .button-container {
+          display: flex;
+          justify-content: center;
+          margin-top: 20px;
+        }
+        
+        .show-more-button {
+          padding: 10px 20px;
+          font-size: 16px;
+          background-color: #f3f3f3;
+          color: black;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+        }
+        
+        .show-more-button:hover {
+          background-color: #283593;
+        }
+        .center-button {
+          display: flex;
+          justify-content: center;
+          margin-top: 20px;
+        }
         `}
       </style>
       <div className="container mx-auto mt-8">
         <div className="welcome-container">
-          <h1 className="welcome-heading">Welcome to Dog and Cat World!</h1>
+          <h1 className="welcome-heading">~ Welcome to Dog and Cat World ~ </h1>
         </div>
         <br></br>
         <br></br>
@@ -159,8 +210,9 @@ function Home() {
             />
           </div>
         </div>
+        <div className="container mx-auto mt-8">
         <div className="news-container">
-          {filteredNews.map((article, index) => (
+          {displayedNews.map((article, index) => (
             <div className="news-card" key={index}>
               <a href={article.url} className="news-link">
                 <h3 className="news-title">{article.title}</h3>
@@ -170,6 +222,17 @@ function Home() {
             </div>
           ))}
         </div>
+        
+        <div className="center-button">
+        {filteredNews.length > displayedNewsCount && (
+          <button onClick={handleShowMore} className="show-more-button">
+            Show More
+          </button>
+        )}
+        </div>
+        <br></br>
+      </div>
+      <br></br>
 
       </div>
     </div>
