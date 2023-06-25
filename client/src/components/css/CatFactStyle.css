@@ -13,13 +13,18 @@ button {
   #img-wrapper {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-evenly;
+    justify-content: center;
+    align-items: center;
+    margin: 10vmin;
+    overflow: hidden;
+    transform: skew(5deg);
    }
    
    #img-wrapper > div {
     flex: 0 1 33%;
    }
 
+   
    .imageBox{
     padding: 30px;
 
