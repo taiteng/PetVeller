@@ -9,3 +9,25 @@ button {
     display: inline-block;
     font-size: 16px;
   }
+
+  #img-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+   }
+   
+   #img-wrapper > div {
+    flex: 0 1 33%;
+   }
+
+   .imageBox{
+    padding: 30px;
+
+   }
+
+   #image{
+    float: left;
+    width: 400px;
+    height: 400px;
+    object-fit: cover;
+   }
