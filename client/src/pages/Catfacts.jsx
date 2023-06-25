@@ -13,6 +13,10 @@ function Catfacts() {
     const url= `https://catfact.ninja/facts?limit=6`;
     const imageUrl= `https://api.thecatapi.com/v1/images/search?limit=6&api_key=live_1mcv1m75repApocbaSeLQ0By2z6IF4jvnSLjxDKC2te9S6oNunefBcoSW1upu2nT`;
    
+    const refresh=()=>{
+      window.location.reload(true);
+    }
+
     const fetchInfo = () => { 
       return fetch(url) 
               .then((res) => res.json()) 
@@ -90,7 +94,7 @@ function Catfacts() {
               <p className="text-lg">Loading cat facts...</p>
             )}
     <center>
-    <button className='button'>Generate a new one</button>
+    <button className='button' onClick={refresh}>Generate a new one</button>
     </center>
     <br></br>
     <br></br>
