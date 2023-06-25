@@ -32,7 +32,7 @@ function Catfacts() {
                 </div>
              
             ) : (
-              <p className="text-lg">Loading dog facts...</p>
+              <p className="text-lg">Loading cat facts...</p>
             )}
     <center>
     <button className='button'>Generate a new one</button>
