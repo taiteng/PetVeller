@@ -18,13 +18,13 @@ function Header() {
   };
 
   const logoutUser = () => {
-    window.name = '';
-    window.email = '';
-    window.password = '';
+    sessionStorage.uEmail = '';
+    sessionStorage.uName = '';
+    sessionStorage.uPass = '';
     console.log('User logged out');
   };
   
-  if(window.name === ''){
+  if(sessionStorage.uEmail === '' || typeof sessionStorage.uEmail === 'undefined'){
     return (
       <>
         <div className='p-2 flex justify-around gap-4 md:gap-14 align-items-center'>
