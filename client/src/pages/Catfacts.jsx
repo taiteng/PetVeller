@@ -65,7 +65,9 @@ function Catfacts() {
                 {hover && <p className={hover}>{HoverData}</p>}
                 <img id='image' onMouseEnter={(e) => onHover(e)}
                   onMouseLeave={(e) => onHoverOver(e)}  src={images.url} />
+                  
               </div>
+              
             </div>
           ))
 
