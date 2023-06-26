@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const catSchema = new mongoose.Schema({
+    userEmail: String,
     imgURL: String,
     imgWidth: Number,
     imgHeight: Number,
@@ -13,5 +14,5 @@ const catSchema = new mongoose.Schema({
     wikipediaURL: String,
 });
 
-const catModel = mongoose.model('catdetails', catSchema);
+const catModel = mongoose.model('userfavourites', catSchema);
 module.exports = catModel;

@@ -3,7 +3,7 @@ import logo from './../assets/catndog.jpeg';
 import { IoPersonCircleOutline } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
 
-function Header() {
+function AdminHeader() {
   const navigate = useNavigate();
   const [showConfirmation, setShowConfirmation] = useState(false);
 
@@ -18,9 +18,9 @@ function Header() {
   };
 
   const logoutUser = () => {
-    window.name = '';
-    window.email = '';
-    window.password = '';
+    sessionStorage.uEmail = '';
+    sessionStorage.uName = '';
+    sessionStorage.uPass = '';
     console.log('User logged out');
   };
 
@@ -77,4 +77,4 @@ function Header() {
   );
 }
 
-export default Header;
+export default AdminHeader;

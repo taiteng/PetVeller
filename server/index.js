@@ -49,8 +49,8 @@ app.post('/register', (req, res) => {
     })
 })
 
-app.post('/addCatDetail', (req, res) => {
-    const { imgURL, imgWidth, imgHeight, imgReferenceID, name, description, lifeSpan, origin, temperament, wikipediaURL } = req.body;
+app.post('/addCatToFav', (req, res) => {
+    const { userEmail, imgURL, imgWidth, imgHeight, imgReferenceID, name, description, lifeSpan, origin, temperament, wikipediaURL } = req.body;
     catModel.findOne({ name: name })
     .then(cat => {
         if(cat){
@@ -58,6 +58,7 @@ app.post('/addCatDetail', (req, res) => {
         }
         else{
             newCat = new catModel({
+                userEmail: userEmail,
                 imgURL: imgURL,
                 imgWidth: imgWidth,
                 imgHeight: imgHeight,

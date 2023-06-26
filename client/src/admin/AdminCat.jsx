@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Col, Container, Row, Spinner } from "react-bootstrap";
-import CatCard from '../components/CatCard';
+import AdminCatCard from '../components/AdminCatCard';
 import AdminHeader from '../components/AdminHeader';
 
 function AdminCat() {
@@ -53,7 +53,7 @@ function AdminCat() {
           <>
             {Object.values(cats).map((cat) => (
               <Col key={cat.id} md={3} className="p-1">
-                <CatCard catCards={cat} />
+                <AdminCatCard adminCatCards={cat} />
               </Col>
             ))}
           </>
