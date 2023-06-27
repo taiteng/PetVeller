@@ -14,16 +14,30 @@ import axios from 'axios';
 library.add(faHeart);
 
 function Home() {
+
+ 
+  
   const [news, setNews] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [userEmail, setUserEmail] = useState('');
   const [displayedNewsCount, setDisplayedNewsCount] = useState(8);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [confirmationMessage, setConfirmationMessage] = useState('');
+
+
+
 
 
   useEffect(() => {
-    setUserEmail(sessionStorage.uEmail);
+    const storedEmail = sessionStorage.getItem('uEmail');
+    if (storedEmail) {
+      setUserEmail(storedEmail);
+    }
+
     fetchAnimalNews();
   }, []);
+
+  
 
   const fetchAnimalNews = async () => {
     try {
@@ -61,32 +75,75 @@ function Home() {
   const displayedNews = filteredNews.slice(0, displayedNewsCount);
 
 
-  const handleFavorite = async (article, userEmail) => {
+
+
+  // const handleFavorite = async (article) => {
+  //   const { id, title, description, url } = article;
+
+  //   try {
+  //     const response = await axios.post('http://localhost:3001/toggleFavorite', {
+  //       article: { id, title, description, url },
+  //       userEmail: userEmail,
+  //     });
+
+  //     if (response.data === 'Removed from favorites') {
+  //       setShowMessage(true);
+  //       setMessage('Removed from favorites');
+  //     } else if (response.data === 'Added to favorites') {
+  //       setShowMessage(true);
+  //       setMessage('Added to favorites');
+  //     } else {
+  //       setShowMessage(true);
+  //       setMessage('Unknown response');
+  //     }
+  //   } catch (error) {
+  //     setShowMessage(true);
+  //     setMessage('Error toggling favorite');
+  //     if (error.response) {
+  //       console.log('Server responded with:', error.response.data);
+  //     } else if (error.request) {
+  //       console.log('No response received:', error.request);
+  //     } else {
+  //       console.log('Error setting up the request:', error.message);
+  //     }
+  //     console.log('Error toggling favorite:', error);
+  //   }
+  // };
+
+  const handleFavorite = async (article) => {
     const { id, title, description, url } = article;
-  
+
     try {
-      const response = await axios.post('http://localhost:3001/addFavorite', {
+      const response = await axios.post('http://localhost:3001/toggleFavorite', {
         article: { id, title, description, url },
         userEmail: userEmail,
       });
-  
-      console.log(response.data);
-      if (response.data === 'Article already in favorites') {
-        console.log('Article already in favorites');
+
+      if (response.data === 'Removed from favorites') {
+        setConfirmationMessage('Removed from favorites');
+      } else if (response.data === 'Added to favorites') {
+        setConfirmationMessage('Added to favorites');
       } else {
-        console.log('Saved to favorites');
+        setConfirmationMessage('Unknown response');
       }
-      // Handle success or show feedback to the user
+      setShowConfirmation(true);
     } catch (error) {
-      if (error.response && error.response.data === 'Article already in favorites') {
-        console.log('Article already in favorites');
+      setConfirmationMessage('Error toggling favorite');
+      setShowConfirmation(true);
+      if (error.response) {
+        console.log('Server responded with:', error.response.data);
+      } else if (error.request) {
+        console.log('No response received:', error.request);
       } else {
-        console.log('Error adding to favorites:', error);
-        // Handle other errors or show feedback to the user
+        console.log('Error setting up the request:', error.message);
       }
+      console.log('Error toggling favorite:', error);
     }
   };
-  
+
+  const closeConfirmation = () => {
+    setShowConfirmation(false);
+  };
   
   
   
@@ -98,6 +155,50 @@ function Home() {
       <BackToTop />
       <style>
         {`
+
+          .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+          }
+
+          .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            text-align: center;
+            max-width: 400px; /* Adjust the width as per your preference */
+            margin: 0 auto; /* Center the modal horizontally */
+          }
+
+          .modal-message {
+            font-size: 18px;
+            margin-bottom: 20px;
+          }
+
+          .modal-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #f3f3f3;
+            color: black;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+          }
+
+          .modal-button:hover {
+            background-color: #283593;
+            color: white;
+          }
+
+
         .image-container {
           position: relative;
           overflow: hidden;
@@ -226,21 +327,42 @@ function Home() {
           background-repeat: no-repeat;
           background-size: 20px;
         }
+
+
         .favorite-button {
           background: none;
           border: none;
           cursor: pointer;
-          font-size: 24px;
-          color: #ff0000;
-          transition: color 0.3s ease;
+          outline: none; /* Add this line to remove any outline styles */
         }
         
-        .favorite-button:hover {
-          color: #ff5f5f;
+        .favorite-icon {
+          color: gray;
+          border: 1px solid gray;
+          border-radius: 50%;
+          padding: 5px;
+          transition: color 0.3s, border-color 0.3s;
         }
+        
+        .favorite-button:hover .favorite-icon {
+          color: red;
+          border-color: red;
+        }
+        
+
         
         `}
       </style>
+      {showConfirmation && (
+        <div className="modal">
+          <div className="modal-content">
+            <p className="modal-message">{confirmationMessage}</p>
+            <button className="modal-button" onClick={closeConfirmation}>
+              Close
+            </button>
+          </div>
+        </div>
+      )}
       <div className="container mx-auto mt-8">
         <div className="welcome-container">
           <h1 className="welcome-heading">~ Welcome to Dog and Cat World ~ </h1>
@@ -303,8 +425,9 @@ function Home() {
             <img src={article.urlToImage} alt="News" className="news-image" />
             <p className="news-description">{article.description}</p>
             <button onClick={() => handleFavorite(article)} className="favorite-button">
-              <FontAwesomeIcon icon={faHeart} />
+              <FontAwesomeIcon icon={faHeart} className="favorite-icon" />
             </button>
+
           </div>
         ))}
       </div>
