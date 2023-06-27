@@ -1,5 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Card, ListGroup } from "react-bootstrap";
+import Card from '@mui/material/Card';
+import CardActions from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import { CardActionArea } from '@mui/material';
 import axios from 'axios';
 import { IoHeartOutline } from 'react-icons/io5';
 import { IoHeart } from 'react-icons/io5';
@@ -63,53 +69,36 @@ const CatCard = ({ catCards }) => {
     }
 
     return (
-        <Card style={{ height: '650px', width: '100%', overflow: 'auto' }}>
-            <Card.Body>
-                <Card.Title>{catCards?.name}</Card.Title>
-                <p>{catCards?.description}</p>
-
-                <br></br>
-                <Card.Header>Information</Card.Header>
-                <ListGroup variant="flush">
-                <ListGroup.Item>
-                    Life Span: {catCards?.life_span}
-                </ListGroup.Item>
-        
-                <ListGroup.Item>
-                    Origin: {catCards?.origin}
-                </ListGroup.Item>
-        
-                <ListGroup.Item>
-                    Temperament: {catCards?.temperament}
-                </ListGroup.Item>
-                </ListGroup>
-
-                <Card.Img
-                    src={catImgURL}
-                    alt={`Cat photo, breed ${catCards?.name}`}
-                    width={catCards?.width}
-                    height={200}
-                    className="rounded"
+        <Card sx={{ maxWidth: 350, height: '100%', display: "flex", flexDirection: "column", }} style={{ background: 'linear-gradient(to bottom right, #FBE8E8, #FCC2C2)', borderRadius: 25 }}>
+            <CardActionArea>
+                <CardMedia
+                    sx={{ height: 200 }}
+                    image={catImgURL}
+                    title={`Cat photo, breed ${catCards?.name}`}
+                    component='div'
                 />
-
-                <p className="text-center mt-2">
-                    <a
-                    className="text-muted"
-                    href={`${catCards?.wikipedia_url}`}
-                    >
-                    Wikipedia
-                    </a>
-                </p>
-            </Card.Body>
-            <Card.Footer>
-                <div className='flex justify-between'>
-                    <form onSubmit={handleAddToDatabase}>
-                        <button type="submit" className="btn bg-red-100 hover:bg-red-300 text-red rounded">
-                            <IoHeartOutline className='text-[23px]' />
-                        </button>
-                    </form>
-                </div>
-            </Card.Footer>
+                <CardContent>
+                    <Typography gutterBottom variant="h5" component="div">
+                    {catCards?.name}
+                    </Typography>
+                    <Typography variant="body2" color="text.primary">
+                        {catCards?.description}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                        Life Span: {catCards?.life_span} <br/>
+                        Origin: {catCards?.origin} <br/>
+                        Temperament: {catCards?.temperament}
+                    </Typography>
+                </CardContent>
+            </CardActionArea>
+            <CardActions disableSpacing sx={{ mt: "auto" }} className='flex justify-between'>
+                <form onSubmit={handleAddToDatabase}>
+                    <Button size="small">Add to Favourite</Button>
+                </form>
+                <a href={`${catCards?.wikipedia_url}`}>
+                    <Button size="small">Learn More</Button>
+                </a>
+            </CardActions>
         </Card>
     );
 };
