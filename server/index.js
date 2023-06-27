@@ -54,7 +54,31 @@ app.post('/addCatToFav', (req, res) => {
     catModel.findOne({ name: name })
     .then(cat => {
         if(cat){
-            res.json('Cat Exists')
+            if(cat.userEmail === userEmail){
+                res.json('Cat Exists');
+            }
+            else{
+                newCat = new catModel({
+                    userEmail: userEmail,
+                    imgURL: imgURL,
+                    imgWidth: imgWidth,
+                    imgHeight: imgHeight,
+                    imgReferenceID: imgReferenceID,
+                    name: name,
+                    description: description,
+                    lifeSpan: lifeSpan,
+                    origin: origin,
+                    temperament: temperament,
+                    wikipediaURL: wikipediaURL,
+                });
+            
+                newCat.save().then(success => {
+                    console.log('Success' + success);
+                    res.json('Saved Cat');
+                }).catch(error => {
+                    console.log('Error' + error);
+                });
+            }
         }
         else{
             newCat = new catModel({

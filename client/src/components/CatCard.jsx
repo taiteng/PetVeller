@@ -69,25 +69,29 @@ const CatCard = ({ catCards }) => {
     }
 
     return (
-        <Card sx={{ maxWidth: 350 }}>
+        <Card sx={{ maxWidth: 350, height: '100%', display: "flex", flexDirection: "column", }} style={{ background: 'linear-gradient(to bottom right, #FBE8E8, #FCC2C2)', borderRadius: 25 }}>
             <CardActionArea>
-            <CardMedia
-                sx={{ height: 200 }}
-                image={catImgURL}
-                title={`Cat photo, breed ${catCards?.name}`}
-            />
-            <CardContent>
-                <Typography gutterBottom variant="h5" component="div">
-                {catCards?.name}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                {catCards?.description} <br/>
-                Life Span: {catCards?.life_span} <br/>
-                Origin: {catCards?.origin} <br/>
-                Temperament: {catCards?.temperament}
-                </Typography>
-            </CardContent>
-            <CardActions className='flex justify-between'>
+                <CardMedia
+                    sx={{ height: 200 }}
+                    image={catImgURL}
+                    title={`Cat photo, breed ${catCards?.name}`}
+                    component='div'
+                />
+                <CardContent>
+                    <Typography gutterBottom variant="h5" component="div">
+                    {catCards?.name}
+                    </Typography>
+                    <Typography variant="body2" color="text.primary">
+                        {catCards?.description}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                        Life Span: {catCards?.life_span} <br/>
+                        Origin: {catCards?.origin} <br/>
+                        Temperament: {catCards?.temperament}
+                    </Typography>
+                </CardContent>
+            </CardActionArea>
+            <CardActions disableSpacing sx={{ mt: "auto" }} className='flex justify-between'>
                 <form onSubmit={handleAddToDatabase}>
                     <Button size="small">Add to Favourite</Button>
                 </form>
@@ -95,7 +99,6 @@ const CatCard = ({ catCards }) => {
                     <Button size="small">Learn More</Button>
                 </a>
             </CardActions>
-            </CardActionArea>
         </Card>
     );
 };
