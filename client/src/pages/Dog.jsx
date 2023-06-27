@@ -5,7 +5,7 @@ function Dog() {
   return (
     <div>
     <Header />
-      Dog
+      Dog Testing 123
     </div>
   )
 }
