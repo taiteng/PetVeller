@@ -33,16 +33,7 @@ function AdminHeader() {
             <a href='/admin'>Admin Home</a>
           </li>
           <li className='hover:font-bold cursor-pointer'>
-            <a>Dogs</a>
-          </li>
-          <li className='hover:font-bold cursor-pointer'>
-            <a>Dog Facts</a>
-          </li>
-          <li className='hover:font-bold cursor-pointer'>
-            <a href='/admincat'>Cats</a>
-          </li>
-          <li className='hover:font-bold cursor-pointer'>
-            <a>Cat Facts</a>
+            <a href=''>Contact Us Form</a>
           </li>
         </ul>
         <form onSubmit={handleSubmit} className='align-items-center'>

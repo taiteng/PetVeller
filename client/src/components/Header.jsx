@@ -46,9 +46,6 @@ function Header() {
               <a href='/catfacts'>Cat Facts</a>
             </li>
             <li className='hover:font-bold cursor-pointer'>
-              <a href='/shop'>Pet Shop</a>
-            </li>
-            <li className='hover:font-bold cursor-pointer'>
               <a href='/aboutus'>About Us</a>
             </li>
             <li className='hover:font-bold cursor-pointer'>

@@ -1,7 +1,5 @@
-import React from 'react'
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import { useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react';
 import { Col, Container, Row, Spinner } from "react-bootstrap";
 import CatCard from '../components/CatCard';
@@ -48,13 +46,13 @@ function Cat() {
     <div style={{ background: 'linear-gradient(to bottom right, #A6BCE8, #FFC0C0)' }}>
     <Header/>
     <Container>
-      <Row className="justify-content-center">
+      <Row xs={1} md={4} className="justify-content-center g-4">
         {isLoading ? (
           <Spinner animation="grow" />
         ) : cats ? (
           <>
             {Object.values(cats).map((cat) => (
-              <Col key={cat.id} md={3} className="p-1">
+              <Col key={cat.id} className="p-2">
                 <CatCard catCards={cat} />
               </Col>
             ))}
