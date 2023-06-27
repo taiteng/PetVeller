@@ -3,6 +3,7 @@ const cors = require('cors')
 const mongoose = require('mongoose');
 const userModel = require('./models/users')
 const catModel = require('./models/cat')
+const newsModel = require('./models/news')
 
 const app = express()
 app.use(express.json())
@@ -104,6 +105,43 @@ app.post('/addCatToFav', (req, res) => {
         }
     })
 })
+
+
+app.post('/addFavorite', (req, res) => {
+    const { article, userEmail } = req.body;
+  
+    newsModel.findOne({ articleId: article.id, userEmail: userEmail })
+      .then(favorite => {
+        if (favorite) {
+          res.json('Article already in favorites');
+        } else {
+          const newFavorite = new newsModel({
+            userEmail: userEmail,
+            articleId: article.id,
+            title: article.title,
+            description: article.description,
+            url: article.url
+          });
+  
+          newFavorite.save()
+            .then(savedFavorite => {
+              res.json(savedFavorite);
+            })
+            .catch(error => {
+              console.log('Error saving favorite:', error);
+              res.status(500).json('Server error');
+            });
+        }
+      })
+      .catch(error => {
+        console.log('Error checking favorite:', error);
+        res.status(500).json('Server error');
+      });
+  });
+  
+  
+  
+  
 
 app.listen(3001, () => {
     console.log('Server is running')
