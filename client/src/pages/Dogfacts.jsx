@@ -32,7 +32,36 @@ function Dogfacts() {
     <div style={{ background: 'linear-gradient(to bottom right, #A6BCE8, #FFC0C0)' }}>
       <Header />
       <br></br>
-      <h1 className="text-center text-4xl font-bold mt-8 mb-4">Dog Facts</h1>
+      <style>
+        {`
+        .welcome-heading {
+          font-size: 36px;
+          font-weight: bold;
+          margin-bottom: 20px;
+          background-image: linear-gradient(to right, violet, indigo, blue, green, yellow, orange, red);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-size: 200% auto; /* Adjust the background size as per your preference */
+          animation: rainbow-effect 10s linear infinite;
+        }
+        
+        @keyframes rainbow-effect {
+          0% {
+            background-position: 0% 50%;
+          }
+          50% {
+            background-position: 100% 50%;
+          }
+          100% {
+            background-position: 0% 50%;
+          }
+        }
+
+        `}
+      </style>
+      <div className="welcome-container">
+      <h1 className="text-center text-4xl font-bold mt-8 mb-4 welcome-heading ">Dog Facts</h1>
+      </div>
       <br></br>
       <div className="container mx-auto">
         {error ? (
