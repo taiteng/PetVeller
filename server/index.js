@@ -108,14 +108,15 @@ app.post('/addCatToFav', (req, res) => {
 
 
 
+
 app.post('/toggleFavorite', (req, res) => {
     const { article, userEmail } = req.body;
   
-    newsModel.findOne({ articleId: article.id, userEmail: userEmail })
+    newsModel.findOne({ userEmail: userEmail, title: article.title })
       .then(favorite => {
         if (favorite) {
-          // Article already in favorites, remove it
-          newsModel.deleteOne({ articleId: article.id, userEmail: userEmail })
+          // Article already in favorites for the user, remove it
+          newsModel.deleteOne({ userEmail: userEmail, title: article.title })
             .then(() => {
               res.json('Removed from favorites');
             })
@@ -124,10 +125,9 @@ app.post('/toggleFavorite', (req, res) => {
               res.status(500).json('Server error');
             });
         } else {
-          // Article not in favorites, add it
+          // Article not in favorites for the user, add it
           const newFavorite = new newsModel({
             userEmail: userEmail,
-            articleId: article.id,
             title: article.title,
             description: article.description,
             url: article.url

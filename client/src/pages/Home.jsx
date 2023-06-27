@@ -8,6 +8,8 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import { faHeart } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid';
+
 
 
 // Initialize FontAwesome library
@@ -76,49 +78,15 @@ function Home() {
 
 
 
-
-  // const handleFavorite = async (article) => {
-  //   const { id, title, description, url } = article;
-
-  //   try {
-  //     const response = await axios.post('http://localhost:3001/toggleFavorite', {
-  //       article: { id, title, description, url },
-  //       userEmail: userEmail,
-  //     });
-
-  //     if (response.data === 'Removed from favorites') {
-  //       setShowMessage(true);
-  //       setMessage('Removed from favorites');
-  //     } else if (response.data === 'Added to favorites') {
-  //       setShowMessage(true);
-  //       setMessage('Added to favorites');
-  //     } else {
-  //       setShowMessage(true);
-  //       setMessage('Unknown response');
-  //     }
-  //   } catch (error) {
-  //     setShowMessage(true);
-  //     setMessage('Error toggling favorite');
-  //     if (error.response) {
-  //       console.log('Server responded with:', error.response.data);
-  //     } else if (error.request) {
-  //       console.log('No response received:', error.request);
-  //     } else {
-  //       console.log('Error setting up the request:', error.message);
-  //     }
-  //     console.log('Error toggling favorite:', error);
-  //   }
-  // };
-
-  const handleFavorite = async (article) => {
-    const { id, title, description, url } = article;
-
+  const handleFavorite = async (article, userEmail) => {
+    const { title, description, url } = article;
+  
     try {
       const response = await axios.post('http://localhost:3001/toggleFavorite', {
-        article: { id, title, description, url },
+        article: { title, description, url },
         userEmail: userEmail,
       });
-
+  
       if (response.data === 'Removed from favorites') {
         setConfirmationMessage('Removed from favorites');
       } else if (response.data === 'Added to favorites') {
@@ -127,6 +95,12 @@ function Home() {
         setConfirmationMessage('Unknown response');
       }
       setShowConfirmation(true);
+  
+      // Update the news state to reflect the favorite status
+      const updatedNews = news.map((item) =>
+        item.title === title ? { ...item, favorite: !item.favorite } : item
+      );
+      setNews(updatedNews);
     } catch (error) {
       setConfirmationMessage('Error toggling favorite');
       setShowConfirmation(true);
@@ -141,11 +115,10 @@ function Home() {
     }
   };
 
+  
   const closeConfirmation = () => {
     setShowConfirmation(false);
   };
-  
-  
   
 
 
@@ -265,17 +238,18 @@ function Home() {
         }
 
         .news-container {
-          margin-top: 40px;
           display: grid;
           grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
           grid-gap: 20px;
         }
 
         .news-card {
+          position: relative;
           padding: 20px;
           background: linear-gradient(to bottom right, #FBE8E8, #FCC2C2);
           border-radius: 10px;
         }
+        
 
         .news-title {
           font-size: 24px;
@@ -330,23 +304,19 @@ function Home() {
 
 
         .favorite-button {
-          background: none;
+          position: absolute;
+          bottom: 10px;
+          right: 10px;
+          padding: 10px;
+          font-size: 20px;
+          background-color: transparent;
           border: none;
-          cursor: pointer;
-          outline: none; /* Add this line to remove any outline styles */
-        }
-        
-        .favorite-icon {
           color: gray;
-          border: 1px solid gray;
-          border-radius: 50%;
-          padding: 5px;
-          transition: color 0.3s, border-color 0.3s;
+          cursor: pointer;
         }
         
-        .favorite-button:hover .favorite-icon {
+        .favorite-button.favorite-red {
           color: red;
-          border-color: red;
         }
         
 
@@ -417,20 +387,23 @@ function Home() {
 
           
         <div className="news-container">
-        {displayedNews.map((article, index) => (
-          <div className="news-card" key={index}>
-            <a href={article.url} className="news-link">
-              <h3 className="news-title">{article.title}</h3>
-            </a>
-            <img src={article.urlToImage} alt="News" className="news-image" />
-            <p className="news-description">{article.description}</p>
-            <button onClick={() => handleFavorite(article)} className="favorite-button">
-              <FontAwesomeIcon icon={faHeart} className="favorite-icon" />
-            </button>
+          {displayedNews.map((article, index) => (
+            <div className="news-card" key={index}>
+              <a href={article.url} className="news-link">
+                <h3 className="news-title">{article.title}</h3>
+              </a>
+              <img src={article.urlToImage} alt="News" className="news-image" />
+              <p className="news-description">{article.description}</p>
+              <button
+                onClick={() => handleFavorite(article)}
+                className={`favorite-button ${article.favorite ? 'favorite-red' : ''}`}
+              >
+                <FontAwesomeIcon icon={faHeart} />
+              </button>
+            </div>
+          ))}
+        </div>
 
-          </div>
-        ))}
-      </div>
 
         
         
