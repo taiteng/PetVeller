@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import dogImage from '../assets/dog.jpg';
 import catImage from '../assets/cat.jpg';
