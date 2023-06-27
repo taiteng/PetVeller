@@ -4,14 +4,24 @@ import dogImage from '../assets/dog.jpg';
 import catImage from '../assets/cat.jpg';
 import BackToTop from '../components/BackToTop';
 import Footer from '../components/Footer';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { faHeart } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import axios from 'axios';
+
+
+// Initialize FontAwesome library
+library.add(faHeart);
 
 function Home() {
   const [news, setNews] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [userEmail, setUserEmail] = useState('');
   const [displayedNewsCount, setDisplayedNewsCount] = useState(8);
 
 
   useEffect(() => {
+    setUserEmail(sessionStorage.uEmail);
     fetchAnimalNews();
   }, []);
 
@@ -22,6 +32,15 @@ function Home() {
       );
       const data = await response.json();
       setNews(data.articles);
+
+      if(sessionStorage.uEmail === ''){
+
+      }
+      else{
+        
+      }
+
+
     } catch (error) {
       console.log('Error fetching animal news:', error);
     }
@@ -40,6 +59,37 @@ function Home() {
   );
 
   const displayedNews = filteredNews.slice(0, displayedNewsCount);
+
+
+  const handleFavorite = async (article, userEmail) => {
+    const { id, title, description, url } = article;
+  
+    try {
+      const response = await axios.post('http://localhost:3001/addFavorite', {
+        article: { id, title, description, url },
+        userEmail: userEmail,
+      });
+  
+      console.log(response.data);
+      if (response.data === 'Article already in favorites') {
+        console.log('Article already in favorites');
+      } else {
+        console.log('Saved to favorites');
+      }
+      // Handle success or show feedback to the user
+    } catch (error) {
+      if (error.response && error.response.data === 'Article already in favorites') {
+        console.log('Article already in favorites');
+      } else {
+        console.log('Error adding to favorites:', error);
+        // Handle other errors or show feedback to the user
+      }
+    }
+  };
+  
+  
+  
+  
 
 
   return (
@@ -160,6 +210,35 @@ function Home() {
           justify-content: center;
           margin-top: 20px;
         }
+        .search-container {
+          position: relative;
+        }
+        
+        .search-input {
+          padding: 10px 35px 10px 15px;
+          border: 1px solid #ccc;
+          border-radius: 5px;
+          outline: none;
+          width: 300px;
+          font-size: 16px;
+          
+          background-position: 10px center;
+          background-repeat: no-repeat;
+          background-size: 20px;
+        }
+        .favorite-button {
+          background: none;
+          border: none;
+          cursor: pointer;
+          font-size: 24px;
+          color: #ff0000;
+          transition: color 0.3s ease;
+        }
+        
+        .favorite-button:hover {
+          color: #ff5f5f;
+        }
+        
         `}
       </style>
       <div className="container mx-auto mt-8">
@@ -204,25 +283,33 @@ function Home() {
           <h1 className="welcome-heading">Animal News</h1>
           <div className="search-container">
             <input
+              className="search-input"
               type="text"
-              placeholder="Search news..."
+              placeholder="&#128269; Search news..."
               value={searchTerm}
               onChange={handleSearch}
             />
           </div>
         </div>
         <div className="container mx-auto mt-8">
+
+          
         <div className="news-container">
-          {displayedNews.map((article, index) => (
-            <div className="news-card" key={index}>
-              <a href={article.url} className="news-link">
-                <h3 className="news-title">{article.title}</h3>
-              </a>
-              <img src={article.urlToImage} alt="News" className="news-image" />
-              <p className="news-description">{article.description}</p>
-            </div>
-          ))}
-        </div>
+        {displayedNews.map((article, index) => (
+          <div className="news-card" key={index}>
+            <a href={article.url} className="news-link">
+              <h3 className="news-title">{article.title}</h3>
+            </a>
+            <img src={article.urlToImage} alt="News" className="news-image" />
+            <p className="news-description">{article.description}</p>
+            <button onClick={() => handleFavorite(article)} className="favorite-button">
+              <FontAwesomeIcon icon={faHeart} />
+            </button>
+          </div>
+        ))}
+      </div>
+
+        
         
         <div className="center-button">
         {filteredNews.length > displayedNewsCount && (
