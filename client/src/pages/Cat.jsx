@@ -44,7 +44,6 @@ function Cat() {
 
       axios.post('http://localhost:3001/getCatFav', { userEmail })
       .then(result => {
-          //const favResult = result.data;
           console.log(result.data);
 
           setFavCats(result.data);
