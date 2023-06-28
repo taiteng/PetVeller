@@ -50,35 +50,6 @@ app.post('/register', (req, res) => {
     })
 })
 
-app.post('/saveCatFactsToDatabase', (req, res) => {
-    const { facts } = req.body;
-  
-    const savePromises = facts.map((fact) => {
-      return catFactsModel.findOne({ fact })
-        .then((catFact) => {
-          if (catFact) {
-            return Promise.resolve('Fact Exists');
-          } else {
-            const newCatFact = new catFactsModel({ fact });
-            return newCatFact.save().then(() => 'Saved Fact');
-          }
-        })
-        .catch((error) => {
-          console.log('Error saving cat fact:', error);
-          return Promise.resolve('Error saving fact');
-        });
-    });
-    Promise.all(savePromises)
-    .then((results) => {
-      res.json(results);
-    })
-    .catch((error) => {
-      console.log('Error saving cat facts:', error);
-      res.status(500).json('Server error');
-    });
-});  
-  
-
 app.post('/addCatToFav', (req, res) => {
     const { userEmail, imgURL, imgWidth, imgHeight, imgReferenceID, name, description, lifeSpan, origin, temperament, wikipediaURL } = req.body;
     catModel.findOne({ name: name })
@@ -135,9 +106,6 @@ app.post('/addCatToFav', (req, res) => {
     })
 })
 
-
-
-
 app.post('/toggleFavorite', (req, res) => {
     const { article, userEmail } = req.body;
   
@@ -176,9 +144,7 @@ app.post('/toggleFavorite', (req, res) => {
         console.log('Error checking favorite:', error);
         res.status(500).json('Server error');
       });
-  });
-  
-  
+});
 
 app.listen(3001, () => {
     console.log('Server is running')
