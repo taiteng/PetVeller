@@ -45,9 +45,7 @@ function Cat() {
       axios.post('http://localhost:3001/getCatFav', { userEmail })
       .then(result => {
           console.log(result.data);
-
           setFavCats(result.data);
-          console.log(favCats);
       })
       .catch(err => console.log(err))
     } catch (error) {

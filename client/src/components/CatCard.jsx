@@ -35,12 +35,32 @@ const CatCard = ({ catCards }) => {
         return null;
     }
     else{
+        const [catName, setCatName] = useState('');
         const [userEmail, setUserEmail] = useState('');
         const [isCatFav, setIsCatFav] = useState(false);
+        const [isLoading, setIsLoading] = useState(true);
 
         useEffect(() => {
+            const fetchIsCatFavourited = async () => {
+                try {
+                    const result = await axios.post('http://localhost:3001/isCatFav', { userEmail, catName });
+                    if (result.data === 'Cat Exists') {
+                        console.log('Existed');
+                        setIsCatFav('true');
+                    } else {
+                        console.log('No Fav');
+                    }
+                  } catch (error) {
+                    console.error(error.message);
+                  }
+
+                  setIsLoading(false);
+            };
+
+            fetchIsCatFavourited();
             fetchCatImg();
             setUserEmail(sessionStorage.uEmail);
+            setCatName(catCards?.name);
         }, []);
     
         const [catImgURL, setCatImgURL] = useState('');
@@ -95,6 +115,12 @@ const CatCard = ({ catCards }) => {
     
         return (
             <>
+            {isLoading ? 
+            (
+                <Spinner animation="border" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                </Spinner>
+            ) : (
             <Card sx={{ maxWidth: 350, height: '100%', display: "flex", flexDirection: "column", }} style={{ background: 'linear-gradient(to bottom right, #FBE8E8, #FCC2C2)', borderRadius: 25 }}>
                 <CardActionArea>
                     <CardMedia
@@ -105,7 +131,7 @@ const CatCard = ({ catCards }) => {
                     />
                     <CardContent>
                         <Typography gutterBottom variant="h5" component="div">
-                        {catCards?.name}
+                            {catCards?.name}
                         </Typography>
                         <Typography variant="body2" color="text.primary">
                             {catCards?.description}
@@ -126,6 +152,7 @@ const CatCard = ({ catCards }) => {
                     </a>
                 </CardActions>
             </Card>
+            )}
             </>
         );
     }
