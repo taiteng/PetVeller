@@ -5,14 +5,12 @@ import { Button, Container } from 'react-bootstrap';
 import "../components/css/CatFactStyle.css";
 import Footer from '../components/Footer';
 
-
 function Catfacts() {
   const [data, setData] = useState([]);
   const [image, setImage] = useState([]);
   const [hover, setHover] = useState(false);
 
   const HoverData = "Click or pinch to Zoom Image";
-  const url = `https://catfact.ninja/facts?limit=6`;
   const imageUrl = `https://api.thecatapi.com/v1/images/search?limit=6&api_key=live_1mcv1m75repApocbaSeLQ0By2z6IF4jvnSLjxDKC2te9S6oNunefBcoSW1upu2nT`;
 
   const onHover = (e) => {
@@ -26,76 +24,48 @@ function Catfacts() {
     setHover(false);
   };
 
-  const refresh = () => {
-    window.location.reload(true);
-  }
 
-  const fetchInfo = () => {
-    return fetch(url)
-      .then((res) => res.json())
-      .then((d) => setData(d.data));
-  }
+  const fetchCatFacts = () => {
+    axios
+      .get('http://localhost:3001/catFacts')
+      .then((response) => {
+        setData(response.data);
+      })
+      .catch((error) => {
+        console.log('Error retrieving cat facts:', error);
+      });
+  };
 
   const fetchImage = () => {
     return fetch(imageUrl)
       .then((res) => res.json())
       .then((d) => setImage(d));
-  }
-
+  };
 
   useEffect(() => {
-    fetchInfo();
+    fetchCatFacts();
     fetchImage();
   }, []);
 
-
   return (
-
     <div style={{ background: 'linear-gradient(to bottom right, #A6BCE8, #FFC0C0)' }}>
       <Header />
       <br></br>
       <div id="img-wrapper">
         {image.length > 0 ? (
-
           image.map((images, index) => (
-            <div
-              key={index}
-            >
+            <div key={index}>
               <div className='imageBox'>
                 {hover && <p className={hover}>{HoverData}</p>}
-                <img id='image' onMouseEnter={(e) => onHover(e)}
-                  onMouseLeave={(e) => onHoverOver(e)}  src={images.url} />
-                  
+                <img id='image' onMouseEnter={(e) => onHover(e)} onMouseLeave={(e) => onHoverOver(e)} src={images.url} />
               </div>
-              
             </div>
           ))
-
         ) : (
           <p className="text-lg">Loading image...</p>
         )}
       </div>
 
-      {/* <div id="img-wrapper">
-                <div className='imageBox'>
-                    <img src="https://cdn2.thecatapi.com/images/1q7.jpg"/>
-                </div>
-                <div className='imageBox'>
-                    <img src="https://cdn2.thecatapi.com/images/1q7.jpg"/>
-                </div>
-                <div className='imageBox'>
-                    <img src="https://cdn2.thecatapi.com/images/1q7.jpg"/>
-                </div>
-                <div className='imageBox'>
-                    <img src="https://cdn2.thecatapi.com/images/1q7.jpg"/>
-                </div>
-                <div className='imageBox'>
-                    <img src="https://cdn2.thecatapi.com/images/1q7.jpg"/>
-                </div>
-                <div className='imageBox'>
-                    <img src="https://cdn2.thecatapi.com/images/1q7.jpg"/>
-                </div>
-            </div> */}
       {data.length > 0 ? (
         data.map((facts, index) => (
           <div
@@ -106,13 +76,13 @@ function Catfacts() {
             <p className="text-lg">{facts.fact}</p>
           </div>
         ))
-
       ) : (
         <p className="text-lg">Loading cat facts...</p>
       )}
+
       <center>
-        <button className='button' onClick={refresh}>Generate a new one</button>
       </center>
+
       <br></br>
       <br></br>
       <br></br>
@@ -121,4 +91,4 @@ function Catfacts() {
   )
 }
 
-export default Catfacts
+export default Catfacts;

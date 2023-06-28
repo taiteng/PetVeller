@@ -179,4 +179,16 @@ app.post('/saveCatFactsToDatabase', (req, res) => {
         res.status(500).json('Server error');
       });
   });
+
+  app.get('/catFacts', (req, res) => {
+    catFactsModel.find()
+      .then(catFacts => {
+        res.json(catFacts);
+      })
+      .catch(error => {
+        console.log('Error retrieving cat facts:', error);
+        res.status(500).json('Server error');
+      });
+  });
+  
   
