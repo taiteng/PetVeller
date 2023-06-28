@@ -77,8 +77,16 @@ function Home() {
   const displayedNews = filteredNews.slice(0, displayedNewsCount);
 
 
-
   const handleFavorite = async (article, userEmail) => {
+
+    
+    if (!userEmail) {
+      // User email is missing, cannot favorite
+      setConfirmationMessage('Please Sign-In Account First');
+      setShowConfirmation(true);
+      return;
+    }
+  
     const { title, description, url } = article;
   
     try {
@@ -114,6 +122,7 @@ function Home() {
       console.log('Error toggling favorite:', error);
     }
   };
+  
 
   
   const closeConfirmation = () => {
@@ -395,11 +404,12 @@ function Home() {
               <img src={article.urlToImage} alt="News" className="news-image" />
               <p className="news-description">{article.description}</p>
               <button
-                onClick={() => handleFavorite(article)}
+                onClick={() => handleFavorite(article, userEmail)}
                 className={`favorite-button ${article.favorite ? 'favorite-red' : ''}`}
               >
                 <FontAwesomeIcon icon={faHeart} />
               </button>
+
             </div>
           ))}
         </div>
