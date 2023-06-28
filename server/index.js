@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const userModel = require('./models/users')
 const catModel = require('./models/cat')
 const newsModel = require('./models/news')
+const catFactsModel = require('./models/catfact')
 
 const app = express()
 app.use(express.json())
@@ -149,3 +150,33 @@ app.post('/toggleFavorite', (req, res) => {
 app.listen(3001, () => {
     console.log('Server is running')
 })
+
+app.post('/saveCatFactsToDatabase', (req, res) => {
+    const { facts } = req.body;
+  
+    const savePromises = facts.map((fact) => {
+      return catFactsModel.findOne({ fact })
+        .then((catFact) => {
+          if (catFact) {
+            return Promise.resolve('Fact Exists');
+          } else {
+            const newCatFact = new catFactsModel({ fact });
+            return newCatFact.save().then(() => 'Saved Fact');
+          }
+        })
+        .catch((error) => {
+          console.log('Error saving cat fact:', error);
+          return Promise.resolve('Error saving fact');
+        });
+    });
+  
+    Promise.all(savePromises)
+      .then((results) => {
+        res.json(results);
+      })
+      .catch((error) => {
+        console.log('Error saving cat facts:', error);
+        res.status(500).json('Server error');
+      });
+  });
+  
