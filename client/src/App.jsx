@@ -14,6 +14,7 @@ import Dogfacts from './pages/Dogfacts';
 import ContactUs from './pages/ContactUs';
 import Dog from './pages/Dog';
 import AboutUs from './pages/AboutUs';
+import AdminCatFacts from './pages/AdminCatFacts';
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
         <Route path="/catdetails" element={<CatDetails/>}></Route>
         <Route path="/catfacts" element={<Catfacts/>}></Route>
         <Route path="/contactus" element={<ContactUs/>}></Route>
+        <Route path="/admincatfacts" element={<AdminCatFacts/>}></Route>
       </Routes>
     </>
   )

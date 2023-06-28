@@ -35,6 +35,9 @@ function AdminHeader() {
           <li className='hover:font-bold cursor-pointer'>
             <a href=''>Contact Us Form</a>
           </li>
+          <li className='hover:font-bold cursor-pointer'>
+            <a href='/admincatfacts'>Cat Facts</a>
+          </li>
         </ul>
         <form onSubmit={handleSubmit} className='align-items-center'>
           <button className='bg-blue-500 hover:bg-blue-700 rounded-full text-white flex align-items-center gap-1'>
