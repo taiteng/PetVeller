@@ -14,5 +14,5 @@ const catSchema = new mongoose.Schema({
     wikipediaURL: String,
 });
 
-const catModel = mongoose.model('userfavourites', catSchema);
+const catModel = mongoose.model('catfavourites', catSchema);
 module.exports = catModel;
