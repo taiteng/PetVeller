@@ -52,7 +52,7 @@ function AdminCatFacts() {
         const factStrings = factsToSave.map((fact) => fact.fact);
       
         axios
-          .post('http://localhost:5173/saveCatFactsToDatabase', { facts: factStrings })
+          .post('http://localhost:3001/saveCatFactsToDatabase', { facts: factStrings })
           .then((response) => {
             const savedFactsIndices = [];
             response.data.forEach((result, index) => {
