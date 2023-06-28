@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
@@ -6,11 +5,25 @@ import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { CardActionArea } from '@mui/material';
+import axios from 'axios';
 
 const FavCatCard = ({ favCatCards }) => {
+
+    const userEmail = sessionStorage.uEmail;
+    const catName = favCatCards.name;
+
     const handleDeleteFromDatabase = (e) => {
         e.preventDefault();
-        
+        if(userEmail){
+            axios.post('http://localhost:3001/dltCatFav', { userEmail, catName })
+            .then((result) => {
+                console.log(result);
+            })
+            .catch((err) => console.log(err));
+        }
+        else{
+            console.log('User not logged in.')
+        }
     }
 
     return (
@@ -24,7 +37,7 @@ const FavCatCard = ({ favCatCards }) => {
                 />
                 <CardContent>
                     <Typography gutterBottom variant="h5" component="div">
-                    {favCatCards.name}
+                        {favCatCards.name}
                     </Typography>
                     <Typography variant="body2" color="text.primary">
                         {favCatCards.description}
