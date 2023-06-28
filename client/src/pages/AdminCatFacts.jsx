@@ -9,6 +9,35 @@ function AdminCatFacts() {
     const [isLoading, setIsLoading] = useState(false);
     const [err, setErr] = useState('');
     const [facts, setFacts] = useState([]);
+    const [catFacts, setCatFacts] = useState([]);
+
+  useEffect(() => {
+    fetchCatFacts();
+  }, []);
+
+  const fetchCatFacts = () => {
+    axios
+      .get('http://localhost:3001/catFacts')
+      .then((response) => {
+        setCatFacts(response.data);
+      })
+      .catch((error) => {
+        console.log('Error retrieving cat facts:', error);
+      });
+  };
+
+  const handleDeleteFact = (id) => {
+    axios
+      .delete(`http://localhost:3001/deleteCatFacts`,{id})
+      .then((response) => {
+        console.log('Fact deleted:', response.data);
+        fetchCatFacts();
+      })
+      .catch((error) => {
+        console.log('Error deleting cat fact:', error);
+      });
+  };
+  
 
     const url = `https://catfact.ninja/fact`;
 
@@ -83,9 +112,43 @@ function AdminCatFacts() {
         <div style={{ background: 'linear-gradient(to bottom right, #A6BCE8, #FFC0C0)' }}>
             <AdminHeader />
             {err && <h2>{err}</h2>}
+
             <br />
             <br />
             <center>
+            <h1 style={{ fontSize: 30 }}>
+          <strong>Cat Facts Table</strong>
+        </h1>
+        <br />
+        {catFacts.length > 0 ? (
+          <table className="table-auto w-full">
+            <thead>
+              <tr>
+                <th className="px-4 py-2">ID</th>
+                <th className="px-4 py-2">Fact</th>
+                <th className="px-4 py-2">Delete</th>
+              </tr>
+            </thead>
+            <tbody>
+              {catFacts.map((fact) => (
+                <tr key={fact.id}>
+                  <td className="border px-4 py-2">{fact._id}</td>
+                  <td className="border px-4 py-2">{fact.fact}</td>
+                  <td className="border px-4 py-2">
+                  <button
+                      className="bg-red-500 text-white px-3 py-1 rounded"
+                      onClick={() => handleDeleteFact(fact._id)}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p>No cat facts found.</p>
+        )}
                 <h1 style={{ fontSize: 30 }}>
                     <strong>Pick the number of facts that you want to generate</strong>
                 </h1>

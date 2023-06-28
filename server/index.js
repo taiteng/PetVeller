@@ -191,4 +191,16 @@ app.post('/saveCatFactsToDatabase', (req, res) => {
       });
   });
   
+  app.delete('/deleteCatFacts', (req, res) => {
+    const { id } = req.params;
+    
+    catFactsModel.deleteOne({ _id: id })
+      .then(() => {
+        res.json('Fact deleted');
+      })
+      .catch(error => {
+        console.log('Error deleting cat fact:', error);
+        res.status(500).json('Server error');
+      });
+  });
   
