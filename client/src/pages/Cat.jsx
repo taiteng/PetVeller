@@ -3,16 +3,21 @@ import Footer from '../components/Footer';
 import { useEffect, useState } from 'react';
 import { Col, Container, Row, Spinner } from "react-bootstrap";
 import CatCard from '../components/CatCard';
+import FavCatCard from '../components/CatFavourite';
 import BackToTop from '../components/BackToTop';
+import axios from 'axios'
 
 function Cat() {
+  const userEmail = sessionStorage.uEmail;
   const maximumCatsPerPage = 20;
+  const catPage = 0;
   const APIURL = 'https://api.thecatapi.com/v1/';
   const APIKey = 'live_4fvlmhHlhugFEhoygx7MssvoLDt3xmRUtTElLjS14d8RB2y1UzUQ2PLTmhrUTnSP';
 
-  const query = `${APIURL}breeds`;
-  const query2 = `${APIURL}breeds?&limit=${maximumCatsPerPage}`;
+  const query1 = `${APIURL}breeds`;
+  const query2 = `${APIURL}breeds?&limit=${maximumCatsPerPage}&page=${catPage}`;
 
+  const [favCats, setFavCats] = useState(null);
   const [cats, setCats] = useState(null);
   const [allCats, setAllCats] = useState(null);
   const [searchName, setSearchName] = useState('');
@@ -33,6 +38,26 @@ function Cat() {
     }
   };
 
+  const requestFavourites = async () => {
+    try {
+      setIsLoading(true);
+
+      axios.post('http://localhost:3001/getCatFav', { userEmail })
+      .then(result => {
+          //const favResult = result.data;
+          console.log(result.data);
+
+          setFavCats(result.data);
+          console.log(favCats);
+      })
+      .catch(err => console.log(err))
+    } catch (error) {
+      console.error(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   const requestCats = async () => {
     const urlHeaders = {
       "Content-Type": "application/json",
@@ -42,13 +67,12 @@ function Cat() {
     try {
       setIsLoading(true);
 
-      const apiResponse = await fetch(query, { urlHeaders });
-      const result = await apiResponse.json();
+      const apiResponse = await fetch(query1, { urlHeaders });
+      const catResult = await apiResponse.json();
 
       // Filter out null data from the response
-      const filteredResult = result.filter((cat) => cat !== null );
+      const filteredResult = catResult.filter((cat) => cat !== null );
 
-      // Logging for debugging
       console.log("Cats result", filteredResult);
 
       setCats(filteredResult);
@@ -63,6 +87,7 @@ function Cat() {
 
   useEffect(() => {
     requestCats();
+    requestFavourites();
   }, []);
 
   return (
@@ -76,7 +101,6 @@ function Cat() {
           padding: 40px;
           border-radius: 10px;
         }
-
         .welcome-heading {
           font-size: 36px;
           font-weight: bold;
@@ -91,17 +115,57 @@ function Cat() {
           background: linear-gradient(to bottom right, #FBE8E8, #FCC2C2);
           border-radius: 20px;
         }
+        .search-container {
+          position: relative;
+        }
+        .search-input {
+          padding: 10px 35px 10px 15px;
+          border: 1px solid #ccc;
+          border-radius: 5px;
+          outline: none;
+          width: 300px;
+          font-size: 16px;
+          
+          background-position: 10px center;
+          background-repeat: no-repeat;
+          background-size: 20px;
+        }
         `}
       </style>
       <Header/>
-      <BackToTop />
+      <BackToTop/>
+      <div className='container mx-auto mt-5 mb-5'>
+        <div className="welcome-container">
+          <h1 className="welcome-heading">Favourite Cats</h1>
+        </div>
+      </div>
+      <Container>
+        <Row className="justify-content-center g-4">
+          {isLoading ? (
+            <Spinner animation="grow" />
+          ) : userEmail === '' || userEmail === null ? (
+            <p>User Not Found.</p>
+          ) : favCats !== null ? (
+            <>
+              {favCats.map((fcat) => (
+                <Col key={fcat._id} className="p-2">
+                  <FavCatCard favCatCards={fcat} />
+                </Col>
+              ))}
+            </>
+          ) : (
+            <p>No Cats Found.</p>
+          )}
+        </Row>
+      </Container>
       <div className='container mx-auto mt-5 mb-5'>
         <div className="welcome-container">
           <h1 className="welcome-heading">Cat Breeds</h1>
           <div className="search-container">
             <input
+              className="search-input"
               type="text"
-              placeholder="Search Cat Name"
+              placeholder="&#128269; Search Cat Name"
               value={searchName}
               onChange={handleSearch}
             />
@@ -128,8 +192,8 @@ function Cat() {
                 </Col>
               ))}
             </>
-          ): (
-            <p>No cats found.</p>
+          ) : (
+            <p>No Cats Found.</p>
           )}
         </Row>
       </Container>
