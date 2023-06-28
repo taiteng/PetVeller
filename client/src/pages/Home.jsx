@@ -25,6 +25,8 @@ function Home() {
   const [displayedNewsCount, setDisplayedNewsCount] = useState(8);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [confirmationMessage, setConfirmationMessage] = useState('');
+  const [sortOrder, setSortOrder] = useState('asc');
+
 
 
 
@@ -38,6 +40,14 @@ function Home() {
 
     fetchAnimalNews();
   }, []);
+
+
+
+  const handleSort = () => {
+    const newSortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+    setSortOrder(newSortOrder);
+  };
+  
 
   
 
@@ -74,12 +84,26 @@ function Home() {
     article.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const displayedNews = filteredNews.slice(0, displayedNewsCount);
+  const sortedNews = filteredNews.sort((a, b) => {
+    const titleA = a.title.toLowerCase();
+    const titleB = b.title.toLowerCase();
+  
+    if (titleA < titleB) {
+      return sortOrder === 'asc' ? -1 : 1;
+    }
+    if (titleA > titleB) {
+      return sortOrder === 'asc' ? 1 : -1;
+    }
+    return 0;
+  });
+  
+  const displayedNews = sortedNews.slice(0, displayedNewsCount);
 
+  
 
   const handleFavorite = async (article, userEmail) => {
 
-    
+
     if (!userEmail) {
       // User email is missing, cannot favorite
       setConfirmationMessage('Please Sign-In Account First');
@@ -327,6 +351,23 @@ function Home() {
         .favorite-button.favorite-red {
           color: red;
         }
+
+        .sort-button {
+          padding: 10px 20px;
+          font-size: 16px;
+          background-color: #f3f3f3;
+          color: black;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+          margin-left: 10px;
+        }
+        
+        .sort-button:hover {
+          background-color: #283593;
+          color: white;
+        }
+        
         
 
         
@@ -391,6 +432,10 @@ function Home() {
               onChange={handleSearch}
             />
           </div>
+          <br></br>
+          <button onClick={handleSort} className="sort-button">
+              Sort {sortOrder === 'asc' ? 'A-Z' : 'Z-A'}
+            </button>
         </div>
         <div className="container mx-auto mt-8">
 
