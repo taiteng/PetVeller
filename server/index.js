@@ -50,53 +50,6 @@ app.post('/register', (req, res) => {
     })
 })
 
-app.post('/getCatFav', (req, res) => {
-    const { userEmail } = req.body;
-    catModel.find({ userEmail: userEmail })
-    .then(cat => {
-        if(cat){
-            res.json(cat);
-        }
-        else{
-            res.json('Cat Not Found')
-        }
-    })
-})
-
-app.post('/dltCatFav', (req, res) => {
-    const { userEmail, catName } = req.body;
-    catModel.find({ userEmail: userEmail })
-    .then(cat => {
-        if(cat){
-            if (cat.name === catName) {
-                
-            } else {
-                
-            }
-        }
-        else{
-            res.json('Cat Not Found')
-        }
-    })
-})
-
-app.post('/isCatFav', (req, res) => {
-    const { userEmail, name } = req.body;
-    catModel.findOne({ name: name })
-    .then(cat => {
-        if(cat){
-            if (cat.userEmail === userEmail) {
-                res.json('Cat Exists')
-            } else {
-                res.json('Cat Not Found')
-            }
-        }
-        else{
-            res.json('User Not Found')
-        }
-    })
-})
-
 app.post('/addCatToFav', (req, res) => {
     const { userEmail, imgURL, imgWidth, imgHeight, imgReferenceID, name, description, lifeSpan, origin, temperament, wikipediaURL } = req.body;
     catModel.findOne({ name: name })
