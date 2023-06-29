@@ -70,7 +70,8 @@ app.post('/dltCatFav', (req, res) => {
   .then(cat => {
       if(cat){
           if (cat.name === catName) {
-
+            // 
+            res.json(cat)
           } else {
 
           }
@@ -83,10 +84,10 @@ app.post('/dltCatFav', (req, res) => {
 
 app.post('/isCatFav', (req, res) => {
   const { userEmail, name } = req.body;
-  catModel.findOne({ name: name })
+  catModel.find({ userEmail: userEmail })
   .then(cat => {
       if(cat){
-          if (cat.userEmail === userEmail) {
+          if (cat.name === name) {
               res.json('Cat Exists')
           } else {
               res.json('Cat Not Found')
@@ -194,10 +195,6 @@ app.post('/toggleFavorite', (req, res) => {
       });
 });
 
-app.listen(3001, () => {
-    console.log('Server is running')
-})
-
 app.post('/saveCatFactsToDatabase', (req, res) => {
     const { facts } = req.body;
   
@@ -225,29 +222,32 @@ app.post('/saveCatFactsToDatabase', (req, res) => {
         console.log('Error saving cat facts:', error);
         res.status(500).json('Server error');
       });
-  });
+});
 
-  app.get('/catFacts', (req, res) => {
-    catFactsModel.find()
-      .then(catFacts => {
-        res.json(catFacts);
-      })
-      .catch(error => {
-        console.log('Error retrieving cat facts:', error);
-        res.status(500).json('Server error');
-      });
-  });
+app.get('/catFacts', (req, res) => {
+  catFactsModel.find()
+    .then(catFacts => {
+      res.json(catFacts);
+    })
+    .catch(error => {
+      console.log('Error retrieving cat facts:', error);
+      res.status(500).json('Server error');
+    });
+});
   
-  app.delete('/deleteCatFacts', (req, res) => {
-    const { id } = req.params;
-    
-    catFactsModel.deleteOne({ _id: id })
-      .then(() => {
-        res.json('Fact deleted');
-      })
-      .catch(error => {
-        console.log('Error deleting cat fact:', error);
-        res.status(500).json('Server error');
-      });
-  });
+app.delete('/deleteCatFacts', (req, res) => {
+  const { id } = req.params;
   
+  catFactsModel.deleteOne({ _id: id })
+    .then(() => {
+      res.json('Fact deleted');
+    })
+    .catch(error => {
+      console.log('Error deleting cat fact:', error);
+      res.status(500).json('Server error');
+    });
+});
+  
+app.listen(3001, () => {
+    console.log('Server is running')
+})
