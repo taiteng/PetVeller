@@ -281,10 +281,6 @@ app.post('/contact', (req, res) => {
     });
 });
 
-app.listen(3001, () => {
-  console.log('Server is running')
-})
-
 app.get('/contact',async (req, res) => {
   try {
     const contacts = await contactModel.find();
@@ -295,34 +291,38 @@ app.get('/contact',async (req, res) => {
   }
 });
 
-  app.post('/addFavouriteDog', (req, res) => {
-    const { userEmail, id, name, bred_for, life_span, temperament, origin, imageURL } = req.body;
-    dogModel.findOne({ name: name })
-    .then(dog => {
-        if(dog){
-            if(dog.userEmail === userEmail){
-                res.json('Dog Exists');
-            }
-            else{
-              //This dog is not yet favourite
-                newDog = new dogModel({
-                    userEmail: userEmail,
-                    id: id,
-                    name: name,
-                    bred_for: bred_for,
-                    life_span: life_span,
-                    temperament: temperament,
-                    origin: origin,
-                    imageURL: imageURL,
-                });
+app.post('/addFavouriteDog', (req, res) => {
+  const { userEmail, id, name, bred_for, life_span, temperament, origin, imageURL } = req.body;
+  dogModel.findOne({ name: name })
+  .then(dog => {
+      if(dog){
+          if(dog.userEmail === userEmail){
+              res.json('Dog Exists');
+          }
+          else{
+            //This dog is not yet favourite
+              newDog = new dogModel({
+                  userEmail: userEmail,
+                  id: id,
+                  name: name,
+                  bred_for: bred_for,
+                  life_span: life_span,
+                  temperament: temperament,
+                  origin: origin,
+                  imageURL: imageURL,
+              });
 
-                newDog.save().then(success => {
-                    console.log('Success' + success);
-                    res.json('Dog Favourited');
-                }).catch(error => {
-                    console.log('Error' + error);
-                });
-            }
-        }
-    })
+              newDog.save().then(success => {
+                  console.log('Success' + success);
+                  res.json('Dog Favourited');
+              }).catch(error => {
+                  console.log('Error' + error);
+              });
+          }
+      }
+  })
+})
+
+app.listen(3001, () => {
+  console.log('Server is running')
 })
