@@ -33,7 +33,7 @@ function AdminHeader() {
             <a href='/admin'>Admin Home</a>
           </li>
           <li className='hover:font-bold cursor-pointer'>
-            <a href=''>Contact Us Form</a>
+            <a href='/admincontact'>Contact Us Form</a>
           </li>
           <li className='hover:font-bold cursor-pointer'>
             <a href='/admincatfacts'>Cat Facts</a>

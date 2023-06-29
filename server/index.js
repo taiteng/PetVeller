@@ -283,3 +283,13 @@ app.post('/contact', (req, res) => {
 app.listen(3001, () => {
   console.log('Server is running')
 })
+
+app.get('/contact',async (req, res) => {
+  try {
+    const contacts = await contactModel.find();
+    res.json(contacts);
+  } catch (error) {
+    console.log('Error fetching contacts:', error);
+    res.status(500).json({ error: 'Failed to fetch contacts' });
+  }
+});
