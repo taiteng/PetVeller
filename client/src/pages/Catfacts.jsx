@@ -1,29 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import axios from 'axios';
-import { Button, Container } from 'react-bootstrap';
-import "../components/css/CatFactStyle.css";
+import '../components/css/CatFactStyle.css';
 import Footer from '../components/Footer';
 
 function Catfacts() {
   const [data, setData] = useState([]);
   const [image, setImage] = useState([]);
-  const [hover, setHover] = useState(false);
-
-  const HoverData = "Click or pinch to Zoom Image";
-  const imageUrl = `https://api.thecatapi.com/v1/images/search?limit=6&api_key=live_1mcv1m75repApocbaSeLQ0By2z6IF4jvnSLjxDKC2te9S6oNunefBcoSW1upu2nT`;
-
-  const onHover = (e) => {
-    e.preventDefault();
-    setHover(true); // turn true
-    console.log("hovered");
-  };
-
-  const onHoverOver = (e) => {
-    e.preventDefault(); // turn false
-    setHover(false);
-  };
-
+  const [hoveredIndex, setHoveredIndex] = useState(null);
 
   const fetchCatFacts = () => {
     axios
@@ -37,6 +21,9 @@ function Catfacts() {
   };
 
   const fetchImage = () => {
+    const key = 'live_1mcv1m75repApocbaSeLQ0By2z6IF4jvnSLjxDKC2te9S6oNunefBcoSW1upu2nT';
+    const imageUrl = `https://api.thecatapi.com/v1/images/search?limit=${data.length}&api_key=${key}`;
+
     return fetch(imageUrl)
       .then((res) => res.json())
       .then((d) => setImage(d));
@@ -44,8 +31,19 @@ function Catfacts() {
 
   useEffect(() => {
     fetchCatFacts();
-    fetchImage();
   }, []);
+
+  useEffect(() => {
+    fetchImage();
+  }, [data]);
+
+  const handleHover = (index) => {
+    setHoveredIndex(index);
+  };
+
+  const handleHoverOut = () => {
+    setHoveredIndex(null);
+  };
 
   return (
     <div style={{ background: 'linear-gradient(to bottom right, #A6BCE8, #FFC0C0)' }}>
@@ -53,12 +51,19 @@ function Catfacts() {
       <br></br>
       <div id="img-wrapper">
         {image.length > 0 ? (
-          image.map((images, index) => (
-            <div key={index}>
-              <div className='imageBox'>
-                {hover && <p className={hover}>{HoverData}</p>}
-                <img id='image' onMouseEnter={(e) => onHover(e)} onMouseLeave={(e) => onHoverOver(e)} src={images.url} />
-              </div>
+          image.map((imageData, index) => (
+            <div key={index} className="imageBox" onMouseEnter={() => handleHover(index)} onMouseLeave={handleHoverOut}>
+              <img
+                id="image"
+                className={hoveredIndex === index ? 'blur' : ''}
+                src={imageData.url}
+                alt={`Cat Image ${index}`}
+              />
+              {hoveredIndex === index && (
+                <div className="factBox">
+                  <p className="text-lg">{data[index].fact}</p>
+                </div>
+              )}
             </div>
           ))
         ) : (
@@ -66,21 +71,10 @@ function Catfacts() {
         )}
       </div>
 
-      {data.length > 0 ? (
-        data.map((facts, index) => (
-          <div
-            key={index}
-            className="bg-blue-100 border border-blue-500 rounded p-4 my-4"
-            style={{ background: 'linear-gradient(to bottom right, #FBE8E8, #FCC2C2)' }}
-          >
-            <p className="text-lg">{facts.fact}</p>
-          </div>
-        ))
-      ) : (
-        <p className="text-lg">Loading cat facts...</p>
-      )}
-
       <center>
+        <button className="button" onClick={fetchCatFacts}>
+          Refresh Facts
+        </button>
       </center>
 
       <br></br>
@@ -88,7 +82,7 @@ function Catfacts() {
       <br></br>
       <Footer />
     </div>
-  )
+  );
 }
 
 export default Catfacts;
