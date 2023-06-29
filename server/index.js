@@ -5,6 +5,7 @@ const userModel = require('./models/users')
 const catModel = require('./models/cat')
 const newsModel = require('./models/news')
 const catFactsModel = require('./models/catfact')
+const contactModel = require('./models/contact')
 
 const app = express()
 app.use(express.json())
@@ -251,5 +252,31 @@ app.post('/saveCatFactsToDatabase', (req, res) => {
         res.status(500).json('Server error');
       });
   });
+
+  app.post('/contact', (req, res) => {
+    const { firstName, surname, email, phone, message } = req.body;
+  
+    const contactData = {
+      firstName,
+      surname,
+      email,
+      phone,
+      message,
+    };
+  
+    const contact = new contactModel(contactData);
+  
+    contact.save()
+      .then((savedContact) => {
+        console.log('Contact form data saved:', savedContact);
+        res.status(200).json(savedContact);
+      })
+      .catch((error) => {
+        console.log('Error saving contact form data:', error);
+        res.status(500).json({ error: 'Failed to save contact form data' });
+      });
+  });
+  
+  
   
   
