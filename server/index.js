@@ -292,33 +292,66 @@ app.get('/contact',async (req, res) => {
 });
 
 app.post('/addFavouriteDog', (req, res) => {
-  const { userEmail, id, name, bred_for, life_span, temperament, origin, imageURL } = req.body;
+  const { userEmail, id, name, bred_for, life_span, temperament, origin, imageURL } = req.body.dogData;
   dogModel.findOne({ name: name })
   .then(dog => {
       if(dog){
-          if(dog.userEmail === userEmail){
-              res.json('Dog Exists');
-          }
-          else{
-            //This dog is not yet favourite
-              newDog = new dogModel({
-                  userEmail: userEmail,
-                  id: id,
-                  name: name,
-                  bred_for: bred_for,
-                  life_span: life_span,
-                  temperament: temperament,
-                  origin: origin,
-                  imageURL: imageURL,
-              });
+        console.log("user email" + userEmail)
+        dogModel.deleteOne({ id: id, userEmail: userEmail })
+        .then(() => {
+          console.log('Dog unfavorited');
+          res.json('Dog Unfavourited')
+        })
+        .catch(err => {
+          console.error(err);
+        });
+      }
+      else{
+        console.log("user email" + userEmail)
+        newDog = new dogModel({
+          userEmail: userEmail,
+          id: id,
+          name: name,
+          bred_for: bred_for,
+          life_span: life_span,
+          temperament: temperament,
+          origin: origin,
+          imageURL: imageURL,
+      });
 
-              newDog.save().then(success => {
-                  console.log('Success' + success);
-                  res.json('Dog Favourited');
-              }).catch(error => {
-                  console.log('Error' + error);
-              });
-          }
+      newDog.save().then(success => {
+        console.log("user email" + userEmail)
+          console.log('Success' + success);
+          res.json('Dog Favourited');
+      }).catch(error => {
+          console.log('Error' + error);
+      });
+    }
+  })
+})
+
+app.post('/favouriteDogs', (req, res) => {
+  const { userEmail } = req.body;
+  dogModel.find({ userEmail: userEmail })
+  .then(dog => {
+      if(dog){
+          res.json(dog);
+      }
+      else{
+          res.json('Dog Not Found')
+      }
+  })
+})
+
+app.post('/deleteFavouriteDogs', (req, res) => {
+  const { id } = req.body.dogData;
+  dogModel.deleteOne({ id: id })
+  .then(dog => {
+      if(dog){
+          res.json("Dog Unfavourited")
+      }
+      else{
+          res.json('Dog Not Found')
       }
   })
 })
