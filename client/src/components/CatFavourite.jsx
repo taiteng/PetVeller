@@ -7,7 +7,7 @@ import Typography from '@mui/material/Typography';
 import { CardActionArea } from '@mui/material';
 import axios from 'axios';
 
-const FavCatCard = ({ favCatCards }) => {
+const FavCatCard = ({ favCatCards, requestFavourites }) => {
 
     const userEmail = sessionStorage.uEmail;
     const catName = favCatCards.name;
@@ -18,6 +18,7 @@ const FavCatCard = ({ favCatCards }) => {
             axios.post('http://localhost:3001/dltCatFav', { userEmail, catName })
             .then((result) => {
                 console.log(result);
+                requestFavourites();
             })
             .catch((err) => console.log(err));
         }

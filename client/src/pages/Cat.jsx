@@ -145,8 +145,8 @@ function Cat() {
           ) : favCats !== null ? (
             <>
               {favCats.map((fcat) => (
-                <Col key={fcat._id} className="p-2">
-                  <FavCatCard favCatCards={fcat} />
+                <Col key={fcat._id} sm={6} md={4} lg={3} className="p-2">
+                  <FavCatCard favCatCards={fcat} requestFavourites={requestFavourites} />
                 </Col>
               ))}
             </>
@@ -170,21 +170,21 @@ function Cat() {
         </div>
       </div>
       <Container>
-        <Row md={4} className="justify-content-center g-4">
+        <Row className="justify-content-center g-4">
           {isLoading ? (
             <Spinner animation="grow" />
           ) : filteredCats !== null ? (
             <>
               {filteredCats.map((cat) => (
-                <Col key={cat.id} className="p-2">
-                  <CatCard catCards={cat} />
+                <Col key={cat.id} sm={6} md={4} lg={3} className="p-2">
+                  <CatCard catCards={cat} requestFavourites={requestFavourites} />
                 </Col>
               ))}
             </>
           ) : allCats !== null ? (
             <>
               {allCats.map((cat) => (
-                <Col key={cat.id} className="p-2">
+                <Col key={cat.id} sm={6} md={4} lg={3} className="p-2">
                   <CatCard catCards={cat} />
                 </Col>
               ))}
