@@ -70,11 +70,18 @@ app.post('/dltCatFav', (req, res) => {
   catModel.find({ userEmail: userEmail })
   .then(cat => {
       if(cat){
-          if (cat.name === catName) {
-
-          } else {
-
+        for (let i = 0; i < cat.length; i++) {
+          if(cat[i].name === catName){
+            catModel.deleteOne({ _id: cat[i]._id })
+              .then(() => {
+                res.json('Deleted Successfully');
+              })
+              .catch(error => {
+                res.json('Error occurred while deleting');
+              });
+            break;
           }
+        }
       }
       else{
           res.json('Cat Not Found')
@@ -84,14 +91,14 @@ app.post('/dltCatFav', (req, res) => {
 
 app.post('/isCatFav', (req, res) => {
   const { userEmail, name } = req.body;
-  catModel.findOne({ name: name })
+  catModel.find({ userEmail: userEmail })
   .then(cat => {
       if(cat){
-          if (cat.userEmail === userEmail) {
-              res.json('Cat Exists')
-          } else {
-              res.json('Cat Not Found')
+        for (let i = 0; i < cat.length; i++) {
+          if(cat[i].name === name){
+            res.json('Cat Exists')
           }
+        }
       }
       else{
           res.json('User Not Found')
@@ -195,10 +202,6 @@ app.post('/toggleFavorite', (req, res) => {
       });
 });
 
-app.listen(3001, () => {
-    console.log('Server is running')
-})
-
 app.post('/saveCatFactsToDatabase', (req, res) => {
     const { facts } = req.body;
   
@@ -226,32 +229,18 @@ app.post('/saveCatFactsToDatabase', (req, res) => {
         console.log('Error saving cat facts:', error);
         res.status(500).json('Server error');
       });
-  });
+});
 
-  app.get('/catFacts', (req, res) => {
-    catFactsModel.find()
-      .then(catFacts => {
-        res.json(catFacts);
-      })
-      .catch(error => {
-        console.log('Error retrieving cat facts:', error);
-        res.status(500).json('Server error');
-      });
-  });
-  
-  app.post('/deleteCatFacts/:id', (req, res) => {
-    const { id } = req.params;
-  
-    catFactsModel
-      .deleteOne({ _id: id })
-      .then(() => {
-        res.json('Fact deleted');
-      })
-      .catch((error) => {
-        console.log('Error deleting cat fact:', error);
-        res.status(500).json('Server error');
-      });
-  });
+app.get('/catFacts', (req, res) => {
+  catFactsModel.find()
+    .then(catFacts => {
+      res.json(catFacts);
+    })
+    .catch(error => {
+      console.log('Error retrieving cat facts:', error);
+      res.status(500).json('Server error');
+    });
+});
   
   app.post('/addFavouriteDog', (req, res) => {
     const { userEmail, id, name, bred_for, life_span, temperament, origin, imageURL } = req.body;
@@ -285,3 +274,20 @@ app.post('/saveCatFactsToDatabase', (req, res) => {
     })
 })
   
+app.post('/deleteCatFacts/:id', (req, res) => {
+  const { id } = req.params;
+
+  catFactsModel
+    .deleteOne({ _id: id })
+    .then(() => {
+      res.json('Fact deleted');
+    })
+    .catch((error) => {
+      console.log('Error deleting cat fact:', error);
+      res.status(500).json('Server error');
+    });
+});
+
+app.listen(3001, () => {
+  console.log('Server is running')
+})
