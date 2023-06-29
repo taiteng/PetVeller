@@ -15,6 +15,7 @@ import ContactUs from './pages/ContactUs';
 import Dog from './pages/Dog';
 import AboutUs from './pages/AboutUs';
 import AdminCatFacts from './pages/AdminCatFacts';
+import AdminContact from './pages/AdminContact';
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
         <Route path="/catfacts" element={<Catfacts/>}></Route>
         <Route path="/contactus" element={<ContactUs/>}></Route>
         <Route path="/admincatfacts" element={<AdminCatFacts/>}></Route>
+        <Route path="/admincontact" element={<AdminContact/>}></Route>
       </Routes>
     </>
   )
