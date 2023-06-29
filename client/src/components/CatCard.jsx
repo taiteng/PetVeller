@@ -9,7 +9,7 @@ import { CardActionArea } from '@mui/material';
 import axios from 'axios';
 import { Spinner } from "react-bootstrap";
 
-const CatCard = ({ catCards }) => {
+const CatCard = ({ catCards, requestFavourites }) => {
     if ((catCards?.wikipedia_url === null) || (catCards?.reference_image_id === null)) {
         return null;
     }
@@ -38,26 +38,26 @@ const CatCard = ({ catCards }) => {
         const [catName, setCatName] = useState('');
         const [userEmail, setUserEmail] = useState('');
         const [isCatFav, setIsCatFav] = useState(false);
-        const [isLoading, setIsLoading] = useState(true);
+        const [isLoading, setIsLoading] = useState(false);
 
         useEffect(() => {
-            const fetchIsCatFavourited = async () => {
-                try {
-                    const result = await axios.post('http://localhost:3001/isCatFav', { userEmail, catName });
-                    if (result.data === 'Cat Exists') {
-                        console.log('Existed');
-                        setIsCatFav('true');
-                    } else {
-                        console.log('No Fav');
-                    }
-                  } catch (error) {
-                    console.error(error.message);
-                  }
+            // const fetchIsCatFavourited = async () => {
+            //     try {
+            //         const result = await axios.post('http://localhost:3001/isCatFav', { userEmail, catName });
+            //         if (result.data === 'Cat Exists') {
+            //             console.log('Existed');
+            //             setIsCatFav('true');
+            //         } else {
+            //             console.log('No Fav');
+            //         }
+            //       } catch (error) {
+            //         console.error(error.message);
+            //       }
 
-                  setIsLoading(false);
-            };
+            //       setIsLoading(false);
+            // };
 
-            fetchIsCatFavourited();
+            // fetchIsCatFavourited();
             fetchCatImg();
             setUserEmail(sessionStorage.uEmail);
             setCatName(catCards?.name);
@@ -99,11 +99,12 @@ const CatCard = ({ catCards }) => {
                     console.log(result);
                     if(result.data === 'Cat Exists'){
                         console.log('Existed');
-                        setIsCatFav('true');
+                        setIsCatFav(true);
                     }
                     else{
                         console.log('Saved')
-                        setIsCatFav('true');
+                        setIsCatFav(true);
+                        requestFavourites();
                     }
                 })
                 .catch((err) => console.log(err));
