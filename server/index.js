@@ -262,7 +262,7 @@ app.get('/catFacts', (req, res) => {
                     origin: origin,
                     imageURL: imageURL,
                 });
-            
+
                 newDog.save().then(success => {
                     console.log('Success' + success);
                     res.json('Dog Favourited');
