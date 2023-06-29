@@ -69,12 +69,18 @@ app.post('/dltCatFav', (req, res) => {
   catModel.find({ userEmail: userEmail })
   .then(cat => {
       if(cat){
-          if (cat.name === catName) {
-            // 
-            res.json(cat)
-          } else {
-
+        for (let i = 0; i < cat.length; i++) {
+          if(cat[i].name === catName){
+            catModel.deleteOne({ _id: cat[i]._id })
+              .then(() => {
+                res.json('Deleted Successfully');
+              })
+              .catch(error => {
+                res.json('Error occurred while deleting');
+              });
+            break;
           }
+        }
       }
       else{
           res.json('Cat Not Found')
@@ -87,11 +93,11 @@ app.post('/isCatFav', (req, res) => {
   catModel.find({ userEmail: userEmail })
   .then(cat => {
       if(cat){
-          if (cat.name === name) {
-              res.json('Cat Exists')
-          } else {
-              res.json('Cat Not Found')
+        for (let i = 0; i < cat.length; i++) {
+          if(cat[i].name === name){
+            res.json('Cat Exists')
           }
+        }
       }
       else{
           res.json('User Not Found')
