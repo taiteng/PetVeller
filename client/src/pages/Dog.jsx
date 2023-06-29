@@ -9,7 +9,7 @@ function Dog() {
   const [text, setText] = useState("")
   const [searched, setSearched] = useState(false)
   const [userEmail, setUserEmail] = useState("");
-  asdasdsa
+  
   useEffect(() => {
     const fetchDogData = async () => {
       try {
