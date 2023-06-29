@@ -8,6 +8,7 @@ function Dog() {
   const [data, setData] = useState([]);
   const [text, setText] = useState("")
   const [searched, setSearched] = useState(false)
+  const [userEmail, setUserEmail] = useState("");
 
   useEffect(() => {
     const fetchDogData = async () => {
@@ -29,7 +30,7 @@ function Dog() {
       const res = await fetch(
         `https://api.thedogapi.com/v1/breeds/search?q=${text}`
       )
-      
+
       const data = await res.json()
       setData(data)
     } catch (error) {
@@ -42,6 +43,32 @@ function Dog() {
 
     searchForDog()
     setSearched(true)
+  }
+
+  const handleDogFavourite = (e) => {
+    e.preventDefault();
+
+    if(sessionStorage != null && sessionStorage != ""){
+      setUserEmail(sessionStorage.uEmail);
+    }
+
+    //Add favourite dog details to database
+    if(userEmail){
+        axios.post('http://localhost:3001/addFavouriteDog', { userEmail, id, name, bred_for, life_span, temperament, origin, imageURL })
+        .then((result) => {
+            console.log(result);
+            if(result.data === "Dog Favourited"){
+                console.log('Dog is added to favourite collection');
+            }
+            else{
+                console.log('Saved')
+            }
+        })
+        .catch((err) => console.log(err));
+    }
+    else{
+        console.log('User not logged in.')
+    }
   }
 
   return (
@@ -105,31 +132,33 @@ function Dog() {
                   {!searched || text === "" ? (
                     data.map((dog) => (
                       <article key={dog.id} className='dog-card p-4 rounded relative'>
-                      <div className="flex flex-col h-full">
-                        <img src={dog.image.url} alt={dog.name} className='rounded md:h-72 w-full object-cover' />
-                        <div className="flex-grow">
-                          <h3 className='text-lg font-bold mt-4'>{dog.name || 'N/A'}</h3>
-                          <p>Life Span: {dog.life_span || 'N/A'}</p>
-                          <p>Origin: {dog.origin || 'N/A'}</p>
-                          <p>Bred: {dog.bred_for || 'N/A'}</p>
-                          <p>Temperament: {dog.temperament || 'N/A'}</p>
+                        <div className="flex flex-col h-full">
+                          <img src={dog.image.url} alt={dog.name} className='rounded md:h-72 w-full object-cover' />
+                          <div className="flex-grow">
+                            <h3 className='text-lg font-bold mt-4'>{dog.name || 'N/A'}</h3>
+                            <p>Life Span: {dog.life_span || 'N/A'}</p>
+                            <p>Origin: {dog.origin || 'N/A'}</p>
+                            <p>Bred: {dog.bred_for || 'N/A'}</p>
+                            <p>Temperament: {dog.temperament || 'N/A'}</p>
+                          </div>
+                          <div className='flex justify-center mt-2'>
+                            <form onSubmit={handleDogFavourite}>
+                              {sessionStorage.uEmail == null || sessionStorage.uEmail == "" ? null : <Button size="small">Add to Favourite</Button>}
+                            </form>
+                          </div>
                         </div>
-                        <div className='flex justify-center mt-2'>
-                          <Button size="small">Add to Favourite</Button>
-                        </div>
-                      </div>
-                    </article>
+                      </article>
                     ))
                   ) : (
                     <>
                       {data.map((dog) => (
                         <article key={dog.id} className='dog-card p-4 rounded relative'>
                           <div className="flex flex-col h-full">
-                          <img
-                            src={`https://cdn2.thedogapi.com/images/${dog.reference_image_id}.jpg`}
-                            alt={dog.name}
-                            className="rounded md:h-72 w-full object-cover"
-                          />
+                            <img
+                              src={`https://cdn2.thedogapi.com/images/${dog.reference_image_id}.jpg`}
+                              alt={dog.name}
+                              className="rounded md:h-72 w-full object-cover"
+                            />
                             <div className="flex-grow">
                               <h3 className='text-lg font-bold mt-4'>{dog.name}</h3>
                               <p>Life Span: {dog.life_span}</p>
@@ -138,7 +167,9 @@ function Dog() {
                               <p>Temperament: {dog.temperament}</p>
                             </div>
                             <div className='flex justify-center mt-2'>
-                              <Button size="small">Add to Favourite</Button>
+                              <form onSubmit={handleDogFavourite}>
+                                {sessionStorage.uEmail == null || sessionStorage.uEmail == "" ? null : <Button size="small">Add to Favourite</Button>}
+                              </form>
                             </div>
                           </div>
                         </article>
