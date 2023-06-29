@@ -231,8 +231,6 @@ app.post('/saveCatFactsToDatabase', (req, res) => {
       });
 });
 
-
-=======
 app.get('/catFacts', (req, res) => {
   catFactsModel.find()
     .then(catFacts => {
@@ -243,7 +241,8 @@ app.get('/catFacts', (req, res) => {
       res.status(500).json('Server error');
     });
 });
- app.post('/deleteCatFacts/:id', (req, res) => {
+
+app.post('/deleteCatFacts/:id', (req, res) => {
     const { id } = req.params;
   
     catFactsModel
@@ -255,35 +254,31 @@ app.get('/catFacts', (req, res) => {
         console.log('Error deleting cat fact:', error);
         res.status(500).json('Server error');
       });
-  });
+});
 
-  app.post('/contact', (req, res) => {
-    const { firstName, surname, email, phone, message } = req.body;
-  
-    const contactData = {
-      firstName,
-      surname,
-      email,
-      phone,
-      message,
-    };
-  
-    const contact = new contactModel(contactData);
-  
-    contact.save()
-      .then((savedContact) => {
-        console.log('Contact form data saved:', savedContact);
-        res.status(200).json(savedContact);
-      })
-      .catch((error) => {
-        console.log('Error saving contact form data:', error);
-        res.status(500).json({ error: 'Failed to save contact form data' });
-      });
-  });
-  
-  
-  
+app.post('/contact', (req, res) => {
+  const { firstName, surname, email, phone, message } = req.body;
 
+  const contactData = {
+    firstName,
+    surname,
+    email,
+    phone,
+    message,
+  };
+
+  const contact = new contactModel(contactData);
+
+  contact.save()
+    .then((savedContact) => {
+      console.log('Contact form data saved:', savedContact);
+      res.status(200).json(savedContact);
+    })
+    .catch((error) => {
+      console.log('Error saving contact form data:', error);
+      res.status(500).json({ error: 'Failed to save contact form data' });
+    });
+});
 
 app.listen(3001, () => {
   console.log('Server is running')
