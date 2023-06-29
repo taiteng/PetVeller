@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import "../components/css/ContactUsStyle.css";
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@material-ui/core';
+import '../components/css/ContactUsStyle.css';
 
 function ContactUs() {
   const [firstName, setFirstName] = useState('');
@@ -11,6 +12,9 @@ function ContactUs() {
   const [phone, setPhone] = useState('');
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState({});
+  const [openDialog, setOpenDialog] = useState(false);
+  const [dialogTitle, setDialogTitle] = useState('');
+  const [dialogContent, setDialogContent] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -24,7 +28,8 @@ function ContactUs() {
     };
 
     if (validateForm(formData)) {
-      axios.post('http://localhost:3001/contact', formData)
+      axios
+        .post('http://localhost:3001/contact', formData)
         .then((response) => {
           console.log('Contact form data saved:', response.data);
           // Reset form fields
@@ -34,9 +39,15 @@ function ContactUs() {
           setPhone('');
           setMessage('');
           setErrors({});
+          setOpenDialog(true);
+          setDialogTitle('Success');
+          setDialogContent('Contact form data saved successfully.');
         })
         .catch((error) => {
           console.log('Error saving contact form data:', error);
+          setOpenDialog(true);
+          setDialogTitle('Error');
+          setDialogContent('Failed to save contact form data.');
         });
     }
   };
@@ -74,52 +85,58 @@ function ContactUs() {
     return isValid;
   };
 
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    setDialogTitle('');
+    setDialogContent('');
+  };
+
   return (
     <div style={{ background: 'linear-gradient(to bottom right, #A6BCE8, #FFC0C0)' }}>
       <Header />
       <br></br>
       <div className='body'>
-        <div className="card">
+        <div className='card'>
           <h2>Contact Us</h2>
           <form onSubmit={handleSubmit}>
-            <div className="row">
-              <div className="col">
-                <div className="form-group">
+            <div className='row'>
+              <div className='col'>
+                <div className='form-group'>
                   <label>First Name</label>
-                  <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
-                  {errors.firstName && <span className="error">{errors.firstName}</span>}
+                  <input type='text' value={firstName} onChange={(e) => setFirstName(e.target.value)} />
+                  {errors.firstName && <span className='error'>{errors.firstName}</span>}
                 </div>
               </div>
-              <div className="col">
-                <div className="form-group">
+              <div className='col'>
+                <div className='form-group'>
                   <label>Surname</label>
-                  <input type="text" value={surname} onChange={(e) => setSurname(e.target.value)} />
-                  {errors.surname && <span className="error">{errors.surname}</span>}
+                  <input type='text' value={surname} onChange={(e) => setSurname(e.target.value)} />
+                  {errors.surname && <span className='error'>{errors.surname}</span>}
                 </div>
               </div>
-              <div className="col">
-                <div className="form-group">
+              <div className='col'>
+                <div className='form-group'>
                   <label>Email</label>
-                  <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} />
-                  {errors.email && <span className="error">{errors.email}</span>}
+                  <input type='text' value={email} onChange={(e) => setEmail(e.target.value)} />
+                  {errors.email && <span className='error'>{errors.email}</span>}
                 </div>
               </div>
-              <div className="col">
-                <div className="form-group">
+              <div className='col'>
+                <div className='form-group'>
                   <label>Phone</label>
-                  <input type="text" value={phone} onChange={(e) => setPhone(e.target.value)} />
-                  {errors.phone && <span className="error">{errors.phone}</span>}
+                  <input type='text' value={phone} onChange={(e) => setPhone(e.target.value)} />
+                  {errors.phone && <span className='error'>{errors.phone}</span>}
                 </div>
               </div>
-              <div className="col">
-                <div className="form-group">
+              <div className='col'>
+                <div className='form-group'>
                   <label>Message</label>
                   <textarea value={message} onChange={(e) => setMessage(e.target.value)}></textarea>
-                  {errors.message && <span className="error">{errors.message}</span>}
+                  {errors.message && <span className='error'>{errors.message}</span>}
                 </div>
               </div>
-              <div className="col">
-                <input type="submit" value="Submit" />
+              <div className='col'>
+                <input type='submit' value='Submit' />
               </div>
             </div>
           </form>
@@ -129,6 +146,16 @@ function ContactUs() {
       <br></br>
       <br></br>
       <Footer />
+
+      <Dialog open={openDialog} onClose={handleCloseDialog}>
+        <DialogTitle>{dialogTitle}</DialogTitle>
+        <DialogContent>{dialogContent}</DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color='primary'>
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }
