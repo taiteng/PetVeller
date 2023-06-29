@@ -71,11 +71,6 @@ function Catfacts() {
         )}
       </div>
 
-      <center>
-        <button className="button" onClick={fetchCatFacts}>
-          Refresh Facts
-        </button>
-      </center>
 
       <br></br>
       <br></br>
