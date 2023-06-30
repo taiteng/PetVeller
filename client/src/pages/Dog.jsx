@@ -11,18 +11,24 @@ function Dog() {
   const [searched, setSearched] = useState(false)
   const [userEmail, setUserEmail] = useState("");
   const [data2, setData2] = useState([]);
-  var isLoading = true;
+  const [dataLoading, setDataLoading] = useState(false);
 
   const fetchDogData = async () => {
     try {
+      setDataLoading(true)
       const dogRes = await fetch("https://api.thedogapi.com/v1/breeds");
       const dogData = await dogRes.json();
-      const dogsWithFavourite = dogData.map((dog) => ({
-        ...dog,
-        isFavourited: false,
-      }));
-      setData(dogsWithFavourite);
+      setData(dogData);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setDataLoading(false)
+    }
+  };
 
+  const fetchFavouriteDogData = async () => {
+    try {
+      setDataLoading(true)
       if (userEmail) {
         const favouriteRes = await axios.post(
           "http://localhost:3001/favouriteDogs",
@@ -30,11 +36,12 @@ function Dog() {
         );
         const favouriteData = favouriteRes.data;
         setData2(favouriteData);
-        isLoading = false;
-        console.log(favouriteData);
+        setDataLoading(false);
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      setDataLoading(false)
     }
   };
 
@@ -43,14 +50,14 @@ function Dog() {
       setUserEmail(sessionStorage.uEmail);
     }
 
-    
-
     setSearched(false);
+    fetchFavouriteDogData()
     fetchDogData();
-  }, []);
+  }, [userEmail]);
 
   const searchForDog = async () => {
     try {
+      setDataLoading(true)
       const res = await fetch(
         `https://api.thedogapi.com/v1/breeds/search?q=${text}`
       )
@@ -59,21 +66,38 @@ function Dog() {
       setData(data)
     } catch (error) {
       console.error(error)
+    } finally {
+      setDataLoading(true)
     }
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-
     searchForDog()
-    setSearched(true)
+
+    if (text == "") {
+      setSearched(false)
+      e.target.reset();
+      await new Promise(resolve => setTimeout(resolve, 50));
+
+      await fetchFavouriteDogData()
+      await fetchDogData();
+    } else {
+      setSearched(true)
+    }
   }
 
-  const handleDogFavourite = (e, dog) => {
+  const handleDogFavourite = async (e, dog) => {
     e.preventDefault();
     const { id, name, bred_for, life_span, temperament, origin, image } = dog;
-    const imageURL = image.url
+    let imageURL = ""
 
+    if(!searched){
+       imageURL = image.url
+    }else{
+       imageURL = `https://cdn2.thedogapi.com/images/${dog.reference_image_id}.jpg`
+    }
+    
     const dogData = {
       userEmail: sessionStorage.uEmail,
       id,
@@ -102,18 +126,13 @@ function Dog() {
       console.log('User not logged in.')
     }
 
-    setData((prevData) => {
-      return prevData.map((prevDog) => {
-        if (prevDog.id === dog.id) {
-          return { ...prevDog, isFavourited: !prevDog.isFavourited };
-        }
-        return prevDog;
-      });
-    });
-    fetchDogData();
+    await new Promise(resolve => setTimeout(resolve, 50));
+
+    await fetchFavouriteDogData()
+    await fetchDogData();
   }
 
-  const handleDogUnfavourite = (e, dog) => {
+  const handleDogUnfavourite = async (e, dog) => {
     e.preventDefault();
     const { id, name, bred_for, life_span, temperament, origin, imageURL } = dog;
 
@@ -142,25 +161,14 @@ function Dog() {
       console.log('User not logged in.')
     }
 
-    setData((prevData) =>
-      prevData.map((prevDog) => {
-        if (prevDog.id === dog.id) {
-          return { ...prevDog, isFavourited: false };
-        }
-        return prevDog;
-      })
-    );
-
-    setData2((prevData) => {
-      return prevData.map((prevDog) => {
-        if (prevDog.id === dog.id) {
-          return { ...prevDog, isFavourited: !prevDog.isFavourited };
-        }
-        return prevDog;
-      });
-    });
-
-    fetchDogData();
+    await new Promise(resolve => setTimeout(resolve, 50));
+    
+    if(searched){
+      await fetchFavouriteDogData()
+    }else{
+      await fetchFavouriteDogData()
+      await fetchDogData();
+    }
   }
 
   return (
@@ -205,7 +213,7 @@ function Dog() {
                   <h1 className="text-center welcome-heading">Favourite Dogs</h1>
                 </div>
                 <div className="grid grid-cols-1 gap-8 md:grid-cols-3 xl:grid-cols-4 my-10 lg:my-20">
-                  {data2.map((dog) => (
+                  {!dataLoading || data2.length != 0 ? (data2.map((dog) => (
                     <article key={dog.id} className='dog-card p-4 rounded relative'>
                       <div className="flex flex-col h-full">
                         <img src={dog.imageURL} alt={dog.name} className='rounded md:h-72 w-full object-cover' />
@@ -223,7 +231,13 @@ function Dog() {
                         </div>
                       </div>
                     </article>
-                  ))}
+                  ))
+                  ) : (
+                    <>
+                      {console.log("Data Loading: " + dataLoading)}
+                    </>
+                  )
+                  }
                 </div>
 
 
@@ -247,11 +261,15 @@ function Dog() {
                 </div>
 
                 <div className="grid grid-cols-1 gap-8 md:grid-cols-3 xl:grid-cols-4 my-10 lg:my-20">
-                  {!searched || text === "" ? (
+                  {!searched ? (
                     data.map((dog) => (
                       <article key={dog.id} className='dog-card p-4 rounded relative'>
                         <div className="flex flex-col h-full">
-                          <img src={dog.image.url} alt={dog.name} className='rounded md:h-72 w-full object-cover' />
+                          {dog.image && dog.image.url ? (
+                            <img src={dog.image.url} alt={dog.name} className='rounded md:h-72 w-full object-cover' />
+                          ) : (
+                            <div className='rounded md:h-72 w-full bg-gray-300' /> // Placeholder image or styling
+                          )}
                           <div className="flex-grow">
                             <h3 className='text-lg font-bold mt-4'>{dog.name || 'N/A'}</h3>
                             <p>Life Span: {dog.life_span || 'N/A'}</p>
@@ -269,29 +287,46 @@ function Dog() {
                     ))
                   ) : (
                     <>
-                      {data.map((dog) => (
-                        <article key={dog.id} className='dog-card p-4 rounded relative'>
-                          <div className="flex flex-col h-full">
-                            <img
-                              src={`https://cdn2.thedogapi.com/images/${dog.reference_image_id}.jpg`}
-                              alt={dog.name}
-                              className="rounded md:h-72 w-full object-cover"
-                            />
-                            <div className="flex-grow">
-                              <h3 className='text-lg font-bold mt-4'>{dog.name}</h3>
-                              <p>Life Span: {dog.life_span}</p>
-                              <p>Origin: {dog.origin}</p>
-                              <p>Bred: {dog.bred_for}</p>
-                              <p>Temperament: {dog.temperament}</p>
-                            </div>
-                            <div className='flex justify-center mt-2'>
-                              <form onSubmit={(e) => handleDogFavourite(e, dog, userEmail)}>
-                                {sessionStorage.uEmail == null || sessionStorage.uEmail == "" ? null : <Button type='submit' size="small">{dog.isFavourited ? "Remove from Favourites" : "Add to Favourites"}</Button>}
-                              </form>
-                            </div>
-                          </div>
-                        </article>
-                      ))}
+                      {!dataLoading || text != "" ? (
+                        data.map((dog) => (
+                          <>
+                            {
+                              dog.reference_image_id == null ? (
+                                console.log("Invalid data for dog id: " + dog.id + " and name: " + dog.name)
+                              ) : (
+                                <>
+                                  <article key={dog.id} className='dog-card p-4 rounded relative'>
+                                    <div className="flex flex-col h-full">
+                                      <img
+                                        src={`https://cdn2.thedogapi.com/images/${dog.reference_image_id}.jpg`}
+                                        alt={dog.name}
+                                        className="rounded md:h-72 w-full object-cover"
+                                      />
+                                      <div className="flex-grow">
+                                        <h3 className='text-lg font-bold mt-4'>{dog.name}</h3>
+                                        <p>Life Span: {dog.life_span}</p>
+                                        <p>Origin: {dog.origin}</p>
+                                        <p>Bred: {dog.bred_for}</p>
+                                        <p>Temperament: {dog.temperament}</p>
+                                      </div>
+                                      <div className='flex justify-center mt-2'>
+                                        <form onSubmit={(e) => handleDogFavourite(e, dog, userEmail)}>
+                                          {sessionStorage.uEmail == null || sessionStorage.uEmail == "" ? null : <Button type='submit' size="small">{dog.isFavourited ? "Remove from Favourites" : "Add to Favourites"}</Button>}
+                                        </form>
+                                      </div>
+                                    </div>
+                                  </article>
+                                </>
+                              )
+                            }
+                          </>
+                        ))
+                      ) : (
+                        <>
+                          <p>You search for nothing! Press ENTER to search</p>
+                        </>
+                      )
+                      }
                     </>
                   )}
                 </div>
