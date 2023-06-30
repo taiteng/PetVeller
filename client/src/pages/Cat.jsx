@@ -22,7 +22,8 @@ function Cat() {
   const [allCats, setAllCats] = useState(null);
   const [searchName, setSearchName] = useState('');
   const [filteredCats, setFilteredCats] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isCatLoading, setIsCatLoading] = useState(false);
+  const [isFavLoading, setIsFavLoading] = useState(true);
 
   const handleSearch = (event) => {
     const searchValue = event.target.value;
@@ -40,7 +41,7 @@ function Cat() {
 
   const requestFavourites = async () => {
     try {
-      setIsLoading(true);
+      setIsFavLoading(true);
 
       axios.post('http://localhost:3001/getCatFav', { userEmail })
       .then(result => {
@@ -51,7 +52,7 @@ function Cat() {
     } catch (error) {
       console.error(error.message);
     } finally {
-      setIsLoading(false);
+      setIsFavLoading(false);
     }
   }
 
@@ -62,7 +63,7 @@ function Cat() {
     };
 
     try {
-      setIsLoading(true);
+      setIsCatLoading(true);
 
       const apiResponse = await fetch(query1, { urlHeaders });
       const catResult = await apiResponse.json();
@@ -78,13 +79,21 @@ function Cat() {
     } catch (error) {
       console.error(error.message);
     } finally {
-      setIsLoading(false);
+      setIsCatLoading(false);
     }
   };
 
   useEffect(() => {
     requestCats();
     requestFavourites();
+
+    // const delay = 2000;
+
+    // const timeoutId = setTimeout(requestCats, delay);
+
+    // return () => {
+    //   clearTimeout(timeoutId);
+    // };
   }, []);
 
   return (
@@ -138,15 +147,15 @@ function Cat() {
       </div>
       <Container>
         <Row className="justify-content-center g-4">
-          {isLoading ? (
+          {isFavLoading ? (
             <Spinner animation="grow" />
-          ) : userEmail === '' || userEmail === null ? (
+          ) : userEmail === '' || userEmail === null || userEmail === undefined ? (
             <p>User Not Found.</p>
           ) : favCats !== null ? (
             <>
               {favCats.map((fcat) => (
                 <Col key={fcat._id} sm={6} md={4} lg={3} className="p-2">
-                  <FavCatCard favCatCards={fcat} requestFavourites={requestFavourites} />
+                  <FavCatCard favCatCards={fcat} requestFavourites={requestFavourites} requestCats={requestCats} />
                 </Col>
               ))}
             </>
@@ -171,7 +180,7 @@ function Cat() {
       </div>
       <Container>
         <Row className="justify-content-center g-4">
-          {isLoading ? (
+          {isCatLoading ? (
             <Spinner animation="grow" />
           ) : filteredCats !== null ? (
             <>

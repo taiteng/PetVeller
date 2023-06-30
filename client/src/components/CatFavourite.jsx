@@ -7,7 +7,7 @@ import Typography from '@mui/material/Typography';
 import { CardActionArea } from '@mui/material';
 import axios from 'axios';
 
-const FavCatCard = ({ favCatCards, requestFavourites }) => {
+const FavCatCard = ({ favCatCards, requestFavourites, requestCats }) => {
 
     const userEmail = sessionStorage.uEmail;
     const catName = favCatCards.name;
@@ -19,6 +19,7 @@ const FavCatCard = ({ favCatCards, requestFavourites }) => {
             .then((result) => {
                 console.log(result);
                 requestFavourites();
+                requestCats();
             })
             .catch((err) => console.log(err));
         }

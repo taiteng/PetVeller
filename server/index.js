@@ -68,21 +68,16 @@ app.post('/getCatFav', (req, res) => {
 
 app.post('/dltCatFav', (req, res) => {
   const { userEmail, catName } = req.body;
-  catModel.find({ userEmail: userEmail })
+  catModel.findOne({ userEmail: userEmail, name: catName })
   .then(cat => {
       if(cat){
-        for (let i = 0; i < cat.length; i++) {
-          if(cat[i].name === catName){
-            catModel.deleteOne({ _id: cat[i]._id })
-              .then(() => {
-                res.json('Deleted Successfully');
-              })
-              .catch(error => {
-                res.json('Error occurred while deleting');
-              });
-            break;
-          }
-        }
+        catModel.deleteOne({ _id: cat._id })
+        .then(() => {
+          res.json('Deleted Successfully');
+        })
+        .catch(error => {
+          res.json('Error occurred while deleting');
+        });
       }
       else{
           res.json('Cat Not Found')
@@ -91,15 +86,11 @@ app.post('/dltCatFav', (req, res) => {
 })
 
 app.post('/isCatFav', (req, res) => {
-  const { userEmail, name } = req.body;
-  catModel.find({ userEmail: userEmail })
+  const { userEmail, catName } = req.body;
+  catModel.findOne({ userEmail: userEmail, name: catName })
   .then(cat => {
       if(cat){
-        for (let i = 0; i < cat.length; i++) {
-          if(cat[i].name === name){
-            res.json('Cat Exists')
-          }
-        }
+        res.json('Cat Exists');
       }
       else{
           res.json('User Not Found')
@@ -109,34 +100,10 @@ app.post('/isCatFav', (req, res) => {
 
 app.post('/addCatToFav', (req, res) => {
     const { userEmail, imgURL, imgWidth, imgHeight, imgReferenceID, name, description, lifeSpan, origin, temperament, wikipediaURL } = req.body;
-    catModel.findOne({ name: name })
+    catModel.findOne({ userEmail: userEmail, name: name })
     .then(cat => {
         if(cat){
-            if(cat.userEmail === userEmail){
-                res.json('Cat Exists');
-            }
-            else{
-                newCat = new catModel({
-                    userEmail: userEmail,
-                    imgURL: imgURL,
-                    imgWidth: imgWidth,
-                    imgHeight: imgHeight,
-                    imgReferenceID: imgReferenceID,
-                    name: name,
-                    description: description,
-                    lifeSpan: lifeSpan,
-                    origin: origin,
-                    temperament: temperament,
-                    wikipediaURL: wikipediaURL,
-                });
-            
-                newCat.save().then(success => {
-                    console.log('Success' + success);
-                    res.json('Saved Cat');
-                }).catch(error => {
-                    console.log('Error' + error);
-                });
-            }
+          res.json('Cat Exists');
         }
         else{
             newCat = new catModel({
