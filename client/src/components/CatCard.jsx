@@ -37,30 +37,18 @@ const CatCard = ({ catCards, requestFavourites }) => {
     else{
         const [catName, setCatName] = useState('');
         const [userEmail, setUserEmail] = useState('');
-        const [isCatFav, setIsCatFav] = useState(false);
+        const [isCatFav, setIsCatFav] = useState();
         const [isLoading, setIsLoading] = useState(false);
 
         useEffect(() => {
-            // const fetchIsCatFavourited = async () => {
-            //     try {
-            //         const result = await axios.post('http://localhost:3001/isCatFav', { userEmail, catName });
-            //         if (result.data === 'Cat Exists') {
-            //             console.log('Existed');
-            //             setIsCatFav('true');
-            //         } else {
-            //             console.log('No Fav');
-            //         }
-            //       } catch (error) {
-            //         console.error(error.message);
-            //       }
-
-            //       setIsLoading(false);
-            // };
-
-            // fetchIsCatFavourited();
+            fetchIsCatFavourited();
             fetchCatImg();
             setUserEmail(sessionStorage.uEmail);
             setCatName(catCards?.name);
+        }, []);
+
+        useEffect(() => {
+
         }, []);
     
         const [catImgURL, setCatImgURL] = useState('');
@@ -78,6 +66,37 @@ const CatCard = ({ catCards, requestFavourites }) => {
         const origin = catCards?.origin;
         const temperament = catCards?.temperament;
         const wikipediaURL = catCards?.wikipedia_url;
+
+        const fetchIsCatFavourited = async () => {
+            if (userEmail) {
+                setIsLoading(true);
+            
+                try {
+                    const result = await new Promise((resolve, reject) => {
+                        axios
+                          .post('http://localhost:3001/isCatFav', {
+                            userEmail,
+                            catName,
+                          })
+                          .then(resolve)
+                          .catch(reject);
+                      });
+            
+                  console.log(result);
+                  if (result.data === 'Cat Exists') {
+                    console.log('Existed');
+                    setIsCatFav(true);
+                  } else {
+                    console.log('No Fav');
+                    setIsCatFav(false);
+                  }
+                } catch (err) {
+                  console.log(err);
+                } finally {
+                  setIsLoading(false);
+                }
+            }
+        };
     
         const fetchCatImg = async () => {
             try {
@@ -146,7 +165,19 @@ const CatCard = ({ catCards, requestFavourites }) => {
                 </CardActionArea>
                 <CardActions disableSpacing sx={{ mt: "auto" }} className='flex justify-between'>
                     <form onSubmit={handleAddToDatabase}>
-                        {!userEmail || !isCatFav && <Button type='submit' size="small">Add to Favourite</Button>}
+                    {(!userEmail || isLoading) ? (
+                        <Button key={catCards._id} disabled size="small">
+                        Loading...
+                        </Button>
+                    ) : isCatFav ? (
+                        <Button key={catCards._id} disabled size="small">
+                        Added to Favourite
+                        </Button>
+                    ) : (
+                        <Button key={catCards._id} type="submit" size="small">
+                        Add to Favourite
+                        </Button>
+                    )}
                     </form>
                     <a href={`${catCards?.wikipedia_url}`}>
                         <Button size="small">Learn More</Button>

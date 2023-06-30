@@ -88,7 +88,7 @@ function Header() {
               <a href='/aboutus'>About Us</a>
             </li>
             <li className='hover:font-bold cursor-pointer'>
-              <a href='/'>Contact Us</a>
+              <a href='/contactus'>Contact Us</a>
             </li>
           </ul>
           <form onSubmit={handleSubmit} className='align-items-center'>
