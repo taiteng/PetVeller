@@ -8,7 +8,6 @@ import Login from './pages/Login'
 import Home from './pages/Home'
 import Admin from './pages/Admin'
 import Cat from './pages/Cat'
-import CatDetails from './pages/CatDetails'
 import Catfacts from './pages/Catfacts';
 import Dogfacts from './pages/Dogfacts';
 import ContactUs from './pages/ContactUs';
@@ -30,7 +29,7 @@ function App() {
         <Route path="/dog" element={<Dog/>}></Route>
         <Route path="/dogfacts" element={<Dogfacts/>}></Route>
         <Route path="/aboutus" element={<AboutUs/>}></Route>
-        <Route path="/catdetails" element={<CatDetails/>}></Route>
+    
         <Route path="/catfacts" element={<Catfacts/>}></Route>
         <Route path="/FavoritePage" element={<FavoritePage/>}></Route>
         <Route path="/contactus" element={<ContactUs/>}></Route>
