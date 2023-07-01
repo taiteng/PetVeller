@@ -16,6 +16,7 @@ import Dog from './pages/Dog';
 import AboutUs from './pages/AboutUs';
 import AdminCatFacts from './pages/AdminCatFacts';
 import AdminContact from './pages/AdminContact';
+import FavoritePage from './pages/FavoritePage';
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
         <Route path="/aboutus" element={<AboutUs/>}></Route>
         <Route path="/catdetails" element={<CatDetails/>}></Route>
         <Route path="/catfacts" element={<Catfacts/>}></Route>
+        <Route path="/FavoritePage" element={<FavoritePage/>}></Route>
         <Route path="/contactus" element={<ContactUs/>}></Route>
         <Route path="/admincatfacts" element={<AdminCatFacts/>}></Route>
         <Route path="/admincontact" element={<AdminContact/>}></Route>
