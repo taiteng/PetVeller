@@ -75,15 +75,25 @@ function FavoritePage() {
         <div style={favoritesContainerStyle}>
           {data.map((item) => (
             <div key={item._id} style={favoriteItemStyle}>
-              <h2>{item.title}</h2>
-              <p>{item.description}</p>
-              <br></br>
+              <a
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ textDecoration: 'none', color: 'inherit' }}
+              >
+                <h2 style={{ fontWeight: 'bold' }}>{item.title}</h2>
+                <p>{item.description}</p>
+              </a>
+              <br />
             </div>
           ))}
         </div>
       );
     }
   };
+  
+
+  
 
   return (
     <div style={containerStyle}>
