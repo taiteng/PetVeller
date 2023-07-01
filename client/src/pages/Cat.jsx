@@ -86,14 +86,6 @@ function Cat() {
   useEffect(() => {
     requestCats();
     requestFavourites();
-
-    // const delay = 2000;
-
-    // const timeoutId = setTimeout(requestCats, delay);
-
-    // return () => {
-    //   clearTimeout(timeoutId);
-    // };
   }, []);
 
   return (
@@ -186,7 +178,7 @@ function Cat() {
             <>
               {filteredCats.map((cat) => (
                 <Col key={cat.id} sm={6} md={4} lg={3} className="p-2">
-                  <CatCard catCards={cat} requestFavourites={requestFavourites} />
+                  <CatCard catCards={cat} requestFavourites={requestFavourites}  requestCats={requestCats} />
                 </Col>
               ))}
             </>
@@ -194,7 +186,7 @@ function Cat() {
             <>
               {allCats.map((cat) => (
                 <Col key={cat.id} sm={6} md={4} lg={3} className="p-2">
-                  <CatCard catCards={cat} />
+                  <CatCard catCards={cat} requestFavourites={requestFavourites}  requestCats={requestCats} />
                 </Col>
               ))}
             </>
