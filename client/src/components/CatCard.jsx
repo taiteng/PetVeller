@@ -8,8 +8,9 @@ import Typography from '@mui/material/Typography';
 import { CardActionArea } from '@mui/material';
 import axios from 'axios';
 import { Spinner } from "react-bootstrap";
+import CatButton from './CatButton';
 
-const CatCard = ({ catCards, requestFavourites }) => {
+const CatCard = ({ catCards, requestFavourites, requestCats }) => {
     if ((catCards?.wikipedia_url === null) || (catCards?.reference_image_id === null)) {
         return null;
     }
@@ -37,18 +38,12 @@ const CatCard = ({ catCards, requestFavourites }) => {
     else{
         const [catName, setCatName] = useState('');
         const [userEmail, setUserEmail] = useState('');
-        const [isCatFav, setIsCatFav] = useState();
-        const [isLoading, setIsLoading] = useState(false);
+        const [isLoading, setIsLoading] = useState(true);
 
         useEffect(() => {
-            fetchIsCatFavourited();
             fetchCatImg();
             setUserEmail(sessionStorage.uEmail);
             setCatName(catCards?.name);
-        }, []);
-
-        useEffect(() => {
-
         }, []);
     
         const [catImgURL, setCatImgURL] = useState('');
@@ -67,37 +62,6 @@ const CatCard = ({ catCards, requestFavourites }) => {
         const temperament = catCards?.temperament;
         const wikipediaURL = catCards?.wikipedia_url;
 
-        const fetchIsCatFavourited = async () => {
-            if (userEmail) {
-                setIsLoading(true);
-            
-                try {
-                    const result = await new Promise((resolve, reject) => {
-                        axios
-                          .post('http://localhost:3001/isCatFav', {
-                            userEmail,
-                            catName,
-                          })
-                          .then(resolve)
-                          .catch(reject);
-                      });
-            
-                  console.log(result);
-                  if (result.data === 'Cat Exists') {
-                    console.log('Existed');
-                    setIsCatFav(true);
-                  } else {
-                    console.log('No Fav');
-                    setIsCatFav(false);
-                  }
-                } catch (err) {
-                  console.log(err);
-                } finally {
-                  setIsLoading(false);
-                }
-            }
-        };
-    
         const fetchCatImg = async () => {
             try {
               const response = await fetch(`https://api.thecatapi.com/v1/images/${catImgID}`);
@@ -105,6 +69,8 @@ const CatCard = ({ catCards, requestFavourites }) => {
               setCatImgURL(data.url);
               setCatImgWidth(data.width);
               setCatImgHeight(data.height);
+
+              setIsLoading(false);
             } catch (error) {
               console.log('Error fetching cat image:', error);
             }
@@ -118,12 +84,11 @@ const CatCard = ({ catCards, requestFavourites }) => {
                     console.log(result);
                     if(result.data === 'Cat Exists'){
                         console.log('Existed');
-                        setIsCatFav(true);
                     }
                     else{
                         console.log('Saved')
-                        setIsCatFav(true);
                         requestFavourites();
+                        requestCats();
                     }
                 })
                 .catch((err) => console.log(err));
@@ -164,21 +129,7 @@ const CatCard = ({ catCards, requestFavourites }) => {
                     </CardContent>
                 </CardActionArea>
                 <CardActions disableSpacing sx={{ mt: "auto" }} className='flex justify-between'>
-                    <form onSubmit={handleAddToDatabase}>
-                    {(!userEmail || isLoading) ? (
-                        <Button key={catCards._id} disabled size="small">
-                        Loading...
-                        </Button>
-                    ) : isCatFav ? (
-                        <Button key={catCards._id} disabled size="small">
-                        Added to Favourite
-                        </Button>
-                    ) : (
-                        <Button key={catCards._id} type="submit" size="small">
-                        Add to Favourite
-                        </Button>
-                    )}
-                    </form>
+                    {userEmail && <CatButton userEmail={userEmail} catName={catName} handleAddToDatabase={handleAddToDatabase} />}
                     <a href={`${catCards?.wikipedia_url}`}>
                         <Button size="small">Learn More</Button>
                     </a>
