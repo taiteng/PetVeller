@@ -93,6 +93,9 @@ function Header() {
             <li className='hover:font-bold cursor-pointer'>
               <a href='/contactus'>Contact Us</a>
             </li>
+            <li className='hover:font-bold cursor-pointer'>
+              <a href='/settings'>Settings</a>
+            </li>
           </ul>
           <form onSubmit={handleSubmit} className='align-items-center'>
             <button className='bg-blue-500 hover:bg-blue-700 rounded-full text-white flex align-items-center gap-1'>

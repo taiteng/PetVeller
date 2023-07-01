@@ -16,6 +16,7 @@ import AboutUs from './pages/AboutUs';
 import AdminCatFacts from './pages/AdminCatFacts';
 import AdminContact from './pages/AdminContact';
 import FavoritePage from './pages/FavoritePage';
+import Settings from './pages/Settings';
 
 function App() {
   return (
@@ -29,7 +30,7 @@ function App() {
         <Route path="/dog" element={<Dog/>}></Route>
         <Route path="/dogfacts" element={<Dogfacts/>}></Route>
         <Route path="/aboutus" element={<AboutUs/>}></Route>
-    
+        <Route path="/settings" element={<Settings/>}></Route>
         <Route path="/catfacts" element={<Catfacts/>}></Route>
         <Route path="/FavoritePage" element={<FavoritePage/>}></Route>
         <Route path="/contactus" element={<ContactUs/>}></Route>

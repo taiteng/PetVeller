@@ -326,7 +326,6 @@ app.post('/deleteFavouriteDogs', (req, res) => {
   })
 })
 
-
 app.post('/favouriteNews', async (req, res) => {
   try {
     const { userEmail } = req.body;
@@ -338,7 +337,118 @@ app.post('/favouriteNews', async (req, res) => {
   }
 });
 
+app.post('/updateUsername', async (req, res) => {
+  const { email, newName, name } = req.body.userDetail;
+  userModel.findOne({ email: email, name: name })
+    .then(user => {
+      if (!user) {
+        res.status(409).json('Username already exists');
+      } else {
+        userModel.findOneAndUpdate({ email: email, name: name }, { name: newName }, { new: true })
+          .then(updatedUser => {
+            if (updatedUser) {
+              res.json("User Name Updated");
+            } else {
+              res.status(404).json('User Not Found');
+            }
+          })
+          .catch(error => {
+            console.log('Error updating username:', error);
+            res.status(500).json('Internal Server Error');
+          });
+      }
+    })
+    .catch(error => {
+      console.log('Error finding user:', error);
+      res.status(500).json('Internal Server Error');
+    });
+});
 
+app.post('/updatePassword', async (req, res) => {
+  const { email, pass, name } = req.body.userDetail;
+  userModel.findOne({ email: email, name: name })
+    .then(user => {
+      if (!user) {
+        res.status(409).json('User Not Found');
+      } else {
+        userModel.findOneAndUpdate({ email: email, name: name }, { password: pass }, { new: true })
+          .then(updatedUser => {
+            if (updatedUser) {
+              res.json("User Password Updated");
+            } else {
+              res.status(404).json('User Not Found');
+            }
+          })
+          .catch(error => {
+            console.log('Error updating password:', error);
+            res.status(500).json('Internal Server Error');
+          });
+      }
+    })
+    .catch(error => {
+      console.log('Error finding user:', error);
+      res.status(500).json('Internal Server Error');
+    });
+});
+
+app.post('/updateEmail', async (req, res) => {
+  const { email, newEmail, name } = req.body.userDetail;
+  userModel.findOne({ email: email, name: name })
+    .then(user => {
+      if (!user) {
+        res.status(409).json('User Not Found');
+      } else {
+        userModel.findOneAndUpdate({ email: email, name: name }, { email: newEmail }, { new: true })
+          .then(updatedUser => {
+            if (updatedUser) {
+              res.json("User Email Updated");
+            } else {
+              res.status(500).json('Internal Server Error');
+            }
+          })
+          .catch(error => {
+            console.log('Error updating email:', error);
+            res.status(500).json('Internal Server Error');
+          });
+      }
+    })
+    .catch(error => {
+      console.log('Error finding user:', error);
+      res.status(500).json('Internal Server Error');
+    });
+});
+
+// app.post('/terminateAccount', (req, res) => {
+//   const { email, name, pass } = req.body.userDetail;
+//   userModel.deleteOne({ email: email , name: name, password: pass})
+//   .then(user => {
+//       if(user){
+//           res.json("Account Terminated")
+//       }
+//       else{
+//           res.json('Failed to remove User')
+//       }
+//   })
+// })
+
+app.post('/terminateAccount', (req, res) => {
+  const { email, name, pass } = req.body.userDetail;
+  userModel.findOne({email: email , name: name, password: pass})
+  .then(user => {
+      if(user){
+        userModel.deleteOne({ email: email, name:name })
+        .then(() => {
+          res.json('Account Terminated');
+        })
+        .catch(error => {
+          res.json('Error occurred while terminating');
+        });
+      }
+      else{
+          res.json('User Not Found')
+      }
+  })
+})
 
 app.listen(3001, () => {
   console.log('Server is running')
