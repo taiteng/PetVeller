@@ -14,6 +14,9 @@ app.use(cors())
 
 const db = 'mongodb+srv://Whitesugar:1zNhtYOKTXYMTVS7@clusterdemo.qjs12rn.mongodb.net/PetVeller';
 
+
+
+
 mongoose.connect(db).then(() => {
     console.log('Connected to database');
 }).catch((e) => {
@@ -322,6 +325,20 @@ app.post('/deleteFavouriteDogs', (req, res) => {
       }
   })
 })
+
+
+app.post('/favouriteNews', async (req, res) => {
+  try {
+    const { userEmail } = req.body;
+    const favouriteData = await newsModel.find({ userEmail });
+    res.json(favouriteData);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
 
 app.listen(3001, () => {
   console.log('Server is running')

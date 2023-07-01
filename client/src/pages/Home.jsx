@@ -38,7 +38,13 @@ function Home() {
       setUserEmail(storedEmail);
     }
 
-    fetchAnimalNews();
+    // Check if there are favorite articles in local storage
+      const storedArticles = localStorage.getItem('favoriteArticles');
+      if (storedArticles) {
+        setNews(JSON.parse(storedArticles));
+      } else {
+        fetchAnimalNews();
+      }
   }, []);
 
 
@@ -59,12 +65,7 @@ function Home() {
       const data = await response.json();
       setNews(data.articles);
 
-      if(sessionStorage.uEmail === ''){
-
-      }
-      else{
-        
-      }
+     
 
 
     } catch (error) {
@@ -133,6 +134,10 @@ function Home() {
         item.title === title ? { ...item, favorite: !item.favorite } : item
       );
       setNews(updatedNews);
+
+       // Store the updated favorite status in local storage
+    localStorage.setItem('favoriteArticles', JSON.stringify(updatedNews));
+
     } catch (error) {
       setConfirmationMessage('Error toggling favorite');
       setShowConfirmation(true);
