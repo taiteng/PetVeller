@@ -18,7 +18,30 @@ function Dog() {
       setDataLoading(true)
       const dogRes = await fetch("https://api.thedogapi.com/v1/breeds");
       const dogData = await dogRes.json();
-      setData(dogData);
+      
+
+      if (userEmail) {
+        const favouriteRes = await axios.post(
+          "http://localhost:3001/favouriteDogs",
+          { userEmail: sessionStorage.uEmail }
+        );
+        const favouriteData = favouriteRes.data;
+        console.log(favouriteData);
+  
+        const updatedData = await dogData.map((dog) => {
+          const isFavourited = favouriteData.some(
+            (favouriteDogData) => favouriteDogData.id === dog.id
+          );
+          return { ...dog, isFavourited };
+        });
+  
+        setData(updatedData);
+        console.log("Updated data" + updatedData)
+      }else{
+        setData(dogData);
+        console.log("Dog Data:", dogData);
+      }
+      
     } catch (error) {
       console.log(error);
     } finally {
@@ -37,6 +60,7 @@ function Dog() {
         const favouriteData = favouriteRes.data;
         setData2(favouriteData);
         setDataLoading(false);
+        console.log("Favourite Dog Data:", favouriteData);
       }
     } catch (error) {
       console.log(error);
@@ -49,11 +73,13 @@ function Dog() {
     if (sessionStorage != null && sessionStorage != "") {
       setUserEmail(sessionStorage.uEmail);
     }
-
+  
     setSearched(false);
-    fetchFavouriteDogData()
+  
     fetchDogData();
+    fetchFavouriteDogData();
   }, [userEmail]);
+  
 
   const searchForDog = async () => {
     try {
@@ -92,12 +118,12 @@ function Dog() {
     const { id, name, bred_for, life_span, temperament, origin, image } = dog;
     let imageURL = ""
 
-    if(!searched){
-       imageURL = image.url
-    }else{
-       imageURL = `https://cdn2.thedogapi.com/images/${dog.reference_image_id}.jpg`
+    if (!searched) {
+      imageURL = image.url
+    } else {
+      imageURL = `https://cdn2.thedogapi.com/images/${dog.reference_image_id}.jpg`
     }
-    
+
     const dogData = {
       userEmail: sessionStorage.uEmail,
       id,
@@ -115,9 +141,23 @@ function Dog() {
           console.log(result);
           if (result.data === "Dog Favourited") {
             console.log('Dog is added to favourite collection');
+
+            setData((prevData) => {
+              const updatedData = prevData.map((dog) =>
+                dog.id === id ? { ...dog, isFavourited: true } : dog
+              );
+              return updatedData;
+            });
           }
           else {
             console.log('Dog Unfavourited')
+
+            setData((prevData) => {
+              const updatedData = prevData.map((dog) =>
+                dog.id === id ? { ...dog, isFavourited: false } : dog
+              );
+              return updatedData;
+            });
           }
         })
         .catch((err) => console.log(err));
@@ -125,11 +165,14 @@ function Dog() {
     else {
       console.log('User not logged in.')
     }
-
     await new Promise(resolve => setTimeout(resolve, 50));
 
-    await fetchFavouriteDogData()
-    await fetchDogData();
+    if (searched) {
+      await fetchFavouriteDogData()
+    } else {
+      await fetchFavouriteDogData()
+      await fetchDogData()
+    }
   }
 
   const handleDogUnfavourite = async (e, dog) => {
@@ -153,6 +196,13 @@ function Dog() {
           console.log(result);
           if (result.data === "Dog Unfavourited") {
             console.log('Dog is removed from favourite collection');
+
+            setData((prevData) => {
+              const updatedData = prevData.map((dog) =>
+                dog.id === id ? { ...dog, isFavourited: false } : dog
+              );
+              return updatedData;
+            });
           }
         })
         .catch((err) => console.log(err));
@@ -162,12 +212,12 @@ function Dog() {
     }
 
     await new Promise(resolve => setTimeout(resolve, 50));
-    
-    if(searched){
+
+    if (searched) {
       await fetchFavouriteDogData()
-    }else{
+    } else {
       await fetchFavouriteDogData()
-      await fetchDogData();
+      await fetchDogData()
     }
   }
 
