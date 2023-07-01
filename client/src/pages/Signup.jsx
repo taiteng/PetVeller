@@ -116,19 +116,6 @@ function Signup() {
                 <div className="text-danger mb-2">{errors.password}</div>
               )}
 
-              <div className="form-check d-flex justify-content-center mb-5">
-                <input
-                  className="form-check-input me-2"
-                  type="checkbox"
-                  value=""
-                  id="tnc"
-                  name="tnc"
-                />
-                <label className="form-check-label" htmlFor="tnc">
-                  I agree to all statements in <a href="#!">Terms of Service</a>
-                </label>
-              </div>
-
               <div className="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
                 <button
                   type="submit"
