@@ -29,17 +29,20 @@ function Settings() {
         if (username.trim() === "") {
             formIsValid = false;
             errors.username = 'Username is required';
+            setUsername(sessionStorage.uName)
         }
 
         if (email.trim() === "") {
             formIsValid = false;
             errors.email = 'Email is required';
             setEmailError('Email is required');
+            setEmail(sessionStorage.uEmail)
         }
 
         if (password.trim() === "") {
             formIsValid = false;
             errors.password = 'Password is required';
+            setPassword(sessionStorage.uPass)
         }
 
         setErrors(errors);
@@ -320,11 +323,12 @@ function Settings() {
                                         className="field-value"
                                         name="username"
                                     />
-                                    {errors.username && <div className="error-message">{errors.username}</div>}
+                                    
                                     <button type="submit" className="edit-button">
                                         Save
                                     </button>
                                 </form>
+                                
                             </>
                         ) : (
                             <>
@@ -332,6 +336,7 @@ function Settings() {
                                 <button className="edit-button" onClick={handleEditUsername}>
                                     Edit
                                 </button>
+                                {errors.username && <div className="error-message">{errors.username}</div>}
                             </>
                         )}
                     </div>
@@ -347,11 +352,12 @@ function Settings() {
                                         className="field-value"
                                         name="password"
                                     />
-                                    {errors.password && <div className="error-message">{errors.password}</div>}
+                                    
                                     <button type="submit" className="edit-button">
                                         Save
                                     </button>
                                 </form>
+                                
                             </>
                         ) : (
                             <>
@@ -359,6 +365,7 @@ function Settings() {
                                 <button className="edit-button" onClick={handleEditPassword}>
                                     Edit
                                 </button>
+                                {errors.password && <div className="error-message">{errors.password}</div>}
                             </>
                         )}
                     </div>
