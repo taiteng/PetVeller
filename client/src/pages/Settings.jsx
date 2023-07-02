@@ -387,8 +387,7 @@ function Settings() {
                         </button>
                     </div>
                 </div>
-                <BackToTop />
-                <Footer />
+                
                 <Dialog open={isModalOpen} onClose={handleCloseModal}>
                     <DialogTitle>Terminate Account</DialogTitle>
                     <DialogContent>
@@ -403,6 +402,8 @@ function Settings() {
                         </Button>
                     </DialogActions>
                 </Dialog>
+                <BackToTop />
+                <Footer />
             </div>
         </>
     );
