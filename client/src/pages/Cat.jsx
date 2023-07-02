@@ -88,7 +88,6 @@ function Cat() {
       const catResult = await apiResponse.json();
 
       const filteredResult = catResult.filter((cat) => cat !== null );
-
       console.log("Cats result", filteredResult);
 
       setCats(filteredResult);
