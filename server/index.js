@@ -14,9 +14,6 @@ app.use(cors())
 
 const db = 'mongodb+srv://Whitesugar:1zNhtYOKTXYMTVS7@clusterdemo.qjs12rn.mongodb.net/PetVeller';
 
-
-
-
 mongoose.connect(db).then(() => {
     console.log('Connected to database');
 }).catch((e) => {
