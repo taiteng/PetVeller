@@ -79,7 +79,8 @@ const CatCard = ({ catCards, requestFavourites, requestCats }) => {
         const handleAddToDatabase = (e) => {
             e.preventDefault();
             if(userEmail){
-                axios.post('http://localhost:3001/addCatToFav', { userEmail, imgURL, imgWidth, imgHeight, imgReferenceID, name, description, lifeSpan, origin, temperament, wikipediaURL })
+                axios.post('http://localhost:3001/addCatToFav', { userEmail, imgURL, imgWidth, imgHeight, imgReferenceID, 
+                name, description, lifeSpan, origin, temperament, wikipediaURL })
                 .then((result) => {
                     console.log(result);
                     if(result.data === 'Cat Exists'){
@@ -106,7 +107,8 @@ const CatCard = ({ catCards, requestFavourites, requestCats }) => {
                     <span className="visually-hidden">Loading...</span>
                 </Spinner>
             ) : (
-            <Card sx={{ maxWidth: 350, height: '100%', display: "flex", flexDirection: "column", }} style={{ background: 'linear-gradient(to bottom right, #FBE8E8, #FCC2C2)', borderRadius: 25 }}>
+            <Card sx={{ maxWidth: 350, height: '100%', display: "flex", flexDirection: "column", }} 
+            style={{ background: 'linear-gradient(to bottom right, #FBE8E8, #FCC2C2)', borderRadius: 25 }}>
                 <CardActionArea>
                     <CardMedia
                         sx={{ height: 200 }}
