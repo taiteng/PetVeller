@@ -68,14 +68,8 @@ function Signup() {
               <div className="d-flex flex-row align-items-center mb-4">
                 <i className="fas fa-user fa-lg me-3"></i>
                 <div className="form-outline flex-fill mb-0">
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    placeholder="Your Name"
-                    className="form-control form-control-lg"
-                    onChange={(e) => setName(e.target.value)}
-                  />
+                  <input type="text" id="name" name="name" placeholder="Your Name" className="form-control form-control-lg"
+                    onChange={(e) => setName(e.target.value)} />
                 </div>
               </div>
               {errors.name && (
@@ -85,14 +79,8 @@ function Signup() {
               <div className="d-flex flex-row align-items-center mb-4">
                 <i className="fas fa-envelope fa-lg me-3"></i>
                 <div className="form-outline flex-fill mb-0">
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    placeholder="Your Email"
-                    className="form-control form-control-lg"
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
+                  <input type="email" id="email" name="email" placeholder="Your Email" className="form-control form-control-lg"
+                    onChange={(e) => setEmail(e.target.value)} />
                 </div>
               </div>
               {errors.email && (
@@ -102,14 +90,8 @@ function Signup() {
               <div className="d-flex flex-row align-items-center mb-4">
                 <i className="fas fa-key fa-lg me-3"></i>
                 <div className="form-outline flex-fill mb-0">
-                  <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    placeholder="Password"
-                    className="form-control form-control-lg"
-                    onChange={(e) => setPassword(e.target.value)}
-                  />
+                  <input type="password" id="password" name="password" placeholder="Password" className="form-control form-control-lg"
+                    onChange={(e) => setPassword(e.target.value)} />
                 </div>
               </div>
               {errors.password && (
@@ -117,10 +99,7 @@ function Signup() {
               )}
 
               <div className="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
-                <button
-                  type="submit"
-                  className="btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                >
+                <button type="submit" className="btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                   Register
                 </button>
               </div>

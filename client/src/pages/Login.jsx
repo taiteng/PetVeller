@@ -3,35 +3,57 @@ import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-//import ReCAPTCHA from "react-google-recaptcha"
 
 function Login() {
 
     const [email, setEmail] = useState()
     const [password, setPassword] = useState()
+    const [errors, setErrors] = useState({})
     const navigate = useNavigate()
-    const captchaRef = useRef(null)
-    const REACT_APP_SITE_KEY = "6LePOK0mAAAAAHl94QVuJ_X0iiPs-q0Wx4flY4DB"
+
+    const validateForm = () => {
+        let formIsValid = true;
+        const errors = {};
+    
+        if (!email) {
+          formIsValid = false;
+          errors.email = 'Email is required';
+        } else if (!/\S+@\S+\.\S+/.test(email)) {
+          formIsValid = false;
+          errors.email = 'Email is invalid';
+        }
+    
+        if (!password) {
+          formIsValid = false;
+          errors.password = 'Password is required';
+        }
+    
+        setErrors(errors);
+        return formIsValid;
+      };
 
     const handleSubmit = (e) => {
-        e.preventDefault()
-        axios.post('http://localhost:3001/login', {email, password})
-        .then(result => {
-            console.log(result);
-            if(result.data.email === 'admin@gmail.com'){
-                navigate('/admin');
-            }
-            else if(result.data === 'The Password Is Incorrect'){
+        e.preventDefault();
 
-            }
-            else{
-                sessionStorage.uEmail = result.data.email;
-                sessionStorage.uName = result.data.name;
-                sessionStorage.uPass = result.data.password;
-                navigate('/');
-            }
-        })
-        .catch(err => console.log(err))
+        if(validateForm()){
+            axios.post('http://localhost:3001/login', {email, password})
+            .then(result => {
+                console.log(result);
+                if(result.data.email === 'admin@gmail.com'){
+                    navigate('/admin');
+                }
+                else if(result.data === 'The Password Is Incorrect'){
+
+                }
+                else{
+                    sessionStorage.uEmail = result.data.email;
+                    sessionStorage.uName = result.data.name;
+                    sessionStorage.uPass = result.data.password;
+                    navigate('/');
+                }
+            })
+            .catch(err => console.log(err))
+        }
     }
     
 
@@ -53,6 +75,9 @@ function Login() {
                                     onChange={(e) => setEmail(e.target.value)}/>
                                 </div>
                             </div>
+                            {errors.email && (
+                                <div className="text-danger mb-2">{errors.email}</div>
+                            )}
 
                             <div className="d-flex flex-row align-items-center mb-4">
                                 <i className="fas fa-key fa-lg me-3 fa-fw"></i>
@@ -61,14 +86,13 @@ function Login() {
                                     onChange={(e) => setPassword(e.target.value)}/>
                                 </div>
                             </div>
+                            {errors.password && (
+                                <div className="text-danger mb-2">{errors.password}</div>
+                            )}
 
                             <div className="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
                                 <button type="submit" className="btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Login</button>
                             </div>
-
-                            { /* <ReCAPTCHA
-                            sitekey = {REACT_APP_SITE_KEY}
-                            /> */ }
 
                             <p className="text-center text-muted mt-5 mb-0">Don't Have An Account Yet? <a href="/register"
                             className="fw-bold text-body"><u>Register here</u></a></p>
