@@ -20,6 +20,7 @@ function Settings() {
     const [isModalOpen, setModalOpen] = useState(false);
     const [errors, setErrors] = useState({});
     const navigate = useNavigate();
+    const [emailError, setEmailError] = useState('');
 
     const validateForm = () => {
         let formIsValid = true;
@@ -33,6 +34,7 @@ function Settings() {
         if (email.trim() === "") {
             formIsValid = false;
             errors.email = 'Email is required';
+            setEmailError('Email is required');
         }
 
         if (password.trim() === "") {
@@ -138,15 +140,25 @@ function Settings() {
                 newEmail: updatedEmail,
                 name: sessionStorage.uName
             };
-
-
             axios.post('http://localhost:3001/updateEmail', { userDetail })
                 .then((result) => {
                     console.log(result);
                     if (result.data === "User Email Updated") {
+
                         setEmail(updatedEmail);
                         sessionStorage.uEmail = updatedEmail;
                         console.log('User Email Updated');
+                        setEmailError('');
+                    } else if (result.data === "Email has been taken") {
+                        console.log(email)
+                        setEmail(sessionStorage.uEmail)
+                        console.log(email)
+                        setEmailError('Email has been taken. Please use a different email.');
+
+                    }else if(result.data === "Email is the same with your old email"){
+                        console.log(email)
+                        setEmail(sessionStorage.uEmail)
+                        setEmailError('Email is the same with your old email. Please use a different email.');
                     }
                     else {
                         console.log('User Not Found')
@@ -166,14 +178,14 @@ function Settings() {
         setModalOpen(false);
     };
 
-    const handleConfirmTerminate = () => {
+    const handleConfirmTerminate = async () => {
         const userDetail = {
             email: sessionStorage.uEmail,
             pass: sessionStorage.uPass,
             name: sessionStorage.uName
         };
 
-        axios.post('http://localhost:3001/terminateAccount', { userDetail })
+        await axios.post('http://localhost:3001/terminateAccount', { userDetail })
             .then((result) => {
                 console.log(result);
                 if (result.data === "Account Terminated") {
@@ -194,14 +206,14 @@ function Settings() {
         setUsername(undefined);
         setEmail(undefined);
         navigate('/');
-      };
-    
-      const removeUserSession = () => {
+    };
+
+    const removeUserSession = () => {
         sessionStorage.uEmail = '';
         sessionStorage.uName = '';
         sessionStorage.uPass = '';
         console.log('User Removed');
-      };
+    };
 
     return (
         <>
@@ -362,18 +374,21 @@ function Settings() {
                                         className="field-value"
                                         name="email"
                                     />
-                                    {errors.email && <div className="error-message">{errors.email}</div>}
                                     <button type="submit" className="edit-button">
                                         Save
                                     </button>
                                 </form>
+                                {errors.email && <div className="error-message">{errors.email}</div>}
                             </>
                         ) : (
                             <>
                                 <div className="field-value">{email}</div>
-                                <button className="edit-button" onClick={handleEditEmail}>
-                                    Edit
-                                </button>
+                                <div>
+                                    <button className="edit-button" onClick={handleEditEmail}>
+                                        Edit
+                                    </button>
+                                </div>
+                                {emailError && <div className="error-message">{emailError}</div>}
                             </>
                         )}
                     </div>
@@ -387,7 +402,8 @@ function Settings() {
                         </button>
                     </div>
                 </div>
-                
+                <BackToTop />
+                <Footer />
                 <Dialog open={isModalOpen} onClose={handleCloseModal}>
                     <DialogTitle>Terminate Account</DialogTitle>
                     <DialogContent>
@@ -402,8 +418,6 @@ function Settings() {
                         </Button>
                     </DialogActions>
                 </Dialog>
-                <BackToTop />
-                <Footer />
             </div>
         </>
     );

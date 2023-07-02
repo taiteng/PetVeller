@@ -344,7 +344,7 @@ app.post('/updateUsername', async (req, res) => {
         userModel.findOneAndUpdate({ email: email, name: name }, { name: newName }, { new: true })
           .then(updatedUser => {
             if (updatedUser) {
-              res.json("User Name Updated");
+              res.status(200).json("User Name Updated");
             } else {
               res.status(404).json('User Not Found');
             }
@@ -371,7 +371,7 @@ app.post('/updatePassword', async (req, res) => {
         userModel.findOneAndUpdate({ email: email, name: name }, { password: pass }, { new: true })
           .then(updatedUser => {
             if (updatedUser) {
-              res.json("User Password Updated");
+              res.status(200).json("User Passowrd Updated");
             } else {
               res.status(404).json('User Not Found');
             }
@@ -394,17 +394,33 @@ app.post('/updateEmail', async (req, res) => {
     .then(user => {
       if (!user) {
         res.status(409).json('User Not Found');
-      } else {
-        userModel.findOneAndUpdate({ email: email, name: name }, { email: newEmail }, { new: true })
-          .then(updatedUser => {
-            if (updatedUser) {
-              res.json("User Email Updated");
+      }else {
+        userModel.findOne({ email: newEmail })
+          .then(existingUser => {
+            if (existingUser) {
+              if(email == newEmail){
+                res.json('Email is the same with your old email');
+              }else{
+                res.json('Email has been taken');
+              }
+              
             } else {
-              res.status(500).json('Internal Server Error');
+              userModel.findOneAndUpdate({ email: email, name: name }, { email: newEmail }, { new: true })
+                .then(updatedUser => {
+                  if (updatedUser) {
+                    res.status(200).json("User Email Updated");
+                  } else {
+                    res.status(500).json('Internal Server Error');
+                  }
+                })
+                .catch(error => {
+                  console.log('Error updating email:', error);
+                  res.status(500).json('Internal Server Error');
+                });
             }
           })
           .catch(error => {
-            console.log('Error updating email:', error);
+            console.log('Error finding user:', error);
             res.status(500).json('Internal Server Error');
           });
       }
@@ -414,19 +430,6 @@ app.post('/updateEmail', async (req, res) => {
       res.status(500).json('Internal Server Error');
     });
 });
-
-// app.post('/terminateAccount', (req, res) => {
-//   const { email, name, pass } = req.body.userDetail;
-//   userModel.deleteOne({ email: email , name: name, password: pass})
-//   .then(user => {
-//       if(user){
-//           res.json("Account Terminated")
-//       }
-//       else{
-//           res.json('Failed to remove User')
-//       }
-//   })
-// })
 
 app.post('/terminateAccount', (req, res) => {
   const { email, name, pass } = req.body.userDetail;
