@@ -14,9 +14,6 @@ function Cat() {
   const APIURL = 'https://api.thecatapi.com/v1/';
   const APIKey = 'live_4fvlmhHlhugFEhoygx7MssvoLDt3xmRUtTElLjS14d8RB2y1UzUQ2PLTmhrUTnSP';
 
-  const query1 = `${APIURL}breeds`;
-  const query2 = `${APIURL}breeds?&limit=${maximumCatsPerPage}&page=${catPage}`;
-
   const [favCats, setFavCats] = useState(null);
   const [cats, setCats] = useState(null);
   const [allCats, setAllCats] = useState(null);
@@ -25,16 +22,43 @@ function Cat() {
   const [isCatLoading, setIsCatLoading] = useState(false);
   const [isFavLoading, setIsFavLoading] = useState(true);
 
-  const handleSearch = (event) => {
+  const urlHeaders = {
+    "Content-Type": "application/json",
+    "x-api-key": APIKey,
+  };
+
+  const query1 = `${APIURL}breeds`;
+  const query2 = `${APIURL}breeds?&limit=${maximumCatsPerPage}&page=${catPage}`;
+
+  const handleSearch = async (event) => {
+    event.preventDefault();
     const searchValue = event.target.value;
-    setSearchName(searchValue);
+    const query3 = `${APIURL}breeds/search?q=${searchValue}`;
 
     if (searchValue.trim() !== '') {
-      const filteredCats = cats.filter((cat) =>
-        cat.name.toLowerCase().includes(searchValue.toLowerCase())
-      );
-      setFilteredCats(filteredCats);
+      setSearchName(searchValue);
+      
+      try {
+        setIsCatLoading(true);
+  
+        const apiRes = await fetch(query3, { urlHeaders });
+        const searchCatResult = await apiRes.json();
+  
+        const filteredSearchResult = searchCatResult.filter((cat) => cat !== null );
+        const filteredCats = filteredSearchResult.filter((cat) =>
+          cat.name.toLowerCase().includes(searchName.toLowerCase())
+        );
+  
+        console.log("Searched Cats result", filteredCats);
+
+        setFilteredCats(filteredCats);
+      } catch (error) {
+        console.error(error.message);
+      } finally {
+        setIsCatLoading(false);
+      }
     } else {
+      setSearchName('');
       setFilteredCats(null);
     }
   };
@@ -57,25 +81,19 @@ function Cat() {
   }
 
   const requestCats = async () => {
-    const urlHeaders = {
-      "Content-Type": "application/json",
-      "x-api-key": APIKey,
-    };
-
     try {
       setIsCatLoading(true);
 
       const apiResponse = await fetch(query1, { urlHeaders });
       const catResult = await apiResponse.json();
 
-      // Filter out null data from the response
       const filteredResult = catResult.filter((cat) => cat !== null );
 
       console.log("Cats result", filteredResult);
 
       setCats(filteredResult);
       setAllCats(filteredResult);
-      setFilteredCats(filteredResult);
+      // setFilteredCats(filteredResult);
     } catch (error) {
       console.error(error.message);
     } finally {
