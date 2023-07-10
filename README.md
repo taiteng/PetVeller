@@ -19,9 +19,6 @@ News : https://newsapi.org/ <br>
 
 
 ## Videocast
-Youtube link: 
+Youtube link: https://youtu.be/FbjNt77Upe4
 
 
-## Documentation 
-Report link :
-Power Point : 
