@@ -116,7 +116,7 @@ function Dog() {
   const handleDogFavourite = async (e, dog) => {
     e.preventDefault();
     const { id, name, bred_for, life_span, temperament, origin, image } = dog;
-    let imageURL = ""
+    let imageURL = "";
 
     if (!searched) {
       imageURL = image.url

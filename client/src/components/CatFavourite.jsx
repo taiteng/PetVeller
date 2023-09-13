@@ -30,7 +30,7 @@ const FavCatCard = ({ favCatCards, requestFavourites, requestCats }) => {
 
     return (
         <Card sx={{ maxWidth: 350, height: '100%', display: "flex", flexDirection: "column", }} 
-        style={{ background: 'linear-gradient(to bottom right, #FBE8E8, #FCC2C2)', borderRadius: 25 }}>
+    style={{ background: 'linear-gradient(to bottom right, #FBE8E8, #FCC2C2)', borderRadius: 25 }}>
             <CardActionArea>
                 <CardMedia
                     sx={{ height: 200 }}
