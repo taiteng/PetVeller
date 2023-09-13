@@ -9,6 +9,7 @@ function Login() {
     const [email, setEmail] = useState()
     const [password, setPassword] = useState()
     const [errors, setErrors] = useState({})
+    const [showConfirmation, setShowConfirmation] = useState(false)
     const navigate = useNavigate()
 
     const validateForm = () => {
@@ -43,7 +44,10 @@ function Login() {
                     navigate('/admin');
                 }
                 else if(result.data === 'The Password Is Incorrect'){
-
+                    setShowConfirmation(true);
+                }
+                else if(result.data === 'User Not Found'){
+                    setShowConfirmation(true);
                 }
                 else{
                     sessionStorage.uEmail = result.data.email;
@@ -101,6 +105,19 @@ function Login() {
                     </form>
                 </div>
             </div>
+            {showConfirmation && (
+            <div className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-4 rounded shadow'>
+                <p>Incorrect Email or Password</p>
+                <div className='flex justify-end mt-4'>
+                <button
+                    className='px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400'
+                    onClick={() => setShowConfirmation(false)}
+                >
+                    OK
+                </button>
+                </div>
+            </div>
+            )}
             <Footer/>
         </div>
         </>

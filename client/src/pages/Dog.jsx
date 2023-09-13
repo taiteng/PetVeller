@@ -61,6 +61,10 @@ function Dog() {
         setData2(favouriteData);
         setDataLoading(false);
         console.log("Favourite Dog Data:", favouriteData);
+
+        if (data2.length === 0) {
+          await fetchFavouriteDogData();
+        }
       }
     } catch (error) {
       console.log(error);
