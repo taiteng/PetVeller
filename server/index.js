@@ -39,14 +39,14 @@ app.post('/login', (req, res) => {
 })
 
 app.post('/register', (req, res) => {
-    const { name, email, password } = req.body;
+    const { name, email, password, role } = req.body;
     userModel.findOne({ email: email })
     .then(user => {
         if(user){
             res.json('User Exists')
         }
         else{
-            const newUser = new userModel({ name, email, password });
+            const newUser = new userModel({ name, email, password, role });
             const saveUser = newUser.save();
             res.json(saveUser);
         }

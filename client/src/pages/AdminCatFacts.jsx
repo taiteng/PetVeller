@@ -9,6 +9,8 @@ function AdminCatFacts() {
   const [err, setErr] = useState('');
   const [facts, setFacts] = useState([]);
   const [catFacts, setCatFacts] = useState([]);
+  
+  const userRole = sessionStorage.getItem('uRole');
 
   useEffect(() => {
     fetchCatFacts();
@@ -105,6 +107,15 @@ function AdminCatFacts() {
         console.error('Error saving cat facts:', error);
       });
   };
+
+
+  if (userRole !== 'admin') {
+    return(
+<div>
+  Access denied
+</div>
+    )
+  }
 
   return (
     <div style={{ background: 'linear-gradient(to bottom right, #A6BCE8, #FFC0C0)' }}>
