@@ -1,12 +1,62 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 import AdminHeader from '../components/AdminHeader';
 
-function Admin(){
-    return(
-        <div>
-            <AdminHeader/>
-        </div>
-    )
+function Admin() {
+  const [logMessage, setLogMessage] = useState('');
+
+  const userRole = sessionStorage.getItem('uRole');
+  const userName = sessionStorage.getItem('uName');
+  const userEmail = sessionStorage.getItem('uEmail');
+  const currentTime = new Date().toLocaleString();
+
+  useEffect(() => {
+    async function sendLogMessage() {
+      if (userRole !== 'admin') {
+        let message = '';
+        if (userRole === '') {
+          message = `An anonymous is trying to access the admin page at ${currentTime}. Access denied.`;
+        } else {
+          message = `${userName} (${userEmail}) is trying to access the admin page at ${currentTime}. Access denied.`;
+        }
+
+        setLogMessage(message);
+
+        try {
+          const response = await axios.post('http://localhost:3001/save-log', { logContent: message });
+          console.log('Log message saved to the database:', response.data);
+        } catch (error) {
+          console.error('Error saving log message to the database:', error);
+        }
+      }
+    }
+
+    sendLogMessage();
+  }, []);
+
+  if (userRole !== 'admin') {
+    return (
+      <div style={{
+        background: '#FFCCCC',
+        padding: '20px',
+        margin: '20px',
+        borderRadius: '5px',
+        textAlign: 'center',
+        color: '#FF0000',
+        fontWeight: 'bold',
+      }}>
+        Access denied
+        <br />
+        <a href='/' style={{ color: 'blue', textDecoration: 'underline' }}>Back to Home Page</a>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <AdminHeader />
+    </div>
+  );
 }
 
 export default Admin;

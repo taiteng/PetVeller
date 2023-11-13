@@ -3,11 +3,37 @@ import axios from 'axios';
 import AdminHeader from '../components/AdminHeader';
 
 function AdminContact() {
-    const handleEmailClick = (email) => {
-        const mailtoLink = `mailto:${email}`;
-        window.location.href = mailtoLink;
-      };
   const [contacts, setContacts] = useState([]);
+  const [logMessage, setLogMessage] = useState('');
+
+  const userRole = sessionStorage.getItem('uRole');
+  const userName = sessionStorage.getItem('uName');
+  const userEmail = sessionStorage.getItem('uEmail');
+  const currentTime = new Date().toLocaleString();
+
+  useEffect(() => {
+    async function sendLogMessage() {
+      if (userRole !== 'admin') {
+        let message = '';
+        if (userRole === '') {
+          message = `An anonymous is trying to access the adminContact page at ${currentTime}. Access denied.`;
+        } else {
+          message = `${userName} (${userEmail}) is trying to access the adminContact page at ${currentTime}. Access denied.`;
+        }
+
+        setLogMessage(message);
+
+        try {
+          const response = await axios.post('http://localhost:3001/save-log', { logContent: message });
+          console.log('Log message saved to the database:', response.data);
+        } catch (error) {
+          console.error('Error saving log message to the database:', error);
+        }
+      }
+    }
+
+    sendLogMessage();
+  }, []);
 
   useEffect(() => {
     fetchContacts();
@@ -22,28 +48,49 @@ function AdminContact() {
     }
   };
 
+  const handleEmailClick = (email) => {
+    const mailtoLink = `mailto:${email}`;
+    window.location.href = mailtoLink;
+  };
+
+  if (userRole !== 'admin') {
+    return (
+      <div style={{
+        background: '#FFCCCC',
+        padding: '20px',
+        margin: '20px',
+        borderRadius: '5px',
+        textAlign: 'center',
+        color: '#FF0000',
+        fontWeight: 'bold',
+      }}>
+        Access denied
+        <br />
+        <a href='/' style={{ color: 'blue', textDecoration: 'underline' }}>Back to Home Page</a>
+      </div>
+    );
+  }
+
   return (
     <div>
       <AdminHeader />
-        <center>
-      <div className="contact-list">
-        {contacts.map((contact) => (
-          <div className="card" key={contact._id} >
-            <h2>{contact.firstName} {contact.surname}</h2>
-            <p
+      <center>
+        <div className="contact-list">
+          {contacts.map((contact) => (
+            <div className="card" key={contact._id} >
+              <h2>{contact.firstName} {contact.surname}</h2>
+              <p
                 onClick={() => handleEmailClick(contact.email)}
                 style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer' }}
               >
                 Email: {contact.email}
               </p>
-            
-            <p>Phone: {contact.phone}</p>
-            <p>Message: {contact.message}</p>
-          </div>
-          
-          
-        ))}
-      </div>
+
+              <p>Phone: {contact.phone}</p>
+              <p>Message: {contact.message}</p>
+            </div>
+          ))}
+        </div>
       </center>
     </div>
   );
