@@ -120,7 +120,7 @@ function Dog() {
   const handleDogFavourite = async (e, dog) => {
     e.preventDefault();
     const { id, name, bred_for, life_span, temperament, origin, image } = dog;
-    let imageURL = ""
+    let imageURL = "";
 
     if (!searched) {
       imageURL = image.url
@@ -288,6 +288,8 @@ function Dog() {
                   ))
                   ) : (
                     <>
+                      <p>No Favourite Dog.</p>
+
                       {console.log("Data Loading: " + dataLoading)}
                     </>
                   )
@@ -319,11 +321,11 @@ function Dog() {
                     data.map((dog) => (
                       <article key={dog.id} className='dog-card p-4 rounded relative'>
                         <div className="flex flex-col h-full">
-                          {dog.image && dog.image.url ? (
-                            <img src={dog.image.url} alt={dog.name} className='rounded md:h-72 w-full object-cover' />
-                          ) : (
-                            <div className='rounded md:h-72 w-full bg-gray-300' /> // Placeholder image or styling
-                          )}
+                          <img
+                            src={`https://cdn2.thedogapi.com/images/${dog.reference_image_id}.jpg`}
+                            alt={dog.name}
+                            className="rounded md:h-72 w-full object-cover"
+                          />
                           <div className="flex-grow">
                             <h3 className='text-lg font-bold mt-4'>{dog.name || 'N/A'}</h3>
                             <p>Life Span: {dog.life_span || 'N/A'}</p>
