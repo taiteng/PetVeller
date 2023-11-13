@@ -50,6 +50,7 @@ function Login() {
                     setShowConfirmation(true);
                 }
                 else{
+                    sessionStorage.uRole = result.data.role;
                     sessionStorage.uEmail = result.data.email;
                     sessionStorage.uName = result.data.name;
                     sessionStorage.uPass = result.data.password;
