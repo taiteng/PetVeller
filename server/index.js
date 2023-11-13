@@ -7,6 +7,7 @@ const newsModel = require('./models/news')
 const catFactsModel = require('./models/catfact')
 const contactModel = require('./models/contact')
 const dogModel = require('./models/dog')
+const logModel = require('./models/logging')
 
 const app = express()
 app.use(express.json())
@@ -19,6 +20,31 @@ mongoose.connect(db).then(() => {
 }).catch((e) => {
     console.log(e);
 });
+
+app.post('/log', (req, res) => {
+    const { logContent } = req.body;
+    inputDate = new Date(Date.now()).toISOString();
+
+    const newLog = new logModel({ logContent, inputDate });
+
+    newLog.save().then((savedLog) => {
+      console.log('Log Saved:', savedLog);
+      res.status(200).json(savedLog);
+    }).catch((error) => {
+      console.log('Error saving log:', error);
+      res.status(500).json({ error: 'Failed to save log' });
+    });
+})
+
+app.get('/contact', async (req, res) => {
+  try {
+    const logs = await logModel.find();
+    res.json(logs);
+  } catch (error) {
+    console.log('Error fetching logs:', error);
+    res.status(500).json({ error: 'Failed to fetch logs' });
+  }
+})
 
 app.post('/login', (req, res) => {
     const { email, password } = req.body;
