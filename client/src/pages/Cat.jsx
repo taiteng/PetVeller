@@ -18,6 +18,7 @@ function Cat() {
   const [cats, setCats] = useState(null);
   const [allCats, setAllCats] = useState(null);
   const [searchName, setSearchName] = useState('');
+  const [noResultsFound, setNoResultsFound] = useState(false);
   const [filteredCats, setFilteredCats] = useState(null);
   const [isCatLoading, setIsCatLoading] = useState(false);
   const [isFavLoading, setIsFavLoading] = useState(true);
@@ -35,7 +36,7 @@ function Cat() {
     const searchValue = event.target.value;
     const query3 = `${APIURL}breeds/search?q=${searchValue}`;
 
-    if (searchValue.trim() !== '') {
+    if (searchValue.trim() !== '' || searchValue !== '') {
       setSearchName(searchValue);
       
       try {
@@ -48,7 +49,7 @@ function Cat() {
         const filteredCats = filteredSearchResult.filter((cat) =>
           cat.name.toLowerCase().includes(searchName.toLowerCase())
         );
-  
+
         console.log("Searched Cats result", filteredCats);
 
         setFilteredCats(filteredCats);
@@ -58,8 +59,8 @@ function Cat() {
         setIsCatLoading(false);
       }
     } else {
-      setSearchName('');
       setFilteredCats(null);
+      setSearchName('');
     }
   };
 
@@ -207,6 +208,8 @@ function Cat() {
                 </Col>
               ))}
             </>
+          ) : noResultsFound ? (
+            <p>No Results Found.</p>
           ) : (
             <p>No Cats Found.</p>
           )}
