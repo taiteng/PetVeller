@@ -37,7 +37,7 @@ app.post('/log', (req, res) => {
     });
 })
 
-app.get('/contact', async (req, res) => {
+app.get('/log', async (req, res) => {
   try {
     const logs = await logModel.find();
     res.json(logs);
@@ -475,6 +475,23 @@ app.post('/terminateAccount', (req, res) => {
           res.json('User Not Found')
       }
   })
+})
+
+app.post('/save-log', async (req, res) => {
+  try {
+    const { logContent } = req.body;
+
+    const newLog = new logModel({
+      logContent,
+    });
+
+    const savedLog = await newLog.save();
+
+    res.status(201).json(savedLog);
+  } catch (error) {
+    console.error('Error saving log:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 })
 
 app.listen(3001, () => {

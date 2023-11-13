@@ -41,6 +41,7 @@ function Login() {
             .then(result => {
                 console.log(result);
                 if(result.data.email === 'admin@gmail.com'){
+                    sessionStorage.uRole = 'admin';
                     navigate('/admin');
                 }
                 else if(result.data === 'The Password Is Incorrect'){

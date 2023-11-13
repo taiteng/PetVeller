@@ -21,6 +21,7 @@ function Header() {
     sessionStorage.uEmail = '';
     sessionStorage.uName = '';
     sessionStorage.uPass = '';
+    sessionStorage.uRole = '';
     console.log('User logged out');
   };
   
