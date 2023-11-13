@@ -23,12 +23,13 @@ mongoose.connect(db).then(() => {
 
 app.post('/log', (req, res) => {
     const { logContent } = req.body;
-    inputDate = new Date(Date.now()).toISOString();
 
-    const newLog = new logModel({ logContent, inputDate });
+    const newLog = new logModel({ logContent });
 
     newLog.save().then((savedLog) => {
-      console.log('Log Saved:', savedLog);
+      console.log('Log Saved:', savedLog.logContent);
+      console.log("Created At:", savedLog.createdAt);
+      console.log("Updated At:", savedLog.updatedAt);
       res.status(200).json(savedLog);
     }).catch((error) => {
       console.log('Error saving log:', error);
