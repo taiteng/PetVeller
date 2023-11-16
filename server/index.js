@@ -499,16 +499,17 @@ app.get('/log', async (req, res) => {
 })
 
 app.post('/changeRole', async (req, res) => {
-  const { email, password, name, role } = req.body.userDetail;
+  const { email, newRole } = req.body.userDetail;
   userModel.findOne({ email: email })
   .then(user => {
       if(user){
-        userModel.findOneAndUpdate({ email: email }, { role: role }, { new: true })
-          .then(updatedUser => {
-            if (updatedUser) {
-              res.status(200).json("User Role Updated");
+        userModel.findOneAndUpdate({ email: email }, { role: newRole }, { new: true })
+          .then(user => {
+            if (user && user.role === 'premiumUser') {
+              const token = jwt.sign({ user }, process.env.JWT_SECRET);
+              res.json({ token });
             } else {
-              res.status(404).json('User Not Found');
+              res.status(404).json('User Not Found Or An Error Occurred.');
             }
           })
           .catch(error => {

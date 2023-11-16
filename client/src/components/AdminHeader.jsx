@@ -21,7 +21,9 @@ function AdminHeader() {
     sessionStorage.uEmail = '';
     sessionStorage.uName = '';
     sessionStorage.uPass = '';
-    console.log('User logged out');
+    sessionStorage.uRole = '';
+    sessionStorage.token = '';
+    console.log('Admin logged out');
   };
 
   return (

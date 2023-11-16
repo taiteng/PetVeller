@@ -5,15 +5,20 @@ import { Col, Container, Row, Spinner } from "react-bootstrap";
 import CatCard from '../components/CatCard';
 import FavCatCard from '../components/CatFavourite';
 import BackToTop from '../components/BackToTop';
-import axios from 'axios'
+import axios from 'axios';
+import {jwtDecode} from 'jwt-decode';
 
 function Cat() {
-  const userEmail = sessionStorage.uEmail;
   const maximumCatsPerPage = 20;
   const catPage = 0;
   const APIURL = 'https://api.thecatapi.com/v1/';
   const APIKey = 'live_4fvlmhHlhugFEhoygx7MssvoLDt3xmRUtTElLjS14d8RB2y1UzUQ2PLTmhrUTnSP';
 
+  const [userRole, setUserRole] = useState(null);
+  const [userName, setUserName] = useState(null);
+  const [userPassword, setPassword] = useState(null);
+  const [userEmail, setEmail] = useState(null);
+  const [token, setToken] = useState(null);
   const [favCats, setFavCats] = useState(null);
   const [cats, setCats] = useState(null);
   const [allCats, setAllCats] = useState(null);
@@ -102,6 +107,23 @@ function Cat() {
   };
 
   useEffect(() => {
+    const storedToken = sessionStorage.getItem('token');
+
+    if(storedToken){
+      const decodedToken = jwtDecode(storedToken);
+      const { user } = decodedToken;
+
+      if (user) {
+        setUserRole(user.role);
+        setUserName(user.name);
+        setEmail(user.email);
+        setPassword(user.password);
+      }
+      else{
+        console.log('An error occurred')
+      }
+    }
+
     requestCats();
     requestFavourites();
   }, []);
@@ -153,6 +175,11 @@ function Cat() {
       <div className='container mx-auto mt-5 mb-5'>
         <div className="welcome-container">
           <h1 className="welcome-heading">Favourite Cats</h1>
+          <div>
+          <button type="button" onClick={requestFavourites}>
+            Refresh
+          </button>
+          </div>
         </div>
       </div>
       <Container>

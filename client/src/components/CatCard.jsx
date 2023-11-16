@@ -9,8 +9,10 @@ import { CardActionArea } from '@mui/material';
 import axios from 'axios';
 import { Spinner } from "react-bootstrap";
 import CatButton from './CatButton';
+import {jwtDecode} from 'jwt-decode';
 
 const CatCard = ({ catCards, requestFavourites, requestCats }) => {
+
     if ((catCards?.wikipedia_url === null) || (catCards?.reference_image_id === null)) {
         return null;
     }
@@ -37,14 +39,28 @@ const CatCard = ({ catCards, requestFavourites, requestCats }) => {
     }
     else{
         const [catName, setCatName] = useState('');
-        const [userName, setUserName] = useState('');
-        const [userEmail, setUserEmail] = useState('');
+        const [userName, setUserName] = useState(null);
+        const [userEmail, setUserEmail] = useState(null);
         const [isLoading, setIsLoading] = useState(true);
 
         useEffect(() => {
             fetchCatImg();
-            setUserName(sessionStorage.uName);
-            setUserEmail(sessionStorage.uEmail);
+
+            const storedToken = sessionStorage.getItem('token');
+        
+            if(storedToken){
+              const decodedToken = jwtDecode(storedToken);
+              const { user } = decodedToken;
+        
+              if (user) {
+                setUserName(user.name);
+                setUserEmail(user.email);
+              }
+              else{
+                console.log('An error occurred')
+              }
+            }
+
             setCatName(catCards?.name);
         }, []);
     
