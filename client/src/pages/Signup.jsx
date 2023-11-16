@@ -44,12 +44,15 @@ function Signup() {
     if (validateForm()) {
       const defaultRole = 'freeUser';
       axios.post('http://localhost:3001/register', { name:name, email:email, password:password, role:defaultRole })
-        .then((result) => {
+        .then(async (result) => {
           console.log(result);
           if(result.data === 'User Exists'){
             navigate('/register')
           }
           else{
+            let message = `${name} (${email}) registered successfully.`;
+            const response = await axios.post('http://localhost:3001/save-log', { logContent: message });
+            console.log('Log message saved to the database:', response.data);
             navigate('/login');
           }
         })

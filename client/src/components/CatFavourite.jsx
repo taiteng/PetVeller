@@ -9,6 +9,7 @@ import axios from 'axios';
 
 const FavCatCard = ({ favCatCards, requestFavourites, requestCats }) => {
 
+    const userName = sessionStorage.uName;
     const userEmail = sessionStorage.uEmail;
     const catName = favCatCards.name;
 
@@ -16,8 +17,11 @@ const FavCatCard = ({ favCatCards, requestFavourites, requestCats }) => {
         e.preventDefault();
         if(userEmail){
             axios.post('http://localhost:3001/dltCatFav', { userEmail, catName })
-            .then((result) => {
+            .then(async (result) => {
                 console.log(result);
+                let message = `${userName} (${userEmail}) deleted ${catName} from Cat Favourites.`;
+                const response = await axios.post('http://localhost:3001/save-log', { logContent: message });
+                console.log('Log message saved to the database:', response.data);
                 requestFavourites();
                 requestCats();
             })

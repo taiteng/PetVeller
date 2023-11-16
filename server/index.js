@@ -21,32 +21,6 @@ mongoose.connect(db).then(() => {
     console.log(e);
 });
 
-app.post('/log', (req, res) => {
-    const { logContent } = req.body;
-
-    const newLog = new logModel({ logContent });
-
-    newLog.save().then((savedLog) => {
-      console.log('Log Saved:', savedLog.logContent);
-      console.log("Created At:", savedLog.createdAt);
-      console.log("Updated At:", savedLog.updatedAt);
-      res.status(200).json(savedLog);
-    }).catch((error) => {
-      console.log('Error saving log:', error);
-      res.status(500).json({ error: 'Failed to save log' });
-    });
-})
-
-app.get('/log', async (req, res) => {
-  try {
-    const logs = await logModel.find();
-    res.json(logs);
-  } catch (error) {
-    console.log('Error fetching logs:', error);
-    res.status(500).json({ error: 'Failed to fetch logs' });
-  }
-})
-
 app.post('/login', (req, res) => {
     const { email, password } = req.body;
     userModel.findOne({ email: email })
@@ -492,6 +466,40 @@ app.post('/save-log', async (req, res) => {
     console.error('Error saving log:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
+})
+
+app.get('/log', async (req, res) => {
+  try {
+    const logs = await logModel.find();
+    res.json(logs);
+  } catch (error) {
+    console.log('Error fetching logs:', error);
+    res.status(500).json({ error: 'Failed to fetch logs' });
+  }
+})
+
+app.post('/changeRole', async (req, res) => {
+  const { email, password, name, role } = req.body.userDetail;
+  userModel.findOne({ email: email })
+  .then(user => {
+      if(user){
+        userModel.findOneAndUpdate({ email: email }, { role: role }, { new: true })
+          .then(updatedUser => {
+            if (updatedUser) {
+              res.status(200).json("User Role Updated");
+            } else {
+              res.status(404).json('User Not Found');
+            }
+          })
+          .catch(error => {
+            console.log('Error updating role:', error);
+            res.status(500).json('Internal Server Error');
+          });
+      }
+      else{
+        res.json('Error Occurred')
+      }
+  })
 })
 
 app.listen(3001, () => {
