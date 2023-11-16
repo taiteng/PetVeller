@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import AdminHeader from '../components/AdminHeader';
 import NumberPicker from 'react-widgets/NumberPicker';
 import axios from 'axios';
+import {jwtDecode} from 'jwt-decode';
 
 function AdminCatFacts() {
   const [value, setValue] = useState(0);
@@ -11,10 +12,12 @@ function AdminCatFacts() {
   const [catFacts, setCatFacts] = useState([]);
   
   const [logMessage, setLogMessage] = useState('');
-    
-  const userRole = sessionStorage.getItem('uRole');
-  const userName = sessionStorage.getItem('uName');
-    const userEmail = sessionStorage.getItem('uEmail');
+  const token= sessionStorage.token;
+  const decodedToken = jwtDecode(token);
+  const { user } = decodedToken;
+  const userRole = user.role;
+  const userName = user.name;
+    const userEmail = user.email;
     const currentTime = new Date().toLocaleString();
   
     useEffect(() => {
