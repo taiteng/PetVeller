@@ -3,6 +3,9 @@ import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import {jwtDecode} from 'jwt-decode';
+
+
 
 function Login() {
 
@@ -39,8 +42,9 @@ function Login() {
         if(validateForm()){
             axios.post('http://localhost:3001/login', {email, password})
             .then(async result => {
-                console.log(result);
-                if(result.data.email === 'admin@gmail.com'){
+                const decodedToken = jwtDecode(result.data.token);
+                const { user } = decodedToken;
+                if(user.email === 'admin@gmail.com'){
                     sessionStorage.uRole = 'admin';
                     navigate('/admin');
                 }
@@ -51,11 +55,11 @@ function Login() {
                     setShowConfirmation(true);
                 }
                 else{
-                    sessionStorage.uRole = result.data.role;
-                    sessionStorage.uEmail = result.data.email;
-                    sessionStorage.uName = result.data.name;
-                    sessionStorage.uPass = result.data.password;
-                    let message = `${result.data.name} (${result.data.email}) logged in.`;
+                    sessionStorage.uRole = user.role;
+                    sessionStorage.uEmail = user.email;
+                    sessionStorage.uName = user.name;
+                    sessionStorage.uPass = user.password;
+                    let message = `${user.name} (${user.email}) logged in.`;
                     const response = await axios.post('http://localhost:3001/save-log', { logContent: message });
                     console.log('Log message saved to the database:', response.data);
                     navigate('/');
