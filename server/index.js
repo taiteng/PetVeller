@@ -8,6 +8,8 @@ const catFactsModel = require('./models/catfact')
 const contactModel = require('./models/contact')
 const dogModel = require('./models/dog')
 const logModel = require('./models/logging')
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
 
 const app = express()
 app.use(express.json())
@@ -27,7 +29,8 @@ app.post('/login', (req, res) => {
     .then(user => {
         if(user){
             if(user.password === password){
-                res.json(user);
+              const token = jwt.sign({ user }, process.env.JWT_SECRET);
+              res.json({ token });
             }
             else{
                 res.json('The Password Is Incorrect')
