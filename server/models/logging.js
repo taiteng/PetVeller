@@ -9,6 +9,5 @@ const logSchema = new mongoose.Schema(
     }
 );
 
-
 const logModel = mongoose.model('logging', logSchema);
 module.exports = logModel;

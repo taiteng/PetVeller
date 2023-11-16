@@ -218,6 +218,10 @@ function Settings() {
         console.log('User Removed');
     };
 
+    const handlePayment = () => {
+        navigate('/payment');
+    }
+
     return (
         <>
             <div style={{ background: 'linear-gradient(to bottom right, #A6BCE8, #FFC0C0)' }}>
@@ -291,7 +295,8 @@ function Settings() {
                 }
                 
                 .edit-button,
-                .terminate-button {
+                .terminate-button,
+                .upgrade-button {
                   background-color: #1976d2;
                   color: #ffffff;
                   border: none;
@@ -303,7 +308,8 @@ function Settings() {
                 }
                 
                 .edit-button:hover,
-                .terminate-button:hover {
+                .terminate-button:hover,
+                .upgrade-button:hover, {
                   background-color: #1565c0;
                 }
               `}
@@ -399,15 +405,32 @@ function Settings() {
                             </>
                         )}
                     </div>
-                    <div className="action-buttons">
-                        <button
-                            className="terminate-button"
-                            style={{ backgroundColor: 'red' }}
-                            onClick={handleTerminateAccount}
-                        >
-                            Terminate Account
-                        </button>
-                    </div>
+                    <table>
+                        <tr>
+                            <td>
+                                <div className="action-buttons">
+                                    <button
+                                        className="upgrade-button"
+                                        style={{ backgroundColor: 'blue' }}
+                                        onClick={handlePayment}
+                                    >
+                                        Upgrade Account
+                                    </button>
+                                </div>
+                            </td>
+                            <td>
+                                <div className="action-buttons">
+                                    <button
+                                        className="terminate-button"
+                                        style={{ backgroundColor: 'red' }}
+                                        onClick={handleTerminateAccount}
+                                    >
+                                        Terminate Account
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
                 </div>
                 <BackToTop />
                 <Footer />
