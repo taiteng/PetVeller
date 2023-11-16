@@ -1,13 +1,17 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import AdminHeader from '../components/AdminHeader';
+import {jwtDecode} from 'jwt-decode';
 
 function Admin() {
   const [logMessage, setLogMessage] = useState('');
 
-  const userRole = sessionStorage.getItem('uRole');
-  const userName = sessionStorage.getItem('uName');
-  const userEmail = sessionStorage.getItem('uEmail');
+  const token= sessionStorage.token;
+  const decodedToken = jwtDecode(token);
+  const { user } = decodedToken;
+  const userRole = user.role;
+  const userName =user.name;
+  const userEmail = user.email;
   const currentTime = new Date().toLocaleString();
 
   useEffect(() => {
