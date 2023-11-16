@@ -4,6 +4,7 @@ import Footer from '../components/Footer';
 import BackToTop from '../components/BackToTop';
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom';
+import {jwtDecode} from 'jwt-decode';
 import {
     MDBBtn,
     MDBCard,
@@ -16,26 +17,31 @@ import {
   } from "mdb-react-ui-kit";
 
 function Payment() {
-    const userRole = sessionStorage.getItem('uRole');
-    const userName = sessionStorage.getItem('uName');
-    const userEmail = sessionStorage.getItem('uEmail');
-    const userPassword = sessionStorage.getItem('uPass');
-
     const navigate = useNavigate();
 
     const handlePayment = async () => {
+
+        const decodedToken = jwtDecode(sessionStorage.getItem('token'));
+        const { user } = decodedToken;
+
+        const userEmail = user.email;
+        const userName = user.name;
+
         const userDetail = {
             email: userEmail,
-            pass: userPassword,
-            name: userName,
-            role: 'premiumUser',
+            newRole: 'premiumUser',
         };
+
+        sessionStorage.token = '';
 
         await axios.post('http://localhost:3001/changeRole', { userDetail })
             .then((result) => {
-                console.log(result);
-                if (result.data === "User Role Updated") {
-                    sessionStorage.uRole = 'premiumUser';
+                
+                sessionStorage.token = result.data.token;
+                const decodedToken = jwtDecode(result.data.token);
+                const { user } = decodedToken;
+
+                if (user.role === 'premiumUser') {
                     console.log('User Role Updated');
                 }
                 else {

@@ -2,8 +2,10 @@ import { useState } from 'react';
 import logo from './../assets/catndog.jpeg';
 import { IoPersonCircleOutline } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
+import {jwtDecode} from 'jwt-decode';
 
 function Header() {
+  
   const navigate = useNavigate();
   const [showConfirmation, setShowConfirmation] = useState(false);
 
@@ -26,7 +28,7 @@ function Header() {
     console.log('User logged out');
   };
   
-  if(sessionStorage.uEmail === '' || typeof sessionStorage.uEmail === 'undefined'){
+  if(sessionStorage.token === '' || typeof sessionStorage.token === 'undefined'){
     return (
       <>
         <div className='p-2 flex justify-around gap-4 md:gap-14 align-items-center'>

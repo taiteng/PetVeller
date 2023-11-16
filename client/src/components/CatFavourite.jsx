@@ -6,15 +6,25 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { CardActionArea } from '@mui/material';
 import axios from 'axios';
+import {jwtDecode} from 'jwt-decode';
 
 const FavCatCard = ({ favCatCards, requestFavourites, requestCats }) => {
 
-    const userName = sessionStorage.uName;
-    const userEmail = sessionStorage.uEmail;
     const catName = favCatCards.name;
 
     const handleDeleteFromDatabase = (e) => {
         e.preventDefault();
+
+        const decodedToken = jwtDecode(sessionStorage.getItem('token'));
+        const { user } = decodedToken;
+        let userEmail = '';
+        let userName = '';
+
+        if(user){
+            userEmail = user.email;
+            userName = user.name;
+        }
+
         if(userEmail){
             axios.post('http://localhost:3001/dltCatFav', { userEmail, catName })
             .then(async (result) => {

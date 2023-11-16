@@ -9,8 +9,18 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import { useNavigate } from 'react-router-dom';
+import {jwtDecode} from 'jwt-decode';
 
 function Settings() {
+    const decodedToken = jwtDecode(sessionStorage.getItem('token'));
+    const { user } = decodedToken;
+
+    const userRole = user.role;
+    const userName = user.name;
+    const userEmail = user.email;
+    const userPassword = user.password;
+
+    const [userrole, setUserRole] = useState(sessionStorage.uRole);
     const [username, setUsername] = useState(sessionStorage.uName);
     const [password, setPassword] = useState(sessionStorage.uPass);
     const [email, setEmail] = useState(sessionStorage.uEmail);
@@ -216,14 +226,16 @@ function Settings() {
         sessionStorage.uName = '';
         sessionStorage.uPass = '';
         sessionStorage.uRole = '';
+        sessionStorage.token = '';
         console.log('User Removed');
     };
 
     const handlePayment = () => {
-        if(sessionStorage.uRole != 'premiumUser'){
+        if(userRole == 'premiumUser'){
             navigate('/payment');
         }
         else{
+            alert('User is already a premium user.');
             console.log('User is already a premium user.');
         }
     }
@@ -417,7 +429,7 @@ function Settings() {
                             <input
                                 readOnly
                                 type="text"
-                                value={sessionStorage.uRole}
+                                value={userRole}
                                 className="field-value"
                                 name="role"
                             />

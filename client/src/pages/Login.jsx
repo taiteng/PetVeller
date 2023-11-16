@@ -45,8 +45,8 @@ function Login() {
                 sessionStorage.token = result.data.token;
                 const decodedToken = jwtDecode(result.data.token);
                 const { user } = decodedToken;
-                if(user.email === 'admin@gmail.com'){
-                    sessionStorage.uRole = 'admin';
+
+                if(user.role === 'admin'){
                     navigate('/admin');
                 }
                 else if(result.data === 'The Password Is Incorrect'){
