@@ -74,25 +74,29 @@ function AdminContact() {
     );
   }
 
+  const renderContactList = () => {
+    return contacts.map((contact) => (
+      <div className="card" key={contact._id}>
+        <h2>{contact.firstName} {contact.surname}</h2>
+        <p
+          onClick={() => handleEmailClick(contact.email)}
+          style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer' }}
+        >
+          Email: {contact.email}
+        </p>
+
+        <p>Phone: {contact.phone}</p>
+        <p>Message: <span dangerouslySetInnerHTML={{ __html: contact.message }} /></p>
+      </div>
+    ));
+  };
+
   return (
     <div>
       <AdminHeader />
       <center>
         <div className="contact-list">
-          {contacts.map((contact) => (
-            <div className="card" key={contact._id} >
-              <h2>{contact.firstName} {contact.surname}</h2>
-              <p
-                onClick={() => handleEmailClick(contact.email)}
-                style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer' }}
-              >
-                Email: {contact.email}
-              </p>
-
-              <p>Phone: {contact.phone}</p>
-              <p>Message: {contact.message}</p>
-            </div>
-          ))}
+        {renderContactList()}
         </div>
       </center>
     </div>

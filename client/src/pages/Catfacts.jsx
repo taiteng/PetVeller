@@ -61,7 +61,7 @@ function Catfacts() {
               />
               {hoveredIndex === index && (
                 <div className="factBox">
-                  <p className="text-lg">{data[index].fact}</p>
+                  <p className="text-lg" dangerouslySetInnerHTML={{ __html: data[index].fact }} />
                 </div>
               )}
             </div>
@@ -70,7 +70,6 @@ function Catfacts() {
           <p className="text-lg">Loading image...</p>
         )}
       </div>
-
 
       <br></br>
       <br></br>
