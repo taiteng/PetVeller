@@ -22,6 +22,7 @@ function Header() {
     sessionStorage.uName = '';
     sessionStorage.uPass = '';
     sessionStorage.uRole = '';
+    sessionStorage.token = '';
     console.log('User logged out');
   };
   
