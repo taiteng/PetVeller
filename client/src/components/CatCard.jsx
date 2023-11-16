@@ -43,7 +43,7 @@ const CatCard = ({ catCards, requestFavourites, requestCats }) => {
 
         useEffect(() => {
             fetchCatImg();
-            setUserName(sessionStorage,uName);
+            setUserName(sessionStorage.uName);
             setUserEmail(sessionStorage.uEmail);
             setCatName(catCards?.name);
         }, []);
