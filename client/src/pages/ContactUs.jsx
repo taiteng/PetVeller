@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import he from 'he';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@material-ui/core';
+
 import '../components/css/ContactUsStyle.css';
 
 function ContactUs() {
@@ -27,9 +29,19 @@ function ContactUs() {
       message,
     };
 
+
+
     if (validateForm(formData)) {
+      const sanitizedFormData = {
+        firstName: encodeHTML(formData.firstName),
+        surname: encodeHTML(formData.surname),
+        email: encodeHTML(formData.email),
+        phone: encodeHTML(formData.phone),
+        message: encodeHTML(formData.message),
+      };
+
       axios
-        .post('http://localhost:3001/contact', formData)
+        .post('http://localhost:3001/contact', sanitizedFormData)
         .then((response) => {
           console.log('Contact form data saved:', response.data);
           // Reset form fields
@@ -51,6 +63,10 @@ function ContactUs() {
         });
     }
   };
+
+  function encodeHTML(str) {
+    return he.encode(str); 
+  }
 
   const validateForm = (formData) => {
     let errors = {};

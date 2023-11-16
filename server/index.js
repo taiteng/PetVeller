@@ -1,4 +1,5 @@
 const express = require('express')
+const { body, validationResult } = require('express-validator');
 const cors = require('cors')
 const mongoose = require('mongoose');
 const userModel = require('./models/users')
@@ -228,29 +229,45 @@ app.post('/deleteCatFacts/:id', (req, res) => {
       });
 });
 
-app.post('/contact', (req, res) => {
-  const { firstName, surname, email, phone, message } = req.body;
+app.post(
+  '/contact',
+  [
+    body('firstName').trim().notEmpty().escape(),
+    body('surname').trim().notEmpty().escape(),
+    body('email').trim().notEmpty().isEmail().escape(),
+    body('phone').trim().notEmpty().escape(),
+    body('message').trim().notEmpty().escape(),
+  ],
+  (req, res) => {
+    const errors = validationResult(req);
 
-  const contactData = {
-    firstName,
-    surname,
-    email,
-    phone,
-    message,
-  };
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
 
-  const contact = new contactModel(contactData);
+    const { firstName, surname, email, phone, message } = req.body;
 
-  contact.save()
-    .then((savedContact) => {
-      console.log('Contact form data saved:', savedContact);
-      res.status(200).json(savedContact);
-    })
-    .catch((error) => {
-      console.log('Error saving contact form data:', error);
-      res.status(500).json({ error: 'Failed to save contact form data' });
-    });
-});
+    const contactData = {
+      firstName,
+      surname,
+      email,
+      phone,
+      message,
+    };
+
+    const contact = new contactModel(contactData);
+
+    contact.save()
+      .then((savedContact) => {
+        console.log('Contact form data saved:', savedContact);
+        res.status(200).json(savedContact);
+      })
+      .catch((error) => {
+        console.log('Error saving contact form data:', error);
+        res.status(500).json({ error: 'Failed to save contact form data' });
+      });
+  }
+);
 
 app.get('/contact',async (req, res) => {
   try {
