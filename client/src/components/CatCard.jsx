@@ -37,11 +37,13 @@ const CatCard = ({ catCards, requestFavourites, requestCats }) => {
     }
     else{
         const [catName, setCatName] = useState('');
+        const [userName, setUserName] = useState('');
         const [userEmail, setUserEmail] = useState('');
         const [isLoading, setIsLoading] = useState(true);
 
         useEffect(() => {
             fetchCatImg();
+            setUserName(sessionStorage,uName);
             setUserEmail(sessionStorage.uEmail);
             setCatName(catCards?.name);
         }, []);
@@ -81,13 +83,16 @@ const CatCard = ({ catCards, requestFavourites, requestCats }) => {
             if(userEmail){
                 axios.post('http://localhost:3001/addCatToFav', { userEmail, imgURL, imgWidth, imgHeight, imgReferenceID, 
                 name, description, lifeSpan, origin, temperament, wikipediaURL })
-                .then((result) => {
+                .then(async (result) => {
                     console.log(result);
                     if(result.data === 'Cat Exists'){
                         console.log('Existed');
                     }
                     else{
-                        console.log('Saved')
+                        console.log('Saved');
+                        let message = `${userName} (${userEmail}) added ${catName} to Cat Favourites.`;
+                        const response = await axios.post('http://localhost:3001/save-log', { logContent: message });
+                        console.log('Log message saved to the database:', response.data);
                         requestFavourites();
                         requestCats();
                     }

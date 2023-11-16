@@ -16,10 +16,37 @@ import {
   } from "mdb-react-ui-kit";
 
 function Payment() {
+    const userRole = sessionStorage.getItem('uRole');
+    const userName = sessionStorage.getItem('uName');
+    const userEmail = sessionStorage.getItem('uEmail');
+    const userPassword = sessionStorage.getItem('uPass');
 
     const navigate = useNavigate();
 
-    const handlePayment = () => {
+    const handlePayment = async () => {
+        const userDetail = {
+            email: userEmail,
+            pass: userPassword,
+            name: userName,
+            role: 'premiumUser',
+        };
+
+        await axios.post('http://localhost:3001/changeRole', { userDetail })
+            .then((result) => {
+                console.log(result);
+                if (result.data === "User Role Updated") {
+                    sessionStorage.uRole = 'premiumUser';
+                    console.log('User Role Updated');
+                }
+                else {
+                    console.log('User Not Found')
+                }
+            })
+            .catch((err) => console.log(err));
+
+        let message = `${userName} (${userEmail}) upgraded account to premium user.`;
+        const response = await axios.post('http://localhost:3001/save-log', { logContent: message });
+        console.log('Log message saved to the database:', response.data);
         navigate('/');
     }
 

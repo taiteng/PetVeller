@@ -215,11 +215,17 @@ function Settings() {
         sessionStorage.uEmail = '';
         sessionStorage.uName = '';
         sessionStorage.uPass = '';
+        sessionStorage.uRole = '';
         console.log('User Removed');
     };
 
     const handlePayment = () => {
-        navigate('/payment');
+        if(sessionStorage.uRole != 'premiumUser'){
+            navigate('/payment');
+        }
+        else{
+            console.log('User is already a premium user.');
+        }
     }
 
     return (
@@ -404,6 +410,18 @@ function Settings() {
                                 {emailError && <div className="error-message">{emailError}</div>}
                             </>
                         )}
+                    </div>
+                    <div className="profile-field">
+                        <div className="field-label">Role:</div>
+                        <form>
+                            <input
+                                readOnly
+                                type="text"
+                                value={sessionStorage.uRole}
+                                className="field-value"
+                                name="role"
+                            />
+                        </form>
                     </div>
                     <table>
                         <tr>
