@@ -3,6 +3,7 @@ import AdminHeader from '../components/AdminHeader';
 import NumberPicker from 'react-widgets/NumberPicker';
 import axios from 'axios';
 import {jwtDecode} from 'jwt-decode';
+import he from 'he';
 
 function AdminCatFacts() {
   const [value, setValue] = useState(0);
@@ -140,6 +141,12 @@ function AdminCatFacts() {
       });
   };
 
+  const encodeFacts = (facts) => {
+    return facts.map((fact) => ({
+      ...fact,
+      fact: he.encode(fact.fact),
+    }));
+  };
 
   if (userRole !== 'admin') {
    
@@ -182,7 +189,7 @@ function AdminCatFacts() {
               </tr>
             </thead>
             <tbody>
-              {catFacts.map((fact) => (
+              {encodeFacts(catFacts).map((fact) => (
                 <tr key={fact._id}>
                   <td className="border px-4 py-2">{fact._id}</td>
                   <td className="border px-4 py-2">{fact.fact}</td>
