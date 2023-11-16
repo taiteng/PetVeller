@@ -42,6 +42,7 @@ function Login() {
         if(validateForm()){
             axios.post('http://localhost:3001/login', {email, password})
             .then(async result => {
+                sessionStorage.token = result.data.token;
                 const decodedToken = jwtDecode(result.data.token);
                 const { user } = decodedToken;
                 if(user.email === 'admin@gmail.com'){
