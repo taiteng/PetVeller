@@ -13,12 +13,22 @@ function AdminCatFacts() {
   const [catFacts, setCatFacts] = useState([]);
   
   const [logMessage, setLogMessage] = useState('');
-  const token= sessionStorage.token;
-  const decodedToken = jwtDecode(token);
-  const { user } = decodedToken;
-  const userRole = user.role;
-  const userName = user.name;
-    const userEmail = user.email;
+  const token = sessionStorage.token;
+
+  let userRole = '';
+  let userName = '';
+  let userEmail = '';
+  
+  if (token) {
+    const decodedToken = jwtDecode(token);
+    const { user: decodedUser } = decodedToken;
+  
+    if (decodedUser) {
+      userRole = decodedUser.role ?? '';
+      userName = decodedUser.name ?? '';
+      userEmail = decodedUser.email ?? '';
+    }
+  }
     const currentTime = new Date().toLocaleString();
   
     useEffect(() => {
