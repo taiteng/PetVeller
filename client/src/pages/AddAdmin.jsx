@@ -49,7 +49,7 @@ function AddAdmin() {
             navigate('/addadmin')
           }
           else{
-            let message = `${name} (${email}) registered successfully.`;
+            let message = `${name} (${email})'s admin account is added successfully.`;
             const response = await axios.post('http://localhost:3001/save-log', { logContent: message });
             console.log('Log message saved to the database:', response.data);
             navigate('/manageuser');
