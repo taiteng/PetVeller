@@ -6,12 +6,22 @@ import {jwtDecode} from 'jwt-decode';
 function AdminContact() {
   const [contacts, setContacts] = useState([]);
   const [logMessage, setLogMessage] = useState('');
-  const token= sessionStorage.token;
-  const decodedToken = jwtDecode(token);
-  const { user } = decodedToken;
-  const userRole = user.role;
-  const userName =user.name;
-  const userEmail = user.email;
+  const token = sessionStorage.token;
+
+  let userRole = '';
+  let userName = '';
+  let userEmail = '';
+  
+  if (token) {
+    const decodedToken = jwtDecode(token);
+    const { user: decodedUser } = decodedToken;
+  
+    if (decodedUser) {
+      userRole = decodedUser.role ?? '';
+      userName = decodedUser.name ?? '';
+      userEmail = decodedUser.email ?? '';
+    }
+  }
   const currentTime = new Date().toLocaleString();
 
   useEffect(() => {

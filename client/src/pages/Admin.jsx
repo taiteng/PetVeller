@@ -10,12 +10,22 @@ function Admin() {
   const [catFactsCount, setCatFactsCount] = useState(0);
   const [contactCount, setContactCount] = useState(0);
 
-  const token= sessionStorage.token;
-  const decodedToken = jwtDecode(token);
-  const { user } = decodedToken;
-  const userRole = user.role;
-  const userName =user.name;
-  const userEmail = user.email;
+  const token = sessionStorage.token;
+
+  let userRole = '';
+  let userName = '';
+  let userEmail = '';
+  
+  if (token) {
+    const decodedToken = jwtDecode(token);
+    const { user: decodedUser } = decodedToken;
+  
+    if (decodedUser) {
+      userRole = decodedUser.role ?? '';
+      userName = decodedUser.name ?? '';
+      userEmail = decodedUser.email ?? '';
+    }
+  }
   const currentTime = new Date().toLocaleString();
 
   useEffect(() => {
