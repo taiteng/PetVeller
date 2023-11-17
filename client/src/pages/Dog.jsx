@@ -7,7 +7,7 @@ import axios from 'axios';
 import {jwtDecode} from 'jwt-decode';
 
 function Dog() {
-  const DOGAPIKEY = "live_4TyztGJfO9FFlu3ceqmiIkExaiNwCN89tZZxKUHd8IHTfLf4NvW25CeZasGRpCHE";
+  const DOGAPIKEY = import.meta.env.DOG_API_KEY;
   const APIURL = "https://api.thedogapi.com/v1/"
 
   const [data, setData] = useState([]);
