@@ -18,6 +18,9 @@ import AdminContact from './pages/AdminContact';
 import FavoritePage from './pages/FavoritePage';
 import Settings from './pages/Settings';
 import Payment from './pages/Payment';
+import ManageUser from './pages/ManageUser';
+import Role from './pages/Role';
+import AddAdmin from './pages/AddAdmin';
 
 function App() {
   return (
@@ -38,6 +41,9 @@ function App() {
         <Route path="/contactus" element={<ContactUs/>}></Route>
         <Route path="/admincatfacts" element={<AdminCatFacts/>}></Route>
         <Route path="/admincontact" element={<AdminContact/>}></Route>
+        <Route path="/manageuser" element={<ManageUser/>}></Route>
+        <Route path="/role/:_id" element={<Role/>}></Route>
+        <Route path="/addadmin" element={<AddAdmin/>}></Route>
       </Routes>
     </>
   )

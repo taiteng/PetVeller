@@ -2,9 +2,13 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import AdminHeader from '../components/AdminHeader';
 import {jwtDecode} from 'jwt-decode';
+import '../components/css/Admin.css';
 
 function Admin() {
   const [logMessage, setLogMessage] = useState('');
+  const [userCount, setUserCount] = useState(0);
+  const [catFactsCount, setCatFactsCount] = useState(0);
+  const [contactCount, setContactCount] = useState(0);
 
   const token= sessionStorage.token;
   const decodedToken = jwtDecode(token);
@@ -13,6 +17,46 @@ function Admin() {
   const userName =user.name;
   const userEmail = user.email;
   const currentTime = new Date().toLocaleString();
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await axios.get('http://localhost:3001/get-user-count');
+        setUserCount(response.data.count);
+      } catch (error) {
+        console.error('Error fetching user count:', error);
+      }
+    }
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await axios.get('http://localhost:3001/get-catFacts-count');
+        setCatFactsCount(response.data.count);
+      } catch (error) {
+        console.error('Error fetching cat facts count:', error);
+      }
+    }
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await axios.get('http://localhost:3001/get-contact-count');
+        setContactCount(response.data.count);
+      } catch (error) {
+        console.error('Error fetching feedback count:', error);
+      }
+    }
+
+    fetchData();
+  }, []);
+
 
   useEffect(() => {
     async function sendLogMessage() {
@@ -57,8 +101,51 @@ function Admin() {
   }
 
   return (
-    <div>
+    <div style={{ background: 'linear-gradient(to bottom right, #A6BCE8, #FFC0C0)' }}>
       <AdminHeader />
+      <main className='main-container'>
+        <div className='main-title' >
+            <h3>DASHBOARD</h3>
+        </div>
+
+        <br></br>
+        
+        <div className='main-cards'>
+            <div className='card' style={{ background: '#2962ff' }}>
+                <div className='card-inner'>
+                    <h3>CUSTOMERS</h3>
+                </div>
+                <h1>{userCount}</h1>
+            </div>
+            <div className='card' style={{ background: '#ff6d00' }}>
+                <div className='card-inner'>
+                    <h3>Cat Facts</h3>
+                </div>
+                <h1>{catFactsCount}</h1>
+            </div>
+            <div className='card' style={{ background: '#2e7d32' }}>
+                <div className='card-inner'>
+                    <h3>Feedback</h3>
+                </div>
+                <h1>{contactCount}</h1>
+            </div>
+        </div>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+
+    </main>
     </div>
   );
 }

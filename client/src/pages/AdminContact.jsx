@@ -92,11 +92,13 @@ function AdminContact() {
   };
 
   return (
-    <div>
+    <div style={{ background: 'linear-gradient(to bottom right, #A6BCE8, #FFC0C0)' }}> 
       <AdminHeader />
+      <br />
       <center>
         <div className="contact-list">
         {renderContactList()}
+        <br />
         </div>
       </center>
     </div>
