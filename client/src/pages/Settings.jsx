@@ -274,7 +274,7 @@ function Settings() {
                   padding: 20px;
                   border-radius: 20px;
                   margin: 20px 0;
-                  max-width: 500px;
+                  max-width: 900px;
                   margin: 20px auto;
                   padding-top: 30px;
                   padding-bottom: 30px;

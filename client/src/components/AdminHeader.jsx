@@ -35,6 +35,12 @@ function AdminHeader() {
             <a href='/admin'>Admin Home</a>
           </li>
           <li className='hover:font-bold cursor-pointer'>
+            <a href='/manageuser'>Manage User</a>
+          </li>
+          <li className='hover:font-bold cursor-pointer'>
+            <a href='/addadmin'>Add Admin</a>
+          </li>
+          <li className='hover:font-bold cursor-pointer'>
             <a href='/admincontact'>Contact Us Form</a>
           </li>
           <li className='hover:font-bold cursor-pointer'>

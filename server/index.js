@@ -10,6 +10,7 @@ const contactModel = require('./models/contact')
 const dogModel = require('./models/dog')
 const logModel = require('./models/logging')
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 require('dotenv').config();
 
 const app = express()
@@ -24,39 +25,63 @@ mongoose.connect(db).then(() => {
     console.log(e);
 });
 
-app.post('/login', (req, res) => {
-    const { email, password } = req.body;
-    userModel.findOne({ email: email })
-    .then(user => {
-        if(user){
-            if(user.password === password){
-              const token = jwt.sign({ user }, process.env.JWT_SECRET);
-              res.json({ token });
-            }
-            else{
-                res.json('The Password Is Incorrect')
-            }
-        }
-        else{
-            res.json('User Not Found')
-        }
-    })
-})
+app.post('/login', async (req, res) => {
+  const { email, password } = req.body;
 
-app.post('/register', (req, res) => {
+  try {
+    const user = await userModel.findOne({ email: email });
+
+    if (user) {
+      const passwordMatch = await bcrypt.compare(password, user.password);
+
+      if (passwordMatch) {
+        const token = jwt.sign({ user }, process.env.JWT_SECRET);
+        res.json({ token });
+      } else {
+        res.json('The Password Is Incorrect');
+      }
+    } else {
+      res.json('User Not Found');
+    }
+  } catch (error) {
+    console.error('Error during login:', error);
+    res.status(500).json('Internal Server Error');
+  }
+});
+
+// Define the route for user registration
+app.post('/register', async (req, res) => {
+  try {
     const { name, email, password, role } = req.body;
-    userModel.findOne({ email: email })
-    .then(user => {
-        if(user){
-            res.json('User Exists')
-        }
-        else{
-            const newUser = new userModel({ name, email, password, role });
-            const saveUser = newUser.save();
-            res.json(saveUser);
-        }
-    })
-})
+
+    // Check if the email is already registered
+    const existingUser = await userModel.findOne({ email });
+
+    if (existingUser) {
+      return res.status(409).json({ error: 'User Exists' });
+    }
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create a new user with the hashed password
+    const newUser = new userModel({
+      name,
+      email,
+      password: hashedPassword,
+      role,
+    });
+
+    // Save the user to the database
+    await newUser.save();
+
+    // Respond with success message
+    res.json('User Registered');
+  } catch (error) {
+    console.error('Error registering user:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
 app.post('/getCatFav', (req, res) => {
   const { userEmail } = req.body;
@@ -384,29 +409,32 @@ app.post('/updateUsername', async (req, res) => {
 
 app.post('/updatePassword', async (req, res) => {
   const { email, pass, name } = req.body.userDetail;
-  userModel.findOne({ email: email, name: name })
-    .then(user => {
-      if (!user) {
-        res.status(409).json('User Not Found');
+
+  try {
+    const user = await userModel.findOne({ email: email, name: name });
+
+    if (!user) {
+      res.status(409).json('User Not Found');
+    } else {
+      // Hash the new password before updating
+      const hashedPassword = await bcrypt.hash(pass, 10);
+
+      const updatedUser = await userModel.findOneAndUpdate(
+        { email: email, name: name },
+        { password: hashedPassword },
+        { new: true }
+      );
+
+      if (updatedUser) {
+        res.status(200).json('User Password Updated');
       } else {
-        userModel.findOneAndUpdate({ email: email, name: name }, { password: pass }, { new: true })
-          .then(updatedUser => {
-            if (updatedUser) {
-              res.status(200).json("User Passowrd Updated");
-            } else {
-              res.status(404).json('User Not Found');
-            }
-          })
-          .catch(error => {
-            console.log('Error updating password:', error);
-            res.status(500).json('Internal Server Error');
-          });
+        res.status(404).json('User Not Found');
       }
-    })
-    .catch(error => {
-      console.log('Error finding user:', error);
-      res.status(500).json('Internal Server Error');
-    });
+    }
+  } catch (error) {
+    console.log('Error updating password:', error);
+    res.status(500).json('Internal Server Error');
+  }
 });
 
 app.post('/updateEmail', async (req, res) => {
@@ -522,6 +550,136 @@ app.post('/changeRole', async (req, res) => {
       }
   })
 })
+
+app.get('/userDetails', (req, res) => {
+  userModel.find()
+    .then(userDetails => {
+      res.json(userDetails);
+    })
+    .catch(error => {
+      console.log('Error retrieving user:', error);
+      res.status(500).json('Server error');
+    });
+});
+
+app.post('/deleteUserDetails/:id', (req, res) => {
+  const { id } = req.params;
+
+  userModel
+    .deleteOne({ _id: id })
+    .then(() => {
+      res.json('User deleted');
+    })
+    .catch((error) => {
+      console.log('Error deleting user:', error);
+      res.status(500).json('Server error');
+    });
+});
+
+app.get('/get-user-count', async (req, res) => {
+  try {
+    const userCount = await userModel.countDocuments();
+    res.json({ count: userCount });
+  } catch (error) {
+    console.error('Error fetching user count:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+app.get('/get-catFacts-count', async (req, res) => {
+  try {
+    const catFactsCount = await catFactsModel.countDocuments();
+    res.json({ count: catFactsCount });
+  } catch (error) {
+    console.error('Error fetching cat facts count:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+app.get('/get-contact-count', async (req, res) => {
+  try {
+    const contactCount = await contactModel.countDocuments();
+    res.json({ count: contactCount });
+  } catch (error) {
+    console.error('Error fetching feedback count:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Define the route for fetching user details by ID
+app.get('/userDetails/:_id', async (req, res) => {
+  try {
+    const _id = req.params._id;
+
+    // Fetch user details from the database based on userId
+    const user = await userModel.findById(_id);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Send the user details in the response
+    res.json(user);
+  } catch (error) {
+    console.error('Error fetching user details:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Define the route for updating user details by ID
+app.post('/userDetails/:_id', async (req, res) => {
+  try {
+    const _id = req.params._id;
+    const updateValues = req.body;
+
+    // Update user details in the database based on userId
+    const updatedUser = await userModel.findByIdAndUpdate(_id, updateValues, { new: true });
+
+    if (!updatedUser) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Send the updated user details in the response
+    res.json(updatedUser);
+  } catch (error) {
+    console.error('Error updating user details:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Define the route for user registration
+app.post('/addadmin', async (req, res) => {
+  try {
+    const { name, email, password, role } = req.body;
+
+    // Check if the email is already registered
+    const existingUser = await userModel.findOne({ email });
+
+    if (existingUser) {
+      return res.status(409).json({ error: 'User Exists' });
+    }
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create a new user with the hashed password
+    const newUser = new userModel({
+      name,
+      email,
+      password: hashedPassword,
+      role,
+    });
+
+    // Save the user to the database
+    await newUser.save();
+
+    // Respond with success message
+    res.json('User Registered');
+  } catch (error) {
+    console.error('Error registering user:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
 app.listen(3001, () => {
   console.log('Server is running')
