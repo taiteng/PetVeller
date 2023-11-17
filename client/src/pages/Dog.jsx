@@ -4,8 +4,12 @@ import BackToTop from '../components/BackToTop';
 import Footer from '../components/Footer';
 import Button from '@mui/material/Button';
 import axios from 'axios';
+import {jwtDecode} from 'jwt-decode';
 
 function Dog() {
+  const DOGAPIKEY = "live_4TyztGJfO9FFlu3ceqmiIkExaiNwCN89tZZxKUHd8IHTfLf4NvW25CeZasGRpCHE";
+  const APIURL = "https://api.thedogapi.com/v1/"
+
   const [data, setData] = useState([]);
   const [text, setText] = useState("")
   const [searched, setSearched] = useState(false)
@@ -13,17 +17,21 @@ function Dog() {
   const [data2, setData2] = useState([]);
   const [dataLoading, setDataLoading] = useState(false);
 
+  const urlHeaders = {
+    "Content-Type": "application/json",
+    "x-api-key": DOGAPIKEY,
+  };
+
   const fetchDogData = async () => {
     try {
       setDataLoading(true)
-      const dogRes = await fetch("https://api.thedogapi.com/v1/breeds");
-      const dogData = await dogRes.json();
-      
+      const dogRes = await fetch(`${APIURL}breeds`, {headers: urlHeaders});
+      const dogData = await dogRes.json();     
 
       if (userEmail) {
         const favouriteRes = await axios.post(
           "http://localhost:3001/favouriteDogs",
-          { userEmail: sessionStorage.uEmail }
+          { userEmail: userEmail }
         );
         const favouriteData = favouriteRes.data;
         console.log(favouriteData);
@@ -36,10 +44,8 @@ function Dog() {
         });
   
         setData(updatedData);
-        console.log("Updated data" + updatedData)
       }else{
         setData(dogData);
-        console.log("Dog Data:", dogData);
       }
       
     } catch (error) {
@@ -55,12 +61,11 @@ function Dog() {
       if (userEmail) {
         const favouriteRes = await axios.post(
           "http://localhost:3001/favouriteDogs",
-          { userEmail: sessionStorage.uEmail }
+          { userEmail: userEmail }
         );
         const favouriteData = favouriteRes.data;
         setData2(favouriteData);
         setDataLoading(false);
-        console.log("Favourite Dog Data:", favouriteData);
 
         if (data2.length === 0) {
           await fetchFavouriteDogData();
@@ -74,36 +79,71 @@ function Dog() {
   };
 
   useEffect(() => {
-    if (sessionStorage != null && sessionStorage != "") {
-      setUserEmail(sessionStorage.uEmail);
+    const storedToken = sessionStorage.getItem('token');
+    console.log(storedToken)
+    if(storedToken){
+      const decodedToken = jwtDecode(storedToken);
+      const { user } = decodedToken;
+
+      if (user) {
+        setUserEmail(user.email);
+      }
+      else{
+        console.log('An error occurred')
+      }
     }
-  
-    setSearched(false);
-  
-    fetchDogData();
-    fetchFavouriteDogData();
-  }, [userEmail]);
+
+    if(text != ""){
+      setSearched(true);
+      fetchFavouriteDogData();
+    }else{
+      setSearched(false);
+      fetchDogData();
+      fetchFavouriteDogData();
+    }
+    
+    
+  }, [userEmail, text]);
   
 
   const searchForDog = async () => {
     try {
       setDataLoading(true)
       const res = await fetch(
-        `https://api.thedogapi.com/v1/breeds/search?q=${text}`
+        `${APIURL}breeds/search?q=${text}`
       )
 
       const data = await res.json()
-      setData(data)
+
+      if (userEmail) {
+        const favouriteRes = await axios.post(
+          "http://localhost:3001/favouriteDogs",
+          { userEmail: userEmail }
+        );
+        const favouriteData = favouriteRes.data;
+  
+        const updatedData = await data.map((dog) => {
+          const isFavourited = favouriteData.some(
+            (favouriteDogData) => favouriteDogData.id === dog.id
+          );
+          return { ...dog, isFavourited };
+        });
+  
+        setData(updatedData);
+      }else{
+        setData(data);
+      }
     } catch (error) {
       console.error(error)
     } finally {
-      setDataLoading(true)
+      setDataLoading(false)
     }
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    searchForDog()
+    
+    console.log("Text: " + text)
 
     if (text == "") {
       setSearched(false)
@@ -112,35 +152,31 @@ function Dog() {
 
       await fetchFavouriteDogData()
       await fetchDogData();
+      console.log("Empty")
     } else {
+      console.log("Not Empty")
       setSearched(true)
+      await searchForDog()
     }
   }
 
   const handleDogFavourite = async (e, dog) => {
     e.preventDefault();
-    const { id, name, bred_for, life_span, temperament, origin, image } = dog;
-    let imageURL = "";
-
-    if (!searched) {
-      imageURL = image.url
-    } else {
-      imageURL = `https://cdn2.thedogapi.com/images/${dog.reference_image_id}.jpg`
-    }
+    const { id, name, bred_for, life_span, temperament, origin, imageURL } = dog;
 
     const dogData = {
-      userEmail: sessionStorage.uEmail,
+      userEmail: userEmail,
       id,
       name,
       bred_for,
       life_span,
       temperament,
       origin,
-      imageURL
+      imageURL: `https://cdn2.thedogapi.com/images/${dog.reference_image_id}.jpg`
     };
 
     if (userEmail) {
-      axios.post('http://localhost:3001/addFavouriteDog', { dogData })
+      await axios.post('http://localhost:3001/addFavouriteDog', { dogData })
         .then((result) => {
           console.log(result);
           if (result.data === "Dog Favourited") {
@@ -169,7 +205,6 @@ function Dog() {
     else {
       console.log('User not logged in.')
     }
-    await new Promise(resolve => setTimeout(resolve, 50));
 
     if (searched) {
       await fetchFavouriteDogData()
@@ -184,7 +219,7 @@ function Dog() {
     const { id, name, bred_for, life_span, temperament, origin, imageURL } = dog;
 
     const dogData = {
-      userEmail: sessionStorage.uEmail,
+      userEmail: userEmail,
       id,
       name,
       bred_for,
@@ -195,7 +230,7 @@ function Dog() {
     };
 
     if (userEmail) {
-      axios.post('http://localhost:3001/deleteFavouriteDogs', { dogData })
+      await axios.post('http://localhost:3001/deleteFavouriteDogs', { dogData })
         .then((result) => {
           console.log(result);
           if (result.data === "Dog Unfavourited") {
@@ -280,7 +315,7 @@ function Dog() {
                         </div>
                         <div className='flex justify-center mt-2'>
                           <form onSubmit={(e) => handleDogUnfavourite(e, dog)}>
-                            {sessionStorage.uEmail == null || sessionStorage.uEmail == "" ? null : <Button type='submit' size="small">Remove from Favourites</Button>}
+                            {userEmail == null || userEmail == "" ? null : <Button type='submit' size="small">Remove from Favourites</Button>}
                           </form>
                         </div>
                       </div>
@@ -289,8 +324,6 @@ function Dog() {
                   ) : (
                     <>
                       <p>No Favourite Dog.</p>
-
-                      {console.log("Data Loading: " + dataLoading)}
                     </>
                   )
                   }
@@ -300,7 +333,7 @@ function Dog() {
                 <div className="welcome-container">
                   <h1 className="text-center welcome-heading">Dog Breeds</h1>
                   <form
-                    onSubmit={handleSubmit}
+                    onChange={handleSubmit}
                     className="max-w-xl mx-auto"
                     autoComplete="off"
                   >
@@ -335,7 +368,7 @@ function Dog() {
                           </div>
                           <div className='flex justify-center mt-2'>
                             <form onSubmit={(e) => handleDogFavourite(e, dog)}>
-                              {sessionStorage.uEmail == null || sessionStorage.uEmail == "" ? null : <Button type='submit' size="small">{dog.isFavourited ? "Remove from Favourites" : "Add to Favourites"}</Button>}
+                              {userEmail == null || userEmail == "" ? null : <Button type='submit' size="small">{dog.isFavourited ? "Remove from Favourites" : "Add to Favourites"}</Button>}
                             </form>
                           </div>
                         </div>
@@ -367,7 +400,7 @@ function Dog() {
                                       </div>
                                       <div className='flex justify-center mt-2'>
                                         <form onSubmit={(e) => handleDogFavourite(e, dog, userEmail)}>
-                                          {sessionStorage.uEmail == null || sessionStorage.uEmail == "" ? null : <Button type='submit' size="small">{dog.isFavourited ? "Remove from Favourites" : "Add to Favourites"}</Button>}
+                                          {userEmail == null || userEmail == "" ? null : <Button type='submit' size="small">{dog.isFavourited ? "Remove from Favourites" : "Add to Favourites"}</Button>}
                                         </form>
                                       </div>
                                     </div>
