@@ -231,7 +231,7 @@ function Settings() {
     };
 
     const handlePayment = () => {
-        if(userRole == 'premiumUser'){
+        if(userRole != 'premiumUser'){
             navigate('/payment');
         }
         else{
