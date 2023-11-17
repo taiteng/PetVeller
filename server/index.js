@@ -306,7 +306,7 @@ app.get('/contact',async (req, res) => {
 
 app.post('/addFavouriteDog', (req, res) => {
   const { userEmail, id, name, bred_for, life_span, temperament, origin, imageURL } = req.body.dogData;
-  dogModel.findOne({ name: name })
+  dogModel.findOne({ userEmail: userEmail, name: name })
   .then(dog => {
       if(dog){
         console.log("user email" + userEmail)
@@ -357,8 +357,8 @@ app.post('/favouriteDogs', (req, res) => {
 })
 
 app.post('/deleteFavouriteDogs', (req, res) => {
-  const { id } = req.body.dogData;
-  dogModel.deleteOne({ id: id })
+  const { userEmail, id } = req.body.dogData;
+  dogModel.deleteOne({userEmail: userEmail, id: id })
   .then(dog => {
       if(dog){
           res.json("Dog Unfavourited")
