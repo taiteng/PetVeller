@@ -25,12 +25,17 @@ function Role() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios.post(`http://localhost:3001/userDetails/`+_id, values)
-    .then(res => {
-      navigate('/manageuser');
-    })
-    .catch(err => console.log(err))
-  }
+    axios.post(`http://localhost:3001/userDetails/` + _id, values)
+      .then(async (res) => {
+        // Add the log message creation and axios post request here
+        let message = `${values.name} (${values.email}) role has been changed to ${values.role} by admin.`;
+        const response = await axios.post('http://localhost:3001/save-log', { logContent: message });
+        console.log('Log message saved to the database:', response.data);
+  
+        navigate('/manageuser');
+      })
+      .catch(err => console.log(err));
+  };
 
 
   return (
