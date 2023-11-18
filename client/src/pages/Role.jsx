@@ -47,7 +47,7 @@ function Role() {
             <input type="text" name="name" className="form-control" placeholder='Enter Name' value={values.name} onChange={e => setValues({...values, name: e.target.value})} required></input>
           </div>
           <div>
-            <label htmlFor='email'>Name:</label>
+            <label htmlFor='email'>Email:</label>
             <input type="email" name="email" className="form-control" placeholder='Enter Email' value={values.email} onChange={e => setValues({...values, email: e.target.value})} required></input>
           </div>
           <div>

@@ -62,16 +62,19 @@ function ManageUser() {
       });
   };
 
-  const handleDeleteUser = (id) => {
-    axios
-      .post(`http://localhost:3001/deleteuserdetails/${id}`)
-      .then((response) => {
-        console.log('User deleted:', response.data);
-        fetchUserDetails();
-      })
-      .catch((error) => {
-        console.log('Error deleting user:', error);
-      });
+  const handleDeleteUser = async (id, name, email) => {
+    try {
+      const response = await axios.post(`http://localhost:3001/deleteuserdetails/${id}`);
+      console.log('User deleted:', response.data);
+      fetchUserDetails();
+  
+      // Add log message
+      let message = `${name} (${email}) has been deleted by the admin.`;
+      const logResponse = await axios.post('http://localhost:3001/save-log', { logContent: message });
+      console.log('Log message saved to the database:', logResponse.data);
+    } catch (error) {
+      console.log('Error deleting user:', error);
+    }
   };
 
   const handleRole = (userId) => {
@@ -137,7 +140,7 @@ function ManageUser() {
                     <span style={{ marginRight: '10px' }}></span>
                     <button
                       className="bg-red-500 text-white px-3 py-1 rounded"
-                      onClick={() => handleDeleteUser(user._id)}
+                      onClick={() => handleDeleteUser(user._id, user.name, user.email)}
                     >
                       Delete
                     </button>
