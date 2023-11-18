@@ -382,33 +382,35 @@ app.post('/favouriteNews', async (req, res) => {
 
 app.post('/updateUsername', async (req, res) => {
   const { email, newName, name } = req.body.userDetail;
-  userModel.findOne({ email: email, name: name })
-    .then(user => {
-      if (!user) {
-        res.status(409).json('Username already exists');
-      } else {
-        userModel.findOneAndUpdate({ email: email, name: name }, { name: newName }, { new: true })
-          .then(updatedUser => {
-            if (updatedUser) {
-              res.status(200).json("User Name Updated");
-            } else {
-              res.status(404).json('User Not Found');
-            }
-          })
-          .catch(error => {
-            console.log('Error updating username:', error);
-            res.status(500).json('Internal Server Error');
-          });
-      }
-    })
-    .catch(error => {
-      console.log('Error finding user:', error);
-      res.status(500).json('Internal Server Error');
-    });
+
+  try {
+    const user = await userModel.findOne({ email, name });
+
+    if (!user) {
+      return res.status(404).json('User Not Found');
+    }
+
+    const updatedUser = await userModel.findOneAndUpdate(
+      { email, name },
+      { name: newName },
+      { new: true }
+    );
+
+    if (updatedUser) {
+      const token = jwt.sign({ user: updatedUser }, process.env.JWT_SECRET);
+      return res.status(200).json({ message: 'User Name Updated', token });
+    } else {
+      return res.status(500).json('Internal Server Error');
+    }
+  } catch (error) {
+    console.error('Error updating username:', error);
+    return res.status(500).json('Internal Server Error');
+  }
 });
 
+
 app.post('/updatePassword', async (req, res) => {
-  const { email, pass, name } = req.body.userDetail;
+  const { email, pass, oldPass, name } = req.body.userDetail;
 
   try {
     const user = await userModel.findOne({ email: email, name: name });
@@ -416,19 +418,36 @@ app.post('/updatePassword', async (req, res) => {
     if (!user) {
       res.status(409).json('User Not Found');
     } else {
-      // Hash the new password before updating
-      const hashedPassword = await bcrypt.hash(pass, 10);
+      const passwordMatch = bcrypt.compareSync(oldPass, user.password);
+      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.{7,})/;
 
-      const updatedUser = await userModel.findOneAndUpdate(
-        { email: email, name: name },
-        { password: hashedPassword },
-        { new: true }
-      );
+      console.log('oldPass:', oldPass);
+      console.log('user.password:', user.password);
+      console.log('passwordMatch:', passwordMatch);
 
-      if (updatedUser) {
-        res.status(200).json('User Password Updated');
-      } else {
-        res.status(404).json('User Not Found');
+      if(!passwordMatch){
+        res.json({message: 'User Current password is unmatched'});
+
+      }else if(!passwordRegex.test(pass)){
+        res.json({message: 'User New Password is weak'});
+
+      }else{
+        // Hash the new password before updating
+        const hashedPassword = await bcrypt.hash(pass, 10);
+
+        const updatedUser = await userModel.findOneAndUpdate(
+          { email: email, name: name },
+          { password: hashedPassword },
+          { new: true }
+        );
+
+        if (updatedUser) {
+          
+          const token = jwt.sign({ user: updatedUser }, process.env.JWT_SECRET);
+          res.status(200).json({message: 'User Password Updated', token});
+        } else {
+          res.status(404).json('User Not Found');
+        }
       }
     }
   } catch (error) {
@@ -438,47 +457,43 @@ app.post('/updatePassword', async (req, res) => {
 });
 
 app.post('/updateEmail', async (req, res) => {
-  const { email, newEmail, name } = req.body.userDetail;
-  userModel.findOne({ email: email, name: name })
-    .then(user => {
-      if (!user) {
-        res.status(409).json('User Not Found');
-      }else {
-        userModel.findOne({ email: newEmail })
-          .then(existingUser => {
-            if (existingUser) {
-              if(email == newEmail){
-                res.json('Email is the same with your old email');
-              }else{
-                res.json('Email has been taken');
-              }
-              
-            } else {
-              userModel.findOneAndUpdate({ email: email, name: name }, { email: newEmail }, { new: true })
-                .then(updatedUser => {
-                  if (updatedUser) {
-                    res.status(200).json("User Email Updated");
-                  } else {
-                    res.status(500).json('Internal Server Error');
-                  }
-                })
-                .catch(error => {
-                  console.log('Error updating email:', error);
-                  res.status(500).json('Internal Server Error');
-                });
-            }
-          })
-          .catch(error => {
-            console.log('Error finding user:', error);
-            res.status(500).json('Internal Server Error');
-          });
+  try {
+    const { email, newEmail, name } = req.body.userDetail;
+
+    const user = await userModel.findOne({ email: email, name: name });
+
+    if (!user) {
+      return res.status(409).json('User Not Found');
+    }
+
+    const existingUser = await userModel.findOne({ email: newEmail });
+
+    if (existingUser) {
+      if (email === newEmail) {
+        return res.json({message: 'Email is the same with your old email'});
+      } else {
+        return res.json({message: 'Email has been taken'});
       }
-    })
-    .catch(error => {
-      console.log('Error finding user:', error);
-      res.status(500).json('Internal Server Error');
-    });
+    }
+
+    const updatedUser = await userModel.findOneAndUpdate(
+      { email: email, name: name },
+      { email: newEmail },
+      { new: true }
+    );
+
+    if (updatedUser) {
+      const token = jwt.sign({ user: updatedUser }, process.env.JWT_SECRET);
+      return res.status(200).json({message: 'User Email Updated', token});
+    } else {
+      return res.status(500).json('Internal Server Error');
+    }
+  } catch (error) {
+    console.error('Error updating email:', error);
+    return res.status(500).json('Internal Server Error');
+  }
 });
+
 
 app.post('/terminateAccount', (req, res) => {
   const { email, name, pass } = req.body.userDetail;

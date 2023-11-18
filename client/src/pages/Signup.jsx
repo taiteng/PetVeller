@@ -10,6 +10,7 @@ function Signup() {
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.{7,})/;
 
   const validateForm = () => {
     let formIsValid = true;
@@ -31,6 +32,11 @@ function Signup() {
     if (!password) {
       formIsValid = false;
       errors.password = 'Password is required';
+    }
+
+    if (password != "" && !passwordRegex.test(password)) {
+      formIsValid = false;
+      errors.password = "Password must have at least 7 characters, including one uppercase letter, one lowercase letter, and one special character.";
     }
 
     setErrors(errors);
