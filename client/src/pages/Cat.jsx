@@ -188,6 +188,8 @@ function Cat() {
             <Spinner animation="grow" />
           ) : userEmail === '' || userEmail === null || userEmail === undefined ? (
             <p>User Not Found.</p>
+          ) : userRole != 'premiumUser' ? (
+            <p>User Is Not Premium.</p>
           ) : favCats !== null ? (
             <>
               {favCats.map((fcat) => (
