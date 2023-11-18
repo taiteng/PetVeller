@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import ReactDOM from 'react-dom';
+import Modal from 'react-modal';
 import Header from '../components/Header';
 import BackToTop from '../components/BackToTop';
 import Footer from '../components/Footer';
@@ -230,12 +232,34 @@ function Settings() {
         console.log('User Removed');
     };
 
+    const customStyles = {
+        content: {
+          top: '50%',
+          left: '50%',
+          right: 'auto',
+          bottom: 'auto',
+          marginRight: '-50%',
+          transform: 'translate(-50%, -50%)',
+        },
+    };
+
+
+    const [isPopupOpen, setPopupOpen] = useState(false);
+
+    const openPopup = () => {
+        setPopupOpen(true);
+    };
+
+    const closePopup = () => {
+        setPopupOpen(false);
+    };
+
     const handlePayment = () => {
         if(userRole != 'premiumUser'){
             navigate('/payment');
         }
         else{
-            alert('User is already a premium user.');
+            openPopup();
             console.log('User is already a premium user.');
         }
     }
@@ -435,6 +459,19 @@ function Settings() {
                             />
                         </form>
                     </div>
+                    <Modal
+                        isOpen={isPopupOpen}
+                        onRequestClose={closePopup}
+                        style={customStyles}
+                        contentLabel="Upgrade Account Error"
+                    >
+                        <div>
+                            <h2>User is already a premium user.</h2>
+                            <div className="action-buttons">
+                                <button className="upgrade-button" style={{ backgroundColor: 'blue' }} onClick={closePopup}>Close Modal</button>
+                            </div>
+                        </div>
+                    </Modal>
                     <table>
                         <tr>
                             <td>
