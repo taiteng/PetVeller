@@ -62,7 +62,7 @@ function ManageUser() {
       });
   };
 
-  const handleDeleteFact = (id) => {
+  const handleDeleteUser = (id) => {
     axios
       .post(`http://localhost:3001/deleteuserdetails/${id}`)
       .then((response) => {
@@ -129,11 +129,18 @@ function ManageUser() {
                   <td className="border px-4 py-2">{user.role}</td>
                   <td className="border px-4 py-2">
                     <Link
-                        className="bg-red-500 text-white px-3 py-1 rounded" to={`/role/${user._id}`}
+                        className="bg-orange-500 text-white px-3 py-1 rounded" to={`/role/${user._id}`}
                         // onClick={() => handleRole(user._id)}
                         >
                         Manage Role
                     </Link>
+                    <span style={{ marginRight: '10px' }}></span>
+                    <button
+                      className="bg-red-500 text-white px-3 py-1 rounded"
+                      onClick={() => handleDeleteUser(user._id)}
+                    >
+                      Delete
+                    </button>
                   </td>
                 </tr>
               ))}
