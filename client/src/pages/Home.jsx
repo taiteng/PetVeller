@@ -1,57 +1,75 @@
-import React, { useState, useEffect } from "react";
-import Header from "../components/Header";
-import dogImage from "../assets/dog.jpg";
-import catImage from "../assets/cat.jpg";
-import BackToTop from "../components/BackToTop";
-import Footer from "../components/Footer";
-import { library } from "@fortawesome/fontawesome-svg-core";
-import { faHeart } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import axios from "axios";
-import { v4 as uuidv4 } from "uuid";
-import { jwtDecode } from "jwt-decode";
+import React, { useState, useEffect } from 'react';
+import Header from '../components/Header';
+import dogImage from '../assets/dog.jpg';
+import catImage from '../assets/cat.jpg';
+import BackToTop from '../components/BackToTop';
+import Footer from '../components/Footer';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { faHeart } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid';
+
+
 
 // Initialize FontAwesome library
 library.add(faHeart);
 
 function Home() {
+
+ 
+  
   const [news, setNews] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [userEmail, setUserEmail] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
+  const [userEmail, setUserEmail] = useState('');
   const [displayedNewsCount, setDisplayedNewsCount] = useState(8);
   const [showConfirmation, setShowConfirmation] = useState(false);
-  const [confirmationMessage, setConfirmationMessage] = useState("");
-  const [sortOrder, setSortOrder] = useState("asc");
+  const [confirmationMessage, setConfirmationMessage] = useState('');
+  const [sortOrder, setSortOrder] = useState('asc');
+
+
+
+
+
 
   useEffect(() => {
-    const storedEmail = sessionStorage.getItem("uEmail");
+    const storedEmail = sessionStorage.getItem('uEmail');
     if (storedEmail) {
       setUserEmail(storedEmail);
     }
 
     // Check if there are favorite articles in local storage
-    const storedArticles = localStorage.getItem("favoriteArticles");
-    if (storedArticles) {
-      setNews(JSON.parse(storedArticles));
-    } else {
-      fetchAnimalNews();
-    }
+      const storedArticles = localStorage.getItem('favoriteArticles');
+      if (storedArticles) {
+        setNews(JSON.parse(storedArticles));
+      } else {
+        fetchAnimalNews();
+      }
   }, []);
 
+
+
   const handleSort = () => {
-    const newSortOrder = sortOrder === "asc" ? "desc" : "asc";
+    const newSortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
     setSortOrder(newSortOrder);
   };
+  
+
+  
 
   const fetchAnimalNews = async () => {
     try {
       const response = await fetch(
-        "https://newsapi.org/v2/everything?q=animal&apiKey=b5d91466301044ceb91fef30afb719d2"
+        'https://newsapi.org/v2/everything?q=animal&apiKey=b5d91466301044ceb91fef30afb719d2'
       );
       const data = await response.json();
       setNews(data.articles);
+
+     
+
+
     } catch (error) {
-      console.log("Error fetching animal news:", error);
+      console.log('Error fetching animal news:', error);
     }
   };
 
@@ -70,88 +88,80 @@ function Home() {
   const sortedNews = filteredNews.sort((a, b) => {
     const titleA = a.title.toLowerCase();
     const titleB = b.title.toLowerCase();
-
+  
     if (titleA < titleB) {
-      return sortOrder === "asc" ? -1 : 1;
+      return sortOrder === 'asc' ? -1 : 1;
     }
     if (titleA > titleB) {
-      return sortOrder === "asc" ? 1 : -1;
+      return sortOrder === 'asc' ? 1 : -1;
     }
     return 0;
   });
-
+  
   const displayedNews = sortedNews.slice(0, displayedNewsCount);
 
+  
+
   const handleFavorite = async (article, userEmail) => {
+
+
     if (!userEmail) {
       // User email is missing, cannot favorite
-      setConfirmationMessage("Please Sign-In Account First");
+      setConfirmationMessage('Please Sign-In Account First');
       setShowConfirmation(true);
       return;
     }
-
+  
     const { title, description, url } = article;
-
+  
     try {
-      const response = await axios.post(
-        "http://localhost:3001/toggleFavorite",
-        {
-          article: { title, description, url },
-          userEmail: userEmail,
-        }
-      );
-
-      if (response.data === "Removed from favorites") {
-        let message = `${userName} (${userEmail}) Removed the news from favorites.`;
-        const response = await axios.post("http://localhost:3001/save-log", {
-          logContent: message,
-        });
-        console.log("Log message saved to the database:", response.data);
-        setConfirmationMessage("Removed from favorites");
-      } else if (response.data === "Added to favorites") {
-        let message = `${userName} (${userEmail}) Added the news to favorites.`;
-        const response = await axios.post("http://localhost:3001/save-log", {
-          logContent: message,
-        });
-        console.log("Log message saved to the database:", response.data);
-        setConfirmationMessage("Added to favorites");
+      const response = await axios.post('http://localhost:3001/toggleFavorite', {
+        article: { title, description, url },
+        userEmail: userEmail,
+      });
+  
+      if (response.data === 'Removed from favorites') {
+        setConfirmationMessage('Removed from favorites');
+      } else if (response.data === 'Added to favorites') {
+        setConfirmationMessage('Added to favorites');
       } else {
-        setConfirmationMessage("Unknown response");
+        setConfirmationMessage('Unknown response');
       }
       setShowConfirmation(true);
-
+  
       // Update the news state to reflect the favorite status
       const updatedNews = news.map((item) =>
         item.title === title ? { ...item, favorite: !item.favorite } : item
       );
       setNews(updatedNews);
 
-      // Store the updated favorite status in local storage
-      localStorage.setItem("favoriteArticles", JSON.stringify(updatedNews));
+       // Store the updated favorite status in local storage
+    localStorage.setItem('favoriteArticles', JSON.stringify(updatedNews));
+
     } catch (error) {
-      setConfirmationMessage("Error toggling favorite");
+      setConfirmationMessage('Error toggling favorite');
       setShowConfirmation(true);
       if (error.response) {
-        console.log("Server responded with:", error.response.data);
+        console.log('Server responded with:', error.response.data);
       } else if (error.request) {
-        console.log("No response received:", error.request);
+        console.log('No response received:', error.request);
       } else {
-        console.log("Error setting up the request:", error.message);
+        console.log('Error setting up the request:', error.message);
       }
-      console.log("Error toggling favorite:", error);
+      console.log('Error toggling favorite:', error);
     }
   };
+  
 
+  
   const closeConfirmation = () => {
     setShowConfirmation(false);
   };
+  
+
 
   return (
-    <div
-      style={{
-        background: "linear-gradient(to bottom right, #A6BCE8, #FFC0C0)",
-      }}
-    >
+    <div style={{ background: 'linear-gradient(to bottom right, #A6BCE8, #FFC0C0)' }}>
       <Header />
       <BackToTop />
       <style>
@@ -395,8 +405,7 @@ function Home() {
             <div className="px-6 py-4">
               <div className="font-bold text-xl mb-2">Dogs</div>
               <p className="text-gray-700 text-base">
-                Learn all about our furry canine friends. Discover various dog
-                breeds, their characteristics, and interesting facts.
+                Learn all about our furry canine friends. Discover various dog breeds, their characteristics, and interesting facts.
               </p>
             </div>
           </div>
@@ -410,8 +419,7 @@ function Home() {
             <div className="px-6 py-4">
               <div className="font-bold text-xl mb-2">Cats</div>
               <p className="text-gray-700 text-base">
-                Dive into the world of cats! Explore different cat breeds, their
-                behaviors, and fascinating trivia about our feline companions.
+                Dive into the world of cats! Explore different cat breeds, their behaviors, and fascinating trivia about our feline companions.
               </p>
             </div>
           </div>
@@ -431,44 +439,45 @@ function Home() {
           </div>
           <br></br>
           <button onClick={handleSort} className="sort-button">
-            Sort {sortOrder === "asc" ? "A-Z" : "Z-A"}
-          </button>
+              Sort {sortOrder === 'asc' ? 'A-Z' : 'Z-A'}
+            </button>
         </div>
         <div className="container mx-auto mt-8">
-          <div className="news-container">
-            {displayedNews.map((article, index) => (
-              <div className="news-card" key={index}>
-                <a href={article.url} className="news-link">
-                  <h3 className="news-title">{article.title}</h3>
-                </a>
-                <img
-                  src={article.urlToImage}
-                  alt="News"
-                  className="news-image"
-                />
-                <p className="news-description">{article.description}</p>
-                <button
-                  onClick={() => handleFavorite(article, userEmail)}
-                  className={`favorite-button ${
-                    article.favorite ? "favorite-red" : ""
-                  }`}
-                >
-                  <FontAwesomeIcon icon={faHeart} />
-                </button>
-              </div>
-            ))}
-          </div>
 
-          <div className="center-button">
-            {filteredNews.length > displayedNewsCount && (
-              <button onClick={handleShowMore} className="show-more-button">
-                Show More
+          
+        <div className="news-container">
+          {displayedNews.map((article, index) => (
+            <div className="news-card" key={index}>
+              <a href={article.url} className="news-link">
+                <h3 className="news-title">{article.title}</h3>
+              </a>
+              <img src={article.urlToImage} alt="News" className="news-image" />
+              <p className="news-description">{article.description}</p>
+              <button
+                onClick={() => handleFavorite(article, userEmail)}
+                className={`favorite-button ${article.favorite ? 'favorite-red' : ''}`}
+              >
+                <FontAwesomeIcon icon={faHeart} />
               </button>
-            )}
-          </div>
-          <br></br>
+
+            </div>
+          ))}
+        </div>
+
+
+        
+        
+        <div className="center-button">
+        {filteredNews.length > displayedNewsCount && (
+          <button onClick={handleShowMore} className="show-more-button">
+            Show More
+          </button>
+        )}
         </div>
         <br></br>
+      </div>
+      <br></br>
+
       </div>
       <Footer />
     </div>
