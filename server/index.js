@@ -406,30 +406,30 @@ app.post("/favouriteNews", async (req, res) => {
 });
 
 app.post("/updateUsername", async (req, res) => {
-  const { email, newName} = req.body.userDetail;
+  const { email, newName } = req.body.userDetail;
 
   try {
-    const user = await userModel.findOne({email});
+    const user = await userModel.findOne({ email });
 
     if (!user) {
-      return res.status(404).json('User Not Found');
+      return res.status(404).json("User Not Found");
     }
 
     const updatedUser = await userModel.findOneAndUpdate(
-      { email},
+      { email },
       { name: newName },
       { new: true }
     );
 
     if (updatedUser) {
       const token = jwt.sign({ user: updatedUser }, process.env.JWT_SECRET);
-      return res.status(200).json({ message: 'User Name Updated', token });
+      return res.status(200).json({ message: "User Name Updated", token });
     } else {
-      return res.status(500).json('Internal Server Error');
+      return res.status(500).json("Internal Server Error");
     }
   } catch (error) {
-    console.error('Error updating username:', error);
-    return res.status(500).json('Internal Server Error');
+    console.error("Error updating username:", error);
+    return res.status(500).json("Internal Server Error");
   }
 });
 
@@ -449,13 +449,11 @@ app.post("/updatePassword", async (req, res) => {
       console.log("user.password:", user.password);
       console.log("passwordMatch:", passwordMatch);
 
-      if(!passwordMatch){
-        res.json({message: 'User Current password is unmatched'});
-
-      }else if(!passwordRegex.test(pass)){
-        res.json({message: 'User New Password is weak'});
-
-      }else{
+      if (!passwordMatch) {
+        res.json({ message: "User Current password is unmatched" });
+      } else if (!passwordRegex.test(pass)) {
+        res.json({ message: "User New Password is weak" });
+      } else {
         // Hash the new password before updating
         const hashedPassword = await bcrypt.hash(pass, 10);
 
@@ -466,11 +464,10 @@ app.post("/updatePassword", async (req, res) => {
         );
 
         if (updatedUser) {
-
           const token = jwt.sign({ user: updatedUser }, process.env.JWT_SECRET);
-          res.status(200).json({message: 'User Password Updated', token});
+          res.status(200).json({ message: "User Password Updated", token });
         } else {
-          res.status(404).json('User Not Found');
+          res.status(404).json("User Not Found");
         }
       }
     }
@@ -487,16 +484,16 @@ app.post("/updateEmail", async (req, res) => {
     const user = await userModel.findOne({ email: email, name: name });
 
     if (!user) {
-      return res.status(409).json('User Not Found');
+      return res.status(409).json("User Not Found");
     }
 
     const existingUser = await userModel.findOne({ email: newEmail });
 
     if (existingUser) {
       if (email === newEmail) {
-        return res.json({message: 'Email is the same with your old email'});
+        return res.json({ message: "Email is the same with your old email" });
       } else {
-        return res.json({message: 'Email has been taken'});
+        return res.json({ message: "Email has been taken" });
       }
     }
 
@@ -508,13 +505,13 @@ app.post("/updateEmail", async (req, res) => {
 
     if (updatedUser) {
       const token = jwt.sign({ user: updatedUser }, process.env.JWT_SECRET);
-      return res.status(200).json({message: 'User Email Updated', token});
+      return res.status(200).json({ message: "User Email Updated", token });
     } else {
-      return res.status(500).json('Internal Server Error');
+      return res.status(500).json("Internal Server Error");
     }
   } catch (error) {
-    console.error('Error updating email:', error);
-    return res.status(500).json('Internal Server Error');
+    console.error("Error updating email:", error);
+    return res.status(500).json("Internal Server Error");
   }
 });
 
