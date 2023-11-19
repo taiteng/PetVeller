@@ -10,6 +10,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import { jwtDecode } from "jwt-decode";
+import SecurityBanner from '../components/SecurityBanner';
 
 // Initialize FontAwesome library
 library.add(faHeart);
@@ -153,6 +154,7 @@ function Home() {
       }}
     >
       <Header />
+      <SecurityBanner/>
       <BackToTop />
       <style>
         {`

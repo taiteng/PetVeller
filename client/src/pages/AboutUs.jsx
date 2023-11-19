@@ -3,6 +3,7 @@ import Draggable from 'react-draggable';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import BackToTop from '../components/BackToTop';
+import SecurityBanner from '../components/SecurityBanner';
 
 function AboutUs() {
   const teamMembers = [
@@ -35,6 +36,7 @@ function AboutUs() {
   return (
     <div style={{ background: 'linear-gradient(to bottom right, #A6BCE8, #FFC0C0)' }}>
       <Header />
+      <SecurityBanner/>
       <BackToTop />
 
       <section style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>

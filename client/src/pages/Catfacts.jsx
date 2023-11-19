@@ -3,6 +3,7 @@ import Header from '../components/Header';
 import axios from 'axios';
 import '../components/css/CatFactStyle.css';
 import Footer from '../components/Footer';
+import SecurityBanner from '../components/SecurityBanner';
 
 function Catfacts() {
   const [data, setData] = useState([]);
@@ -48,6 +49,7 @@ function Catfacts() {
   return (
     <div style={{ background: 'linear-gradient(to bottom right, #A6BCE8, #FFC0C0)' }}>
       <Header />
+      <SecurityBanner/>
       <br></br>
       <div id="img-wrapper">
         {image.length > 0 ? (

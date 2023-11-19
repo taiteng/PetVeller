@@ -7,6 +7,7 @@ import FavCatCard from '../components/CatFavourite';
 import BackToTop from '../components/BackToTop';
 import axios from 'axios';
 import {jwtDecode} from 'jwt-decode';
+import SecurityBanner from '../components/SecurityBanner';
 
 function Cat() {
   const maximumCatsPerPage = 20;
@@ -171,6 +172,7 @@ function Cat() {
         `}
       </style>
       <Header/>
+      <SecurityBanner/>
       <BackToTop/>
       <div className='container mx-auto mt-5 mb-5'>
         <div className="welcome-container">
