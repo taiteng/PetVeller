@@ -4,7 +4,8 @@ import BackToTop from '../components/BackToTop';
 import Footer from '../components/Footer';
 import Button from '@mui/material/Button';
 import axios from 'axios';
-import {jwtDecode} from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
+import SecurityBanner from '../components/SecurityBanner';
 
 function Dog() {
   const DOGAPIKEY = import.meta.env.DOG_API_KEY;
@@ -26,8 +27,8 @@ function Dog() {
   const fetchDogData = async () => {
     try {
       setDataLoading(true)
-      const dogRes = await fetch(`${APIURL}breeds`, {headers: urlHeaders});
-      const dogData = await dogRes.json();     
+      const dogRes = await fetch(`${APIURL}breeds`, { headers: urlHeaders });
+      const dogData = await dogRes.json();
 
       if (userEmail) {
         const favouriteRes = await axios.post(
@@ -36,19 +37,19 @@ function Dog() {
         );
         const favouriteData = favouriteRes.data;
         console.log(favouriteData);
-  
+
         const updatedData = await dogData.map((dog) => {
           const isFavourited = favouriteData.some(
             (favouriteDogData) => favouriteDogData.id === dog.id
           );
           return { ...dog, isFavourited };
         });
-  
+
         setData(updatedData);
-      }else{
+      } else {
         setData(dogData);
       }
-      
+
     } catch (error) {
       console.log(error);
     } finally {
@@ -82,7 +83,7 @@ function Dog() {
   useEffect(() => {
     const storedToken = sessionStorage.getItem('token');
     console.log(storedToken)
-    if(storedToken){
+    if (storedToken) {
       const decodedToken = jwtDecode(storedToken);
       const { user } = decodedToken;
 
@@ -90,23 +91,23 @@ function Dog() {
         setUserEmail(user.email);
         setUserName(user.name);
       }
-      else{
+      else {
         console.log('An error occurred')
       }
     }
 
-    if(text != ""){
+    if (text != "") {
       setSearched(true);
       fetchFavouriteDogData();
-    }else{
+    } else {
       setSearched(false);
       fetchDogData();
       fetchFavouriteDogData();
     }
-    
-    
+
+
   }, [userName, userEmail, text]);
-  
+
 
   const searchForDog = async () => {
     try {
@@ -123,16 +124,16 @@ function Dog() {
           { userEmail: userEmail }
         );
         const favouriteData = favouriteRes.data;
-  
+
         const updatedData = await data.map((dog) => {
           const isFavourited = favouriteData.some(
             (favouriteDogData) => favouriteDogData.id === dog.id
           );
           return { ...dog, isFavourited };
         });
-  
+
         setData(updatedData);
-      }else{
+      } else {
         setData(data);
       }
     } catch (error) {
@@ -144,7 +145,7 @@ function Dog() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    
+
     console.log("Text: " + text)
 
     if (text == "") {
@@ -305,39 +306,49 @@ function Dog() {
         `}
             </style>
             <Header />
+            <SecurityBanner />
             <BackToTop />
             <section className="p-8 max-w-8xl mx-auto">
               <div className='container mx-auto mt-5 mb-5'>
-                <div className="welcome-container">
-                  <h1 className="text-center welcome-heading">Favourite Dogs</h1>
-                </div>
-                <div className="grid grid-cols-1 gap-8 md:grid-cols-3 xl:grid-cols-4 my-10 lg:my-20">
-                  {!dataLoading || data2.length != 0 ? (data2.map((dog) => (
-                    <article key={dog.id} className='dog-card p-4 rounded relative'>
-                      <div className="flex flex-col h-full">
-                        <img src={dog.imageURL} alt={dog.name} className='rounded md:h-72 w-full object-cover' />
-                        <div className="flex-grow">
-                          <h3 className='text-lg font-bold mt-4'>{dog.name || 'N/A'}</h3>
-                          <p>Life Span: {dog.life_span || 'N/A'}</p>
-                          <p>Origin: {dog.origin || 'N/A'}</p>
-                          <p>Bred: {dog.bred_for || 'N/A'}</p>
-                          <p>Temperament: {dog.temperament || 'N/A'}</p>
-                        </div>
-                        <div className='flex justify-center mt-2'>
-                          <form onSubmit={(e) => handleDogUnfavourite(e, dog)}>
-                            {userEmail == null || userEmail == "" ? null : <Button type='submit' size="small">Remove from Favourites</Button>}
-                          </form>
-                        </div>
-                      </div>
-                    </article>
-                  ))
-                  ) : (
-                    <>
-                      <p>No Favourite Dog.</p>
-                    </>
-                  )
-                  }
-                </div>
+                {userEmail != null && userEmail !== "" && (
+                  <>
+                    <div className="welcome-container">
+                      <h1 className="text-center welcome-heading">Favourite Dogs</h1>
+                    </div>
+                    <div className="grid grid-cols-1 gap-8 md:grid-cols-3 xl:grid-cols-4 my-10 lg:my-20">
+                      {!dataLoading || data2.length !== 0 ? (
+                        data2.map((dog) => (
+                          <article key={dog.id} className='dog-card p-4 rounded relative'>
+                            <div className="flex flex-col h-full">
+                              <img src={dog.imageURL} alt={dog.name} className='rounded md:h-72 w-full object-cover' />
+                              <div className="flex-grow">
+                                <h3 className='text-lg font-bold mt-4'>{dog.name || 'N/A'}</h3>
+                                <p>Life Span: {dog.life_span || 'N/A'}</p>
+                                <p>Origin: {dog.origin || 'N/A'}</p>
+                                <p>Bred: {dog.bred_for || 'N/A'}</p>
+                                <p>Temperament: {dog.temperament || 'N/A'}</p>
+                              </div>
+                              <div className='flex justify-center mt-2'>
+                                {userEmail != null && userEmail !== "" && (
+                                  <form onSubmit={(e) => handleDogUnfavourite(e, dog)}>
+                                    <Button type='submit' size="small">Remove from Favourites</Button>
+                                  </form>
+                                )}
+                              </div>
+                            </div>
+                          </article>
+                        ))
+                      ) : (
+                        <p className="text-center">
+                          {userEmail != null && userEmail !== ""
+                            ? 'No Favourite Dog.'
+                            : 'Please log in to view favourite dogs.'}
+                        </p>
+                      )}
+                    </div>
+                  </>
+                )}
+
 
 
                 <div className="welcome-container">

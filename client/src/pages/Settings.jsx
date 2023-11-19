@@ -13,6 +13,7 @@ import DialogActions from '@mui/material/DialogActions';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import he from 'he';
+import SecurityBanner from '../components/SecurityBanner';
 
 function Settings() {
     const decodedToken = jwtDecode(sessionStorage.getItem('token'));
@@ -428,6 +429,7 @@ function Settings() {
               `}
                 </style>
                 <Header />
+                <SecurityBanner />
                 <div className="user-profile">
                     <div className="profile-title">My Profile</div>
                     <div className="profile-field">

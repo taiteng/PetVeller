@@ -4,6 +4,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import he from 'he';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@material-ui/core';
+import SecurityBanner from '../components/SecurityBanner';
 
 import '../components/css/ContactUsStyle.css';
 
@@ -110,6 +111,7 @@ function ContactUs() {
   return (
     <div style={{ background: 'linear-gradient(to bottom right, #A6BCE8, #FFC0C0)' }}>
       <Header />
+      <SecurityBanner/>
       <br></br>
       <div className='body'>
         <div className='card'>
