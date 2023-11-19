@@ -445,7 +445,7 @@ app.post("/updatePassword", async (req, res) => {
         res.status(404).json('User Not Found');
       }
     }
-  } catch (error) {
+  }} catch (error) {
     console.log('Error updating password:', error);
     res.status(500).json('Internal Server Error');
   }
