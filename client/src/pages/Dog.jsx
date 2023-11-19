@@ -14,6 +14,7 @@ function Dog() {
   const [text, setText] = useState("")
   const [searched, setSearched] = useState(false)
   const [userEmail, setUserEmail] = useState("");
+  const [userName, setUserName] = useState("");
   const [data2, setData2] = useState([]);
   const [dataLoading, setDataLoading] = useState(false);
 
@@ -87,6 +88,7 @@ function Dog() {
 
       if (user) {
         setUserEmail(user.email);
+        setUserName(user.name);
       }
       else{
         console.log('An error occurred')
@@ -103,7 +105,7 @@ function Dog() {
     }
     
     
-  }, [userEmail, text]);
+  }, [userName, userEmail, text]);
   
 
   const searchForDog = async () => {
@@ -177,10 +179,14 @@ function Dog() {
 
     if (userEmail) {
       await axios.post('http://localhost:3001/addFavouriteDog', { dogData })
-        .then((result) => {
+        .then(async (result) => {
           console.log(result);
           if (result.data === "Dog Favourited") {
             console.log('Dog is added to favourite collection');
+
+            let message = `${userName}(${userEmail}) favorite a dog named ${name}.`;
+            const response = await axios.post('http://localhost:3001/save-log', { logContent: message });
+            console.log('Log message saved to the database:', response.data);
 
             setData((prevData) => {
               const updatedData = prevData.map((dog) =>
@@ -231,10 +237,14 @@ function Dog() {
 
     if (userEmail) {
       await axios.post('http://localhost:3001/deleteFavouriteDogs', { dogData })
-        .then((result) => {
+        .then(async (result) => {
           console.log(result);
           if (result.data === "Dog Unfavourited") {
             console.log('Dog is removed from favourite collection');
+
+            let message = `${userName}(${userEmail}) remove a dog named ${name} from favorite.`;
+            const response = await axios.post('http://localhost:3001/save-log', { logContent: message });
+            console.log('Log message saved to the database:', response.data);
 
             setData((prevData) => {
               const updatedData = prevData.map((dog) =>

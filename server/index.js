@@ -406,17 +406,17 @@ app.post("/favouriteNews", async (req, res) => {
 });
 
 app.post("/updateUsername", async (req, res) => {
-  const { email, newName, name } = req.body.userDetail;
+  const { email, newName} = req.body.userDetail;
 
   try {
-    const user = await userModel.findOne({ email, name });
+    const user = await userModel.findOne({email});
 
     if (!user) {
       return res.status(404).json('User Not Found');
     }
 
     const updatedUser = await userModel.findOneAndUpdate(
-      { email, name },
+      { email},
       { name: newName },
       { new: true }
     );
