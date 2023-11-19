@@ -60,6 +60,7 @@ function Settings() {
             errors.newPassword = "New Password must have at least 7 characters, including one uppercase letter, one lowercase letter, and one special character.";
             setNewPassword("")
             setCurrentPassword("")
+            setCurrentPasswordError("")
         }
 
         setErrors(errors);
@@ -478,11 +479,14 @@ function Settings() {
                                 <button className="edit-button" onClick={handleEditPassword}>
                                     Change Password
                                 </button>
-                                {newPasswordError && <div className="error-message">{newPasswordError}</div>}
-                                {currentPasswordError && <div className="error-message">{currentPasswordError}</div>}
-                                {errors.currentPassword && <div className="error-message" >{errors.currentPassword}</div>}
-                                {errors.newPassword && <div className="error-message" >{errors.newPassword}</div>}
-                                
+                                <div>
+                                    {newPasswordError && <div className="error-message">{newPasswordError}</div>}
+                                    {currentPasswordError && <div className="error-message">{currentPasswordError}</div>}
+                                </div>
+                                <div>
+                                    {errors.currentPassword && <div className="error-message" >{errors.currentPassword}</div>}
+                                    {errors.newPassword && <div className="error-message" >{errors.newPassword}</div>}
+                                </div>
                             </>
                         )}
                     </div>
