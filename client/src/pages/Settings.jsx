@@ -12,6 +12,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
+import he from 'he';
 
 function Settings() {
     const decodedToken = jwtDecode(sessionStorage.getItem('token'));
@@ -24,6 +25,7 @@ function Settings() {
 
     const [userrole, setUserRole] = useState(sessionStorage.uRole);
     const [username, setUsername] = useState(userName);
+    const [oldUsername, setOldUsername] = useState(userName);
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [email, setEmail] = useState(userEmail);
@@ -107,16 +109,17 @@ function Settings() {
         if (validateForm()) {
             const updatedUsername = e.target.elements.username.value;
             const userDetail = {
-                email: userEmail,
-                newName: updatedUsername,
-                name: userName
+                email: encodeHTML(userEmail),
+                newName: encodeHTML(updatedUsername),
+                name: encodeHTML(userName),
             };
 
             await axios.post('http://localhost:3001/updateUsername', { userDetail })
-                .then((result) => {
+                .then(async (result) => {
                     console.log(result);
                     if (result.data.message === "User Name Updated") {
 
+                        //setOldUsername(user.name)
                         //Delete the old token
                         sessionStorage.token = "";
 
@@ -125,8 +128,12 @@ function Settings() {
                         const decodedToken = jwtDecode(result.data.token);
                         const { user } = decodedToken;
 
-                        console.log(user.name)
                         console.log('User Name Updated');
+
+                        let message = `${user.name} (${user.email}) update the username from ${userName} to ${user.name}.`;
+                        const response = await axios.post('http://localhost:3001/save-log', { logContent: message });
+                        console.log('Log message saved to the database:', response.data);
+                        setUsername(user.name)
                     }
                     else {
                         console.log('User Not Found')
@@ -196,13 +203,13 @@ function Settings() {
         if (validateForm()) {
             const updatedEmail = e.target.elements.email.value;
             const userDetail = {
-                email: userEmail,
-                newEmail: updatedEmail,
-                name: userName
+                email: encodeHTML(userEmail),
+                newEmail: encodeHTML(updatedEmail),
+                name: encodeHTML(userName)
             };
 
             await axios.post('http://localhost:3001/updateEmail', { userDetail })
-                .then((result) => {
+                .then(async (result) => {
                     console.log(result);
                     if (result.data.message === "User Email Updated") {
 
@@ -216,6 +223,10 @@ function Settings() {
 
                         console.log(user.email);
                         setEmailError('');
+                        let message = `${user.name} (${user.email}) update the email from ${userEmail} to ${user.email}.`;
+                        const response = await axios.post('http://localhost:3001/save-log', { logContent: message });
+                        console.log('Log message saved to the database:', response.data);
+                        
                     } else if (result.data.message === "Email has been taken") {
                         console.log(email)
                         setEmail(userEmail)
@@ -252,9 +263,12 @@ function Settings() {
         };
 
         await axios.post('http://localhost:3001/terminateAccount', { userDetail })
-            .then((result) => {
+            .then(async (result) => {
                 console.log(result);
                 if (result.data === "Account Terminated") {
+                    let message = `${userName} (${userEmail}) account has been terminated.`;
+                    const response = await axios.post('http://localhost:3001/save-log', { logContent: message });
+                    console.log('Log message saved to the database:', response.data);
                     handleLogout()
                     console.log('Account Terminated and Navigate to home');
                 }
@@ -313,6 +327,10 @@ function Settings() {
             openPopup();
             console.log('User is already a premium user.');
         }
+    }
+
+    function encodeHTML(str) {
+        return he.encode(str); 
     }
 
     return (
