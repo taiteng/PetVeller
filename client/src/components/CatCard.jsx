@@ -39,6 +39,7 @@ const CatCard = ({ catCards, requestFavourites, requestCats }) => {
     }
     else{
         const [catName, setCatName] = useState('');
+        const [userRole, setUserRole] = useState(null);
         const [userName, setUserName] = useState(null);
         const [userEmail, setUserEmail] = useState(null);
         const [isLoading, setIsLoading] = useState(true);
@@ -55,6 +56,7 @@ const CatCard = ({ catCards, requestFavourites, requestCats }) => {
               if (user) {
                 setUserName(user.name);
                 setUserEmail(user.email);
+                setUserRole(user.role);
               }
               else{
                 console.log('An error occurred')
@@ -152,7 +154,7 @@ const CatCard = ({ catCards, requestFavourites, requestCats }) => {
                     </CardContent>
                 </CardActionArea>
                 <CardActions disableSpacing sx={{ mt: "auto" }} className='flex justify-between'>
-                    {userEmail && <CatButton userEmail={userEmail} catName={catName} handleAddToDatabase={handleAddToDatabase} />}
+                    {userEmail && userRole === 'premiumUser' && <CatButton userEmail={userEmail} catName={catName} handleAddToDatabase={handleAddToDatabase} />}
                     <a href={`${catCards?.wikipedia_url}`}>
                         <Button size="small">Learn More</Button>
                     </a>

@@ -29,7 +29,11 @@ function AddAdmin() {
 
     if (!password) {
       formIsValid = false;
-      errors.password = 'Password is required';
+      newErrors.password = 'Password is required';
+    } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.{7,})/.test(password)) {
+      formIsValid = false;
+      errors.password =
+        'Password must contain at least one lowercase letter, one uppercase letter, one special character, and be at least 7 characters long';
     }
 
     setErrors(errors);

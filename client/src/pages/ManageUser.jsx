@@ -62,16 +62,19 @@ function ManageUser() {
       });
   };
 
-  const handleDeleteFact = (id) => {
-    axios
-      .post(`http://localhost:3001/deleteuserdetails/${id}`)
-      .then((response) => {
-        console.log('User deleted:', response.data);
-        fetchUserDetails();
-      })
-      .catch((error) => {
-        console.log('Error deleting user:', error);
-      });
+  const handleDeleteUser = async (id, name, email) => {
+    try {
+      const response = await axios.post(`http://localhost:3001/deleteuserdetails/${id}`);
+      console.log('User deleted:', response.data);
+      fetchUserDetails();
+  
+      // Add log message
+      let message = `${name} (${email}) has been deleted by the admin.`;
+      const logResponse = await axios.post('http://localhost:3001/save-log', { logContent: message });
+      console.log('Log message saved to the database:', logResponse.data);
+    } catch (error) {
+      console.log('Error deleting user:', error);
+    }
   };
 
   const handleRole = (userId) => {
@@ -129,11 +132,18 @@ function ManageUser() {
                   <td className="border px-4 py-2">{user.role}</td>
                   <td className="border px-4 py-2">
                     <Link
-                        className="bg-red-500 text-white px-3 py-1 rounded" to={`/role/${user._id}`}
+                        className="bg-orange-500 text-white px-3 py-1 rounded" to={`/role/${user._id}`}
                         // onClick={() => handleRole(user._id)}
                         >
                         Manage Role
                     </Link>
+                    <span style={{ marginRight: '10px' }}></span>
+                    <button
+                      className="bg-red-500 text-white px-3 py-1 rounded"
+                      onClick={() => handleDeleteUser(user._id, user.name, user.email)}
+                    >
+                      Delete
+                    </button>
                   </td>
                 </tr>
               ))}

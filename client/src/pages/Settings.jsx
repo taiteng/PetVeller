@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState} from 'react';
+import ReactDOM from 'react-dom';
+import Modal from 'react-modal';
 import Header from '../components/Header';
 import BackToTop from '../components/BackToTop';
 import Footer from '../components/Footer';
@@ -9,7 +11,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import { useNavigate } from 'react-router-dom';
-import {jwtDecode} from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 
 function Settings() {
     const decodedToken = jwtDecode(sessionStorage.getItem('token'));
@@ -21,9 +23,10 @@ function Settings() {
     const userPassword = user.password;
 
     const [userrole, setUserRole] = useState(sessionStorage.uRole);
-    const [username, setUsername] = useState(sessionStorage.uName);
-    const [password, setPassword] = useState(sessionStorage.uPass);
-    const [email, setEmail] = useState(sessionStorage.uEmail);
+    const [username, setUsername] = useState(userName);
+    const [currentPassword, setCurrentPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [email, setEmail] = useState(userEmail);
     const [editingUsername, setEditingUsername] = useState(false);
     const [editingPassword, setEditingPassword] = useState(false);
     const [editingEmail, setEditingEmail] = useState(false);
@@ -31,6 +34,9 @@ function Settings() {
     const [errors, setErrors] = useState({});
     const navigate = useNavigate();
     const [emailError, setEmailError] = useState('');
+    const [newPasswordError, setNewPasswordError] = useState('');
+    const [currentPasswordError, setCurrentPasswordError] = useState('');
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.{7,})/;
 
     const validateForm = () => {
         let formIsValid = true;
@@ -39,20 +45,21 @@ function Settings() {
         if (username.trim() === "") {
             formIsValid = false;
             errors.username = 'Username is required';
-            setUsername(sessionStorage.uName)
+            setUsername(userName)
         }
 
         if (email.trim() === "") {
             formIsValid = false;
             errors.email = 'Email is required';
             setEmailError('Email is required');
-            setEmail(sessionStorage.uEmail)
+            setEmail(userEmail)
         }
 
-        if (password.trim() === "") {
+        if (currentPassword != "" && newPassword != "" && !passwordRegex.test(newPassword)) {
             formIsValid = false;
-            errors.password = 'Password is required';
-            setPassword(sessionStorage.uPass)
+            errors.newPassword = "New Password must have at least 7 characters, including one uppercase letter, one lowercase letter, and one special character.";
+            setNewPassword("")
+            setCurrentPassword("")
         }
 
         setErrors(errors);
@@ -63,8 +70,12 @@ function Settings() {
         setUsername(e.target.value);
     };
 
-    const handlePasswordChange = (e) => {
-        setPassword(e.target.value);
+    const handleCurrentPasswordChange = (e) => {
+        setCurrentPassword(e.target.value);
+    };
+
+    const handleNewPasswordChange = (e) => {
+        setNewPassword(e.target.value);
     };
 
     const handleEmailChange = (e) => {
@@ -79,6 +90,12 @@ function Settings() {
         setEditingPassword(true);
     };
 
+    const handleCancelEditPassword = () => {
+        setCurrentPasswordError("")
+        setNewPasswordError("")
+        setEditingPassword(false);
+    };
+
     const handleEditEmail = () => {
         setEditingEmail(true);
     };
@@ -89,18 +106,25 @@ function Settings() {
         if (validateForm()) {
             const updatedUsername = e.target.elements.username.value;
             const userDetail = {
-                email: sessionStorage.uEmail,
-                pass: sessionStorage.uPass,
+                email: userEmail,
                 newName: updatedUsername,
-                name: sessionStorage.uName
+                name: userName
             };
 
-            axios.post('http://localhost:3001/updateUsername', { userDetail })
+            await axios.post('http://localhost:3001/updateUsername', { userDetail })
                 .then((result) => {
                     console.log(result);
-                    if (result.data === "User Name Updated") {
-                        setUsername(updatedUsername);
-                        sessionStorage.uName = updatedUsername;
+                    if (result.data.message === "User Name Updated") {
+
+                        //Delete the old token
+                        sessionStorage.token = "";
+
+                        //Assign the new token with new information
+                        sessionStorage.token = result.data.token;
+                        const decodedToken = jwtDecode(result.data.token);
+                        const { user } = decodedToken;
+
+                        console.log(user.name)
                         console.log('User Name Updated');
                     }
                     else {
@@ -112,25 +136,48 @@ function Settings() {
 
         setEditingUsername(false);
     }
-    const handleSavePassword = (e) => {
+
+    const handleSavePassword = async (e) => {
         e.preventDefault();
 
         if (validateForm()) {
-            const updatedPassword = e.target.elements.password.value;
+            const currentPassword = e.target.elements.currentPassword.value;
+            const newPassword = e.target.elements.newPassword.value;
+
             const userDetail = {
-                email: sessionStorage.uEmail,
-                pass: updatedPassword,
-                oldPass: sessionStorage.uPass,
-                name: sessionStorage.uName
+                email: userEmail,
+                pass: newPassword,
+                oldPass: currentPassword,
+                name: userName
             };
 
-            axios.post('http://localhost:3001/updatePassword', { userDetail })
+            await axios.post('http://localhost:3001/updatePassword', { userDetail })
                 .then((result) => {
                     console.log(result);
-                    if (result.data === "User Password Updated") {
-                        setPassword(updatedPassword);
-                        sessionStorage.uPass = updatedPassword;
+                    if (result.data.message === "User Password Updated") {
+
+                        //Empty the old token
+                        sessionStorage.token = "";
+
+                        sessionStorage.token = result.data.token;
+
+                        setNewPassword("")
+                        setCurrentPassword("")
+                        setCurrentPasswordError('');
+                        setNewPasswordError('');
                         console.log('User Password Updated');
+                    }
+                    else if (result.data.message === "User Current password is unmatched") {
+                        setCurrentPasswordError('Your current password is unmatched');
+                        console.log('Unmatched Current Password')
+                        setCurrentPassword("")
+                        setNewPassword("")
+                    }
+                    else if (result.data.message === "User New Password is weak") {
+                        setNewPasswordError('Your new password is weak');
+                        console.log('Weak New Password')
+                        setCurrentPassword("")
+                        setNewPassword("")
                     }
                     else {
                         console.log('User Not Found')
@@ -142,35 +189,40 @@ function Settings() {
         setEditingPassword(false);
     };
 
-    const handleSaveEmail = (e) => {
+    const handleSaveEmail = async (e) => {
         e.preventDefault();
 
         if (validateForm()) {
             const updatedEmail = e.target.elements.email.value;
             const userDetail = {
-                email: sessionStorage.uEmail,
-                pass: sessionStorage.uPass,
+                email: userEmail,
                 newEmail: updatedEmail,
-                name: sessionStorage.uName
+                name: userName
             };
-            axios.post('http://localhost:3001/updateEmail', { userDetail })
+
+            await axios.post('http://localhost:3001/updateEmail', { userDetail })
                 .then((result) => {
                     console.log(result);
-                    if (result.data === "User Email Updated") {
+                    if (result.data.message === "User Email Updated") {
 
-                        setEmail(updatedEmail);
-                        sessionStorage.uEmail = updatedEmail;
-                        console.log('User Email Updated');
+                        //Delete the old token
+                        sessionStorage.token = "";
+
+                        //Assign the new token with new information
+                        sessionStorage.token = result.data.token;
+                        const decodedToken = jwtDecode(result.data.token);
+                        const { user } = decodedToken;
+
+                        console.log(user.email);
                         setEmailError('');
-                    } else if (result.data === "Email has been taken") {
+                    } else if (result.data.message === "Email has been taken") {
                         console.log(email)
-                        setEmail(sessionStorage.uEmail)
-                        console.log(email)
+                        setEmail(userEmail)
                         setEmailError('Email has been taken. Please use a different email.');
 
-                    }else if(result.data === "Email is the same with your old email"){
+                    } else if (result.data.message === "Email is the same with your old email") {
                         console.log(email)
-                        setEmail(sessionStorage.uEmail)
+                        setEmail(userEmail)
                         setEmailError('Email is the same with your old email. Please use a different email.');
                     }
                     else {
@@ -193,9 +245,9 @@ function Settings() {
 
     const handleConfirmTerminate = async () => {
         const userDetail = {
-            email: sessionStorage.uEmail,
-            pass: sessionStorage.uPass,
-            name: sessionStorage.uName
+            email: userEmail,
+            pass: userPassword,
+            name: userName
         };
 
         await axios.post('http://localhost:3001/terminateAccount', { userDetail })
@@ -230,12 +282,34 @@ function Settings() {
         console.log('User Removed');
     };
 
+    const customStyles = {
+        content: {
+            top: '50%',
+            left: '50%',
+            right: 'auto',
+            bottom: 'auto',
+            marginRight: '-50%',
+            transform: 'translate(-50%, -50%)',
+        },
+    };
+
+
+    const [isPopupOpen, setPopupOpen] = useState(false);
+
+    const openPopup = () => {
+        setPopupOpen(true);
+    };
+
+    const closePopup = () => {
+        setPopupOpen(false);
+    };
+
     const handlePayment = () => {
-        if(userRole != 'premiumUser'){
+        if (userRole != 'premiumUser') {
             navigate('/payment');
         }
-        else{
-            alert('User is already a premium user.');
+        else {
+            openPopup();
             console.log('User is already a premium user.');
         }
     }
@@ -313,6 +387,7 @@ function Settings() {
                 }
                 
                 .edit-button,
+                .cancel-button,
                 .terminate-button,
                 .upgrade-button {
                   background-color: #1976d2;
@@ -326,6 +401,7 @@ function Settings() {
                 }
                 
                 .edit-button:hover,
+                .cancel-button,
                 .terminate-button:hover,
                 .upgrade-button:hover, {
                   background-color: #1565c0;
@@ -347,12 +423,12 @@ function Settings() {
                                         className="field-value"
                                         name="username"
                                     />
-                                    
+
                                     <button type="submit" className="edit-button">
                                         Save
                                     </button>
                                 </form>
-                                
+
                             </>
                         ) : (
                             <>
@@ -369,27 +445,44 @@ function Settings() {
                         {editingPassword ? (
                             <>
                                 <form onSubmit={handleSavePassword}>
+                                    <div>Current Password</div>
                                     <input
                                         type="password"
-                                        value={password}
-                                        onChange={handlePasswordChange}
+                                        value={currentPassword}
+                                        onChange={handleCurrentPasswordChange}
                                         className="field-value"
-                                        name="password"
+                                        name="currentPassword"
+                                        required
                                     />
-                                    
+                                    <div>New Password</div>
+                                    <input
+                                        type="password"
+                                        value={newPassword}
+                                        onChange={handleNewPasswordChange}
+                                        className="field-value"
+                                        name="newPassword"
+                                        required
+                                    />
+                                    <button type="button" className="cancel-button" style={{ backgroundColor: 'red' }} onClick={handleCancelEditPassword}>
+                                        Cancel
+                                    </button>
                                     <button type="submit" className="edit-button">
                                         Save
                                     </button>
                                 </form>
-                                
+
                             </>
                         ) : (
                             <>
-                                <div className="field-value">{password}</div>
+                                <div className="field-value"></div>
                                 <button className="edit-button" onClick={handleEditPassword}>
-                                    Edit
+                                    Change Password
                                 </button>
-                                {errors.password && <div className="error-message">{errors.password}</div>}
+                                {newPasswordError && <div className="error-message">{newPasswordError}</div>}
+                                {currentPasswordError && <div className="error-message">{currentPasswordError}</div>}
+                                {errors.currentPassword && <div className="error-message" >{errors.currentPassword}</div>}
+                                {errors.newPassword && <div className="error-message" >{errors.newPassword}</div>}
+                                
                             </>
                         )}
                     </div>
@@ -435,32 +528,43 @@ function Settings() {
                             />
                         </form>
                     </div>
-                    <table>
-                        <tr>
-                            <td>
-                                <div className="action-buttons">
-                                    <button
-                                        className="upgrade-button"
-                                        style={{ backgroundColor: 'blue' }}
-                                        onClick={handlePayment}
-                                    >
-                                        Upgrade Account
-                                    </button>
-                                </div>
-                            </td>
-                            <td>
-                                <div className="action-buttons">
-                                    <button
-                                        className="terminate-button"
-                                        style={{ backgroundColor: 'red' }}
-                                        onClick={handleTerminateAccount}
-                                    >
-                                        Terminate Account
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    </table>
+                    <Modal
+                        isOpen={isPopupOpen}
+                        onRequestClose={closePopup}
+                        style={customStyles}
+                        contentLabel="Upgrade Account Error"
+                    >
+                        <div>
+                            <h2>User is already a premium user.</h2>
+                            <div className="action-buttons">
+                                <button className="upgrade-button" style={{ backgroundColor: 'blue' }} onClick={closePopup}>Close Modal</button>
+                            </div>
+                        </div>
+                    </Modal>
+                    <div className="action-buttons" style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <button
+                                            className="upgrade-button"
+                                            style={{ backgroundColor: 'blue' }}
+                                            onClick={handlePayment}>
+                                            Upgrade Account
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <button
+                                            className="terminate-button"
+                                            style={{ backgroundColor: 'red' }}
+                                            onClick={handleTerminateAccount}>
+                                            Terminate Account
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 <BackToTop />
                 <Footer />

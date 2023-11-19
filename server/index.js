@@ -407,38 +407,33 @@ app.post("/favouriteNews", async (req, res) => {
 
 app.post("/updateUsername", async (req, res) => {
   const { email, newName, name } = req.body.userDetail;
-  userModel
-    .findOne({ email: email, name: name })
-    .then((user) => {
+  userModel.findOne({ email: email, name: name })
+    .then(user => {
       if (!user) {
-        res.status(409).json("Username already exists");
+        res.status(409).json('Username already exists');
       } else {
-        userModel
-          .findOneAndUpdate(
-            { email: email, name: name },
-            { name: newName },
-            { new: true }
-          )
-          .then((updatedUser) => {
+        userModel.findOneAndUpdate({ email: email, name: name }, { name: newName }, { new: true })
+          .then(updatedUser => {
             if (updatedUser) {
               res.status(200).json("User Name Updated");
             } else {
-              res.status(404).json("User Not Found");
+              res.status(404).json('User Not Found');
             }
           })
-          .catch((error) => {
-            console.log("Error updating username:", error);
-            res.status(500).json("Internal Server Error");
+          .catch(error => {
+            console.log('Error updating username:', error);
+            res.status(500).json('Internal Server Error');
           });
       }
     })
-    .catch((error) => {
-      console.log("Error finding user:", error);
-      res.status(500).json("Internal Server Error");
+    .catch(error => {
+      console.log('Error finding user:', error);
+      res.status(500).json('Internal Server Error');
     });
 });
 
-app.post("/updatePassword", async (req, res) => {
+
+app.post('/updatePassword', async (req, res) => {
   const { email, pass, name } = req.body.userDetail;
 
   try {
@@ -447,19 +442,33 @@ app.post("/updatePassword", async (req, res) => {
     if (!user) {
       res.status(409).json("User Not Found");
     } else {
-      // Hash the new password before updating
-      const hashedPassword = await bcrypt.hash(pass, 10);
+      const passwordMatch = bcrypt.compareSync(oldPass, user.password);
+      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.{7,})/;
 
-      const updatedUser = await userModel.findOneAndUpdate(
-        { email: email, name: name },
-        { password: hashedPassword },
-        { new: true }
-      );
+      console.log('oldPass:', oldPass);
+      console.log('user.password:', user.password);
+      console.log('passwordMatch:', passwordMatch);
+
+      if(!passwordMatch){
+        res.json({message: 'User Current password is unmatched'});
+
+      }else if(!passwordRegex.test(pass)){
+        res.json({message: 'User New Password is weak'});
+
+      }else{
+        // Hash the new password before updating
+        const hashedPassword = await bcrypt.hash(pass, 10);
+
+        const updatedUser = await userModel.findOneAndUpdate(
+          { email: email, name: name },
+          { password: hashedPassword },
+          { new: true }
+        );
 
       if (updatedUser) {
-        res.status(200).json("User Password Updated");
+        res.status(200).json('User Password Updated');
       } else {
-        res.status(404).json("User Not Found");
+        res.status(404).json('User Not Found');
       }
     }
   } catch (error) {
@@ -468,52 +477,46 @@ app.post("/updatePassword", async (req, res) => {
   }
 });
 
-app.post("/updateEmail", async (req, res) => {
+app.post('/updateEmail', async (req, res) => {
   const { email, newEmail, name } = req.body.userDetail;
-  userModel
-    .findOne({ email: email, name: name })
-    .then((user) => {
+  userModel.findOne({ email: email, name: name })
+    .then(user => {
       if (!user) {
-        res.status(409).json("User Not Found");
-      } else {
-        userModel
-          .findOne({ email: newEmail })
-          .then((existingUser) => {
+        res.status(409).json('User Not Found');
+      }else {
+        userModel.findOne({ email: newEmail })
+          .then(existingUser => {
             if (existingUser) {
-              if (email == newEmail) {
-                res.json("Email is the same with your old email");
-              } else {
-                res.json("Email has been taken");
+              if(email == newEmail){
+                res.json('Email is the same with your old email');
+              }else{
+                res.json('Email has been taken');
               }
+              
             } else {
-              userModel
-                .findOneAndUpdate(
-                  { email: email, name: name },
-                  { email: newEmail },
-                  { new: true }
-                )
-                .then((updatedUser) => {
+              userModel.findOneAndUpdate({ email: email, name: name }, { email: newEmail }, { new: true })
+                .then(updatedUser => {
                   if (updatedUser) {
                     res.status(200).json("User Email Updated");
                   } else {
-                    res.status(500).json("Internal Server Error");
+                    res.status(500).json('Internal Server Error');
                   }
                 })
-                .catch((error) => {
-                  console.log("Error updating email:", error);
-                  res.status(500).json("Internal Server Error");
+                .catch(error => {
+                  console.log('Error updating email:', error);
+                  res.status(500).json('Internal Server Error');
                 });
             }
           })
-          .catch((error) => {
-            console.log("Error finding user:", error);
-            res.status(500).json("Internal Server Error");
+          .catch(error => {
+            console.log('Error finding user:', error);
+            res.status(500).json('Internal Server Error');
           });
       }
     })
-    .catch((error) => {
-      console.log("Error finding user:", error);
-      res.status(500).json("Internal Server Error");
+    .catch(error => {
+      console.log('Error finding user:', error);
+      res.status(500).json('Internal Server Error');
     });
 });
 
