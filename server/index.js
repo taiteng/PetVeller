@@ -36,7 +36,7 @@ app.post("/login", async (req, res) => {
     const user = await userModel.findOne({ email: email });
 
     if (user) {
-      const passwordMatch = await bcrypt.compare(password, user.password);
+      const passwordMatch = bcrypt.compare(password, user.password);
 
       if (passwordMatch) {
         const token = jwt.sign({ user }, process.env.JWT_SECRET);
