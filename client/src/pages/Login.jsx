@@ -42,20 +42,15 @@ function Login() {
         if(validateForm()){
             axios.post('http://localhost:3001/login', {email, password})
             .then(async result => {
-                sessionStorage.token = result.data.token;
-                const decodedToken = jwtDecode(result.data.token);
-                const { user } = decodedToken;
+                
+                if(result.data === 'The Password Is Incorrect' || result.data === 'User Not Found'){
+                    setShowConfirmation(true);
+                }
+                else if(result.data && result.data.token){
+                    sessionStorage.token = result.data.token;
+                    const decodedToken = jwtDecode(result.data.token);
+                    const { user } = decodedToken;
 
-                if(user.role === 'admin'){
-                    navigate('/admin');
-                }
-                else if(result.data === 'The Password Is Incorrect'){
-                    setShowConfirmation(true);
-                }
-                else if(result.data === 'User Not Found'){
-                    setShowConfirmation(true);
-                }
-                else{
                     sessionStorage.uRole = user.role;
                     sessionStorage.uEmail = user.email;
                     sessionStorage.uName = user.name;
@@ -63,7 +58,16 @@ function Login() {
                     let message = `${user.name} (${user.email}) logged in.`;
                     const response = await axios.post('http://localhost:3001/save-log', { logContent: message });
                     console.log('Log message saved to the database:', response.data);
-                    navigate('/');
+
+                    if(user.role === 'admin'){
+                        navigate('/admin');
+                    }
+                    else{
+                        navigate('/');
+                    }
+                }
+                else{
+                    console.log('An Error Occurred.');
                 }
             })
             .catch(err => console.log(err))
