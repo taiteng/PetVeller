@@ -77,6 +77,13 @@ function Settings() {
             setCurrentPasswordError("")
         }
 
+        if(!/\S+@\S+\.\S+/.test(email)){
+            formIsValid = false;
+            errors.email = 'Email is required';
+            setEmailError('Please provide a valid email address');
+            setEmail(userEmail)
+        }
+
         setErrors(errors);
         return formIsValid;
     };

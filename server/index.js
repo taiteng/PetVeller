@@ -479,9 +479,9 @@ app.post("/updatePassword", async (req, res) => {
 
 app.post("/updateEmail", async (req, res) => {
   try {
-    const { email, newEmail, name } = req.body.userDetail;
+    const { email, newEmail} = req.body.userDetail;
 
-    const user = await userModel.findOne({ email: email, name: name });
+    const user = await userModel.findOne({ email: email});
 
     if (!user) {
       return res.status(409).json("User Not Found");
@@ -498,7 +498,7 @@ app.post("/updateEmail", async (req, res) => {
     }
 
     const updatedUser = await userModel.findOneAndUpdate(
-      { email: email, name: name },
+      { email: email},
       { email: newEmail },
       { new: true }
     );
