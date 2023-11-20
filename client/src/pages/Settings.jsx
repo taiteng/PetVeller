@@ -29,8 +29,8 @@ function Settings() {
     
       if (decodedUser) {
         userRole = decodedUser.role ?? '';
-        userName = decodedUser.name ?? '';
-        userEmail = decodedUser.email ?? '';
+        userName = encodeHTML(decodedUser.name) ?? '';
+        userEmail = encodeHTML(decodedUser.email) ?? '';
         userPassword = decodedUser.password ?? '';
       }
     }
@@ -121,9 +121,9 @@ function Settings() {
         if (validateForm()) {
             const updatedUsername = e.target.elements.username.value;
             const userDetail = {
-                email: encodeHTML(userEmail),
-                newName: encodeHTML(updatedUsername),
-                name: encodeHTML(userName),
+                email: userEmail,
+                newName: updatedUsername,
+                name: userName,
             };
 
             await axios.post('http://localhost:3001/updateUsername', { userDetail })
@@ -145,7 +145,7 @@ function Settings() {
                         let message = `${user.name} (${user.email}) update the username from ${userName} to ${user.name}.`;
                         const response = await axios.post('http://localhost:3001/save-log', { logContent: message });
                         console.log('Log message saved to the database:', response.data);
-                        setUsername(user.name)
+                        setUsername(encodeHTML(user.name))
                     }
                     else {
                         console.log('User Not Found')
@@ -215,9 +215,9 @@ function Settings() {
         if (validateForm()) {
             const updatedEmail = e.target.elements.email.value;
             const userDetail = {
-                email: encodeHTML(userEmail),
-                newEmail: encodeHTML(updatedEmail),
-                name: encodeHTML(userName)
+                email: userEmail,
+                newEmail: updatedEmail,
+                name: userName
             };
 
             await axios.post('http://localhost:3001/updateEmail', { userDetail })
@@ -233,20 +233,17 @@ function Settings() {
                         const decodedToken = jwtDecode(result.data.token);
                         const { user } = decodedToken;
 
-                        console.log(user.email);
                         setEmailError('');
                         let message = `${user.name} (${user.email}) update the email from ${userEmail} to ${user.email}.`;
                         const response = await axios.post('http://localhost:3001/save-log', { logContent: message });
                         console.log('Log message saved to the database:', response.data);
                         
                     } else if (result.data.message === "Email has been taken") {
-                        console.log(email)
-                        setEmail(userEmail)
+                        setEmail(encodeHTML(userEmail))
                         setEmailError('Email has been taken. Please use a different email.');
 
                     } else if (result.data.message === "Email is the same with your old email") {
-                        console.log(email)
-                        setEmail(userEmail)
+                        setEmail(encodeHTML(userEmail))
                         setEmailError('Email is the same with your old email. Please use a different email.');
                     }
                     else {
