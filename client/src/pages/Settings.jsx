@@ -29,18 +29,18 @@ function Settings() {
     
       if (decodedUser) {
         userRole = decodedUser.role ?? '';
-        userName = encodeHTML(decodedUser.name) ?? '';
-        userEmail = encodeHTML(decodedUser.email) ?? '';
+        userName = decodedUser.name ?? '';
+        userEmail = decodedUser.email ?? '';
         userPassword = decodedUser.password ?? '';
       }
     }
 
     const [userrole, setUserRole] = useState(sessionStorage.uRole);
-    const [username, setUsername] = useState(userName);
+    const [username, setUsername] = useState(encodeHTML(userName));
     const [oldUsername, setOldUsername] = useState(userName);
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
-    const [email, setEmail] = useState(userEmail);
+    const [email, setEmail] = useState(encodeHTML(userEmail));
     const [editingUsername, setEditingUsername] = useState(false);
     const [editingPassword, setEditingPassword] = useState(false);
     const [editingEmail, setEditingEmail] = useState(false);
@@ -244,6 +244,7 @@ function Settings() {
                         let message = `${user.name} (${user.email}) update the email from ${userEmail} to ${user.email}.`;
                         const response = await axios.post('http://localhost:3001/save-log', { logContent: message });
                         console.log('Log message saved to the database:', response.data);
+                        setEmail(encodeHTML(user.email))
                         
                     } else if (result.data.message === "Email has been taken") {
                         setEmail(encodeHTML(userEmail))
