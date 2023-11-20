@@ -16,13 +16,24 @@ import he from 'he';
 import SecurityBanner from '../components/SecurityBanner';
 
 function Settings() {
-    const decodedToken = jwtDecode(sessionStorage.getItem('token'));
-    const { user } = decodedToken;
+    const token = sessionStorage.getItem('token');
 
-    const userRole = user.role;
-    const userName = user.name;
-    const userEmail = user.email;
-    const userPassword = user.password;
+    let userRole = '';
+    let userName = '';
+    let userEmail = '';
+    let userPassword = '';
+    
+    if (token) {
+      const decodedToken = jwtDecode(token);
+      const { user: decodedUser } = decodedToken;
+    
+      if (decodedUser) {
+        userRole = decodedUser.role ?? '';
+        userName = decodedUser.name ?? '';
+        userEmail = decodedUser.email ?? '';
+        userPassword = decodedUser.password ?? '';
+      }
+    }
 
     const [userrole, setUserRole] = useState(sessionStorage.uRole);
     const [username, setUsername] = useState(userName);
@@ -333,6 +344,24 @@ function Settings() {
     function encodeHTML(str) {
         return he.encode(str); 
     }
+
+    if (!token) {
+        return (
+          <div style={{
+            background: '#FFCCCC',
+            padding: '20px',
+            margin: '20px',
+            borderRadius: '5px',
+            textAlign: 'center',
+            color: '#FF0000',
+            fontWeight: 'bold',
+          }}>
+            Access denied
+            <br />
+            <a href='/' style={{ color: 'blue', textDecoration: 'underline' }}>Back to Home Page</a>
+          </div>
+        );
+      }
 
     return (
         <>

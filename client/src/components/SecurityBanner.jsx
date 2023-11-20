@@ -25,14 +25,12 @@ const SecurityBanner = () => {
   useEffect(() => {
     const storedVisibility = sessionStorage.getItem('securityBannerVisible');
     const closedTime = sessionStorage.getItem('securityBannerClosedTime');
-
-    if (storedVisibility === 'false') {
-      if (!closedTime || (new Date().getTime() - parseInt(closedTime)) >= 15000) {
-        setCurrentTip(getRandomTip());
-        setIsVisible(true);
-      } else {
-        setIsVisible(false);
-      }
+  
+    if (!closedTime || (new Date().getTime() - parseInt(closedTime)) >= 15000) {
+      setCurrentTip(getRandomTip());
+      setIsVisible(true);
+    } else {
+      setIsVisible(false);
     }
   }, []);
 
