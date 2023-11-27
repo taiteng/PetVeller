@@ -16,6 +16,7 @@ function Dog() {
   const [searched, setSearched] = useState(false)
   const [userEmail, setUserEmail] = useState("");
   const [userName, setUserName] = useState("");
+  const [userRole, setUserRole] = useState("");
   const [data2, setData2] = useState([]);
   const [dataLoading, setDataLoading] = useState(false);
 
@@ -90,6 +91,7 @@ function Dog() {
       if (user) {
         setUserEmail(user.email);
         setUserName(user.name);
+        setUserRole(user.role);
       }
       else {
         console.log('An error occurred')
@@ -106,7 +108,7 @@ function Dog() {
     }
 
 
-  }, [userName, userEmail, text]);
+  }, [userName, userEmail, userRole, text]);
 
 
   const searchForDog = async () => {
@@ -328,21 +330,28 @@ function Dog() {
                                 <p>Bred: {dog.bred_for || 'N/A'}</p>
                                 <p>Temperament: {dog.temperament || 'N/A'}</p>
                               </div>
-                              <div className='flex justify-center mt-2'>
-                                {userEmail != null && userEmail !== "" && (
-                                  <form onSubmit={(e) => handleDogUnfavourite(e, dog)}>
-                                    <Button type='submit' size="small">Remove from Favourites</Button>
-                                  </form>
-                                )}
-                              </div>
+                              
+                              {userRole !== "premiumUser" ? (
+                                <div className='flex justify-center mt-2'>
+                                  <p>Not a premium user</p>
+                                </div>
+                              ) : (
+                                <div className='flex justify-center mt-2'>
+                                  {userEmail != null && userEmail !== "" && (
+                                    <form onSubmit={(e) => handleDogUnfavourite(e, dog)}>
+                                      <Button type='submit' size="small">Remove from Favourites</Button>
+                                    </form>
+                                  )}
+                                </div>
+                              )}
                             </div>
                           </article>
                         ))
                       ) : (
                         <p className="text-center">
-                          {userEmail != null && userEmail !== ""
+                          {userEmail != null && userEmail !== "" && userRole == "premiumUser"
                             ? 'No Favourite Dog.'
-                            : 'Please log in to view favourite dogs.'}
+                            : 'Not a premium user.'}
                         </p>
                       )}
                     </div>
@@ -387,11 +396,15 @@ function Dog() {
                             <p>Bred: {dog.bred_for || 'N/A'}</p>
                             <p>Temperament: {dog.temperament || 'N/A'}</p>
                           </div>
-                          <div className='flex justify-center mt-2'>
-                            <form onSubmit={(e) => handleDogFavourite(e, dog)}>
-                              {userEmail == null || userEmail == "" ? null : <Button type='submit' size="small">{dog.isFavourited ? "Remove from Favourites" : "Add to Favourites"}</Button>}
-                            </form>
-                          </div>
+                          {userRole != "premiumUser" ? 
+                                      <></>
+                                      :
+                                      <div className='flex justify-center mt-2'>
+                                        <form onSubmit={(e) => handleDogFavourite(e, dog, userEmail)}>
+                                          {userEmail == null || userEmail == "" ? null : <Button type='submit' size="small">{dog.isFavourited ? "Remove from Favourites" : "Add to Favourites"}</Button>}
+                                        </form>
+                                      </div>
+                                      }
                         </div>
                       </article>
                     ))
@@ -419,11 +432,16 @@ function Dog() {
                                         <p>Bred: {dog.bred_for}</p>
                                         <p>Temperament: {dog.temperament}</p>
                                       </div>
+                                      {userRole != "premiumUser" ? 
+                                      <></>
+                                      :
                                       <div className='flex justify-center mt-2'>
                                         <form onSubmit={(e) => handleDogFavourite(e, dog, userEmail)}>
                                           {userEmail == null || userEmail == "" ? null : <Button type='submit' size="small">{dog.isFavourited ? "Remove from Favourites" : "Add to Favourites"}</Button>}
                                         </form>
                                       </div>
+                                      }
+                                      
                                     </div>
                                   </article>
                                 </>
